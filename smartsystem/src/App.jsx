@@ -7,17 +7,26 @@ import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 import './App.css'
 import Login from './pages/auth/Login'
+import Sidebar from './components/sidebar/Sidebar'
+import Company from './pages/super_admin/company'
 
 export default function App() {
   return (
     <div>
         <Navbar />
         <div className='main-content'>
-            <Routes>
+              <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="*" element={<NotFound />} />
-            </Routes>
+              </Routes>
+
+                <Sidebar>
+                  <Routes>
+                    <Route path="/company" element={<Company />} />
+                  </Routes>
+                </Sidebar>
+            
         </div>
         <Footer />
     </div>

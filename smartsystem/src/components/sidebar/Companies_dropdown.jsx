@@ -13,79 +13,73 @@ const companies = [
   {
     name: "Facebook",
     location: "San Francisco, CA",
-    logo: <Avatar name="Company" />,
+    logo: <Avatar name="Facebook" />,
     key: "1",
   },
   {
     name: "Instagram",
     location: "Austin, TX",
-    logo: <Avatar name="Company" />,
+    logo: <Avatar name="Instagram" />,
     key: "2",
   },
   {
     name: "Twitter",
     location: "Brooklyn, NY",
-    logo: <Avatar name="Company" />,
+    logo: <Avatar name="Twitter" />,
     key: "3",
   },
   {
     name: "Acme Co.",
     location: "Palo Alto, CA",
-    logo: <Avatar name="Company" />,
+    logo: <Avatar name="Acme Co." />,
     key: "4",
   },
 ];
 
 const CompaniesDropdown = () => {
-  const [company, setCompany] = useState(companies[3]);
+  const [selectedCompany, setSelectedCompany] = useState(companies[3]);
 
-  const handleAction = (key) => {
-    const selectedCompany = companies.find((company) => company.key === key);
-    if (selectedCompany) {
-      setCompany(selectedCompany);
+  const handleSelectionChange = (key) => {
+    const company = companies.find((c) => c.key === key);
+    if (company) {
+      setSelectedCompany(company);
     }
   };
 
   return (
-    <div>
-      <Dropdown
-        classNames={{
-          base: "w-full min-w-[260px]",
-        }}
-      >
-        <DropdownTrigger className="cursor-pointer">
-          <div className="flex items-center gap-2">
-            {company.logo}
-            <div className="flex flex-col gap-4">
-              <h3 className="text-xl font-medium m-0 text-default-900 -mb-4 whitespace-nowrap">
-                {company.name}
-              </h3>
-              <span className="text-xs font-medium text-default-500">
-                {company.location}
-              </span>
-            </div>
-            <SlArrowDown />
+    <Dropdown>
+      <DropdownTrigger>
+        <div className="flex items-center justify-center gap-2 cursor-pointer">
+          {selectedCompany.logo}
+          <div className="flex flex-col">
+            <h3 className="text-base font-medium text-default-900 m-0">
+              {selectedCompany.name}
+            </h3>
+            <span className="text-xs text-default-500">
+              {selectedCompany.location}
+            </span>
           </div>
-        </DropdownTrigger>
-        <DropdownMenu onAction={handleAction} aria-label="Avatar Actions">
-          <DropdownSection title="Companies">
-            {companies.map((company) => (
-              <DropdownItem
-                key={company.key}
-                startContent={company.logo}
-                description={company.location}
-                classNames={{
-                  base: "py-4",
-                  title: "text-base font-semibold",
-                }}
-              >
-                {company.name}
-              </DropdownItem>
-            ))}
-          </DropdownSection>
-        </DropdownMenu>
-      </Dropdown>
-    </div>
+          <SlArrowDown className="text-default-400" />
+        </div>
+      </DropdownTrigger>
+      <DropdownMenu
+        aria-label="Company selection"
+        onAction={handleSelectionChange}
+        className="w-[260px]"
+      >
+        <DropdownSection title="Companies">
+          {companies.map((company) => (
+            <DropdownItem
+              key={company.key}
+              startContent={company.logo}
+              description={company.location}
+            >
+              {company.name}
+            </DropdownItem>
+          ))}
+        </DropdownSection>
+      </DropdownMenu>
+    </Dropdown>
   );
 };
 

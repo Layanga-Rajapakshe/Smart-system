@@ -1,14 +1,14 @@
-import React from 'react'
+import React from 'react';
 
-const Sidebar_Menu = ({title,children}) => {
+const Sidebar_Menu = ({ title, children }) => {
   return (
-    <div>
-        <div className="flex gap-2 flex-col">
-            <span className="text-xs font-normal ">{title}</span>
-            {children}
-        </div>
+    <div className="sidebar-menu">
+      <h3 className="text-sm font-normal text-black mb-2 text-start px-2">{title}</h3>
+      <div className="flex gap-2 flex-col w-full px-2">
+        {children}
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Sidebar_Menu
+export default Sidebar_Menu;

@@ -9,11 +9,11 @@ import './App.css'
 import Login from './pages/auth/Login'
 import Sidebar from './components/sidebar/Sidebar'
 import Company from './pages/super_admin/company'
+import Employee from './pages/super_admin/employee'
 
 export default function App() {
   return (
     <div>
-        <Navbar />
         <div className='main-content'>
               <Routes>
                 <Route path="/" element={<Home />} />
@@ -24,6 +24,7 @@ export default function App() {
                 <Sidebar>
                   <Routes>
                     <Route path="/company" element={<Company />} />
+                    <Route path="/employee" element={<Employee />} />
                   </Routes>
                 </Sidebar>
             

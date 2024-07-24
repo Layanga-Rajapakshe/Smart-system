@@ -28,7 +28,7 @@ const Sidebar = () => {
             
             <div className={`w-56 bg-white text-black transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:translate-x-0`}>
                 <div className="flex flex-col h-full overflow-y-scroll">
-                    <div className="flex gap-8 justify-items-center py-6 px-4">
+                    <div className="flex gap-8 justify-center py-6 px-4">
                         <CompaniesDropdown />
                     </div>
 

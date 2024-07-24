@@ -1,7 +1,10 @@
 import React from 'react';
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Input, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Avatar } from '@nextui-org/react';
+import { Navbar, NavbarBrand, NavbarContent, User, Input, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Switch, Badge, Button } from '@nextui-org/react';
 import { CiSearch } from "react-icons/ci";
-import { TbBrandAlipay } from "react-icons/tb";
+import { LuSunMedium } from "react-icons/lu";
+import { LuMoon } from "react-icons/lu";
+import { IoNotifications } from "react-icons/io5";
+import { FaRegMessage } from "react-icons/fa6";
 
 const NavBar = () => {
   return (
@@ -13,28 +16,79 @@ const NavBar = () => {
             base: "max-w-full sm:max-w-[10rem] h-10",
             mainWrapper: "h-full",
             input: "text-small",
-            inputWrapper: "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+            inputWrapper: "h-full font-normal text-default-500",
           }}
           placeholder="Type to search..."
           size="sm"
           startContent={<CiSearch size={18} />}
           type="search"
+          variant='bordered'
         />
         </NavbarBrand>
       </NavbarContent>
 
       <NavbarContent as="div" className="items-center" justify="end">
 
+      <Switch
+        defaultSelected
+        size="lg"
+        color="primary"
+        thumbIcon={({ isSelected, className }) =>
+          isSelected ? (
+            <LuSunMedium className={className} />
+          ) : (
+            <LuMoon className={className} />
+          )
+        }
+      />
+
+    <Dropdown placement="bottom-end">
+      <DropdownTrigger>
+        <div className='cursor-pointer px-4'>
+        <Badge content="99+" shape="circle" color="danger" size='sm' variant='shadow'>
+          <IoNotifications size={24} />
+        </Badge>
+        </div>
+      </DropdownTrigger>
+      <DropdownMenu 
+        aria-label="Notifications"
+        color='default'
+        variant='faded'
+      >
+        <DropdownItem key="notification1">notification1</DropdownItem>
+        <DropdownItem key="notification2">notification2</DropdownItem>
+        <DropdownItem key="notification3">notification3</DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
+
+    <Dropdown placement="bottom-end">
+      <DropdownTrigger>
+      <div className='cursor-pointer px-4'>
+        <Badge content="99+" shape="circle" color="danger" size='sm' variant='shadow'>
+          <FaRegMessage size={24} />
+        </Badge>
+        </div>
+      </DropdownTrigger>
+      <DropdownMenu 
+        aria-label="Messages"
+        color='default'
+        variant='faded'
+      >
+        <DropdownItem key="message1">message1</DropdownItem>
+        <DropdownItem key="message2">message2</DropdownItem>
+        <DropdownItem key="message3">message3</DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
+
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
-            <Avatar
-              isBordered
-              as="button"
-              className="transition-transform"
-              color="secondary"
-              name="Jason Hughes"
-              size="sm"
-              src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+            <User   
+              name="Jane Doe"
+              description="Product Designer"
+              className='cursor-pointer'
+              avatarProps={{
+                src: "https://i.pravatar.cc/150?u=a04258114e29026702d"
+              }}
             />
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">

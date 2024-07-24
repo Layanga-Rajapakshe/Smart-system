@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import Companies_dropdown from './Companies_dropdown';
-import Sidebar_Item from './Sidebar_Item';
+import CompaniesDropdown from './CompaniesDropdown';
+import SidebarItem from './SidebarItem';
 import { FaBuilding } from "react-icons/fa6";
 import { BsFillPersonVcardFill } from "react-icons/bs";
-import Sidebar_Menu from './Sidebar_Menu';
+import SidebarMenu from './SidebarMenu';
 
 const Sidebar = () => {
     const location = useLocation();
@@ -29,21 +29,21 @@ const Sidebar = () => {
             <div className={`w-56 bg-white text-black transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:translate-x-0`}>
                 <div className="flex flex-col h-full overflow-y-scroll">
                     <div className="flex gap-8 justify-items-center py-6 px-4">
-                        <Companies_dropdown />
+                        <CompaniesDropdown />
                     </div>
 
 
-                    <Sidebar_Menu title="Admin Menu">
+                    <SidebarMenu title="Admin Menu">
                     <nav className="flex-grow">
                         <ul>
                             {adminMenuItems.map((item, index) => (
                                 <li key={index}>
-                                    <Sidebar_Item {...item} />
+                                    <SidebarItem {...item} />
                                 </li>
                             ))}
                         </ul>
                     </nav>
-                    </Sidebar_Menu>
+                    </SidebarMenu>
                     
                     <div className="p-5 mt-auto">
                         <div className="flex items-center">

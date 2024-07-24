@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@nextui-org/react";
 
-const Sidebar_Item = ({ icon, title, isActive, href }) => {
+const SidebarItem = ({ icon, title, isActive, href }) => {
     const navigate = useNavigate();
 
     const handleClick = (e) => {
@@ -25,4 +25,4 @@ const Sidebar_Item = ({ icon, title, isActive, href }) => {
     );
 };
 
-export default Sidebar_Item;
+export default SidebarItem;

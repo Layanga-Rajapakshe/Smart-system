@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Sidebar_Menu = ({ title, children }) => {
+const SidebarMenu = ({ title, children }) => {
   return (
     <div className="sidebar-menu">
       <h3 className="text-sm font-normal text-black mb-2 text-start px-2">{title}</h3>
@@ -11,4 +11,4 @@ const Sidebar_Menu = ({ title, children }) => {
   );
 };
 
-export default Sidebar_Menu;
+export default SidebarMenu;

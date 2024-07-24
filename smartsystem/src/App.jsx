@@ -7,8 +7,8 @@ import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 import Login from './pages/auth/Login'
 import Sidebar from './components/sidebar/Sidebar'
-import Company from './pages/super_admin/company'
-import Employee from './pages/super_admin/employee'
+import Company from './pages/super_admin/Company'
+import Employee from './pages/super_admin/Employee'
 
 export default function App() {
   const location = useLocation();

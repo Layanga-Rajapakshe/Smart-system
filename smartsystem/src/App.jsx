@@ -9,10 +9,12 @@ import Login from './pages/auth/Login'
 import Sidebar from './components/sidebar/Sidebar'
 import Company from './pages/super_admin/Company'
 import Employee from './pages/super_admin/Employee'
+import CompanyRegister from './pages/super_admin/CompanyRegister'
+import Admin from './pages/super_admin/Admin'
 
 export default function App() {
   const location = useLocation();
-  const showSidebar = ['/company', '/employee'].includes(location.pathname);
+  const showSidebar = ['/company', '/employee', '/admin', '/companyregister'].includes(location.pathname);
 
   return (
     <div>
@@ -24,6 +26,8 @@ export default function App() {
             <div className="p-4 overflow-auto flex-1">
               <Routes>
                 <Route path="/company" element={<Company />} />
+                <Route path="/companyregister" element={<CompanyRegister />} />
+                <Route path="/admin" element={<Admin />} />
                 <Route path="/employee" element={<Employee />} />
               </Routes>
             </div>

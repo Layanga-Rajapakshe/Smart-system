@@ -13,8 +13,8 @@ const Sidebar = () => {
     const toggleSidebar = () => setIsOpen(!isOpen);
     
     const adminMenuItems = [
-        { title: 'Companies Menu', href: '/company', icon: <FaBuilding/>, isActive: location.pathname === '/company' },
-        { title: 'Employee Menu', href: '/employee', icon: <BsFillPersonVcardFill/>, isActive: location.pathname === '/employee' },
+        { title: 'Companies Menu', href: '/company', icon: <FaBuilding/>, isActive: ['/company', '/companyregister'].includes(location.pathname) },
+        { title: 'Admin Menu', href: '/admin', icon: <BsFillPersonVcardFill/>, isActive: location.pathname === '/admin' },
     ];
 
     return (
@@ -33,7 +33,7 @@ const Sidebar = () => {
                     </div>
 
 
-                    <SidebarMenu title="Admin Menu">
+                    <SidebarMenu title=" Super Admin Menu">
                     <nav className="flex-grow">
                         <ul>
                             {adminMenuItems.map((item, index) => (

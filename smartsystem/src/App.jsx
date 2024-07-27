@@ -10,11 +10,12 @@ import Sidebar from './components/sidebar/Sidebar'
 import Company from './pages/super_admin/Company'
 import Employee from './pages/super_admin/Employee'
 import CompanyRegister from './pages/super_admin/CompanyRegister'
-import Admin from './pages/super_admin/Admin'
+import CompanyEdit from './pages/super_admin/CompanyEdit'
+import CompanyView from './pages/super_admin/CompanyView'
 
 export default function App() {
   const location = useLocation();
-  const showSidebar = ['/company', '/employee', '/admin', '/companyregister'].includes(location.pathname);
+  const showSidebar = ['/company', '/employee', '/companyedit', '/companyregister', '/companyview'].includes(location.pathname);
 
   return (
     <div>
@@ -27,7 +28,8 @@ export default function App() {
               <Routes>
                 <Route path="/company" element={<Company />} />
                 <Route path="/companyregister" element={<CompanyRegister />} />
-                <Route path="/admin" element={<Admin />} />
+                <Route path="/companyedit" element={<CompanyEdit />} />
+                <Route path='/companyview' element={<CompanyView />} />
                 <Route path="/employee" element={<Employee />} />
               </Routes>
             </div>

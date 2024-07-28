@@ -8,7 +8,7 @@ import NotFound from './pages/NotFound'
 import Login from './pages/auth/Login'
 import Sidebar from './components/sidebar/Sidebar'
 import Company from './pages/super_admin/Company'
-
+import Employee from './pages/super_admin/Employee'
 import CompanyRegister from './pages/super_admin/CompanyRegister'
 import CompanyEdit from './pages/super_admin/CompanyEdit'
 import CompanyView from './pages/super_admin/CompanyView'

@@ -1,19 +1,29 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const app = express()
+require('dotenv').config(); 
 
-app.get('/',(req,res)=>{
-    res.send('Hello node api')
-})
+const express = require('express');
+const mongoose = require('mongoose');
+const CompanyRoute = require('./routes/CompaniesRoute'); 
+const app = express();
+const PORT=process.env.PORT
+
+const MONGO_URL = process.env.MONGO_URL; 
+
+app.use(express.json());
+app.use('/api/company',CompanyRoute);
+
+app.get('/', (req, res) => {
+    res.send('Hello node api');
+});
 
 
 
-mongoose.connect('mongodb+srv://smartsystemall623:fTa4zCVgCnxi4gJM@smartsystemapi.4ylwyo9.mongodb.net/Smart-API?retryWrites=true&w=majority&appName=SmartsystemAPI')
-.then(()=>{
-    app.listen(3000,()=>{
-        console.log('Node api is running on port 3000')
+mongoose.connect(MONGO_URL)
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`Node API is running on port ${PORT}`);
+        });
+        console.log('Connected to MongoDB');
     })
-    console.log('Connected to Mongodb')
-}).catch((error)=>{
-    console.log(error)
-})
+    .catch((error) => {
+        console.log(error);
+    });

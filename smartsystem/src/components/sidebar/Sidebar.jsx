@@ -14,7 +14,7 @@ const Sidebar = () => {
     
     const adminMenuItems = [
         { title: 'Companies Menu', href: '/company', icon: <FaBuilding/>, isActive: ['/company', '/companyregister', '/companyedit', '/companyview'].includes(location.pathname) },
-        { title: 'Admin Menu', href: '/admin', icon: <BsFillPersonVcardFill/>, isActive: location.pathname === '/admin' },
+        { title: 'Employee Menu', href: '/employee', icon: <BsFillPersonVcardFill/>, isActive: ['/employee', '/employeeregister', '/employeeedit', '/employeeview'].includes(location.pathname) },
     ];
 
     return (

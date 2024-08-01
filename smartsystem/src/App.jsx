@@ -7,15 +7,18 @@ import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 import Login from './pages/auth/Login'
 import Sidebar from './components/sidebar/Sidebar'
-import Company from './pages/super_admin/Company'
-import Employee from './pages/super_admin/Employee'
+import Company from './pages/super_admin/company'
+import Employee from './pages/super_admin/employee'
 import CompanyRegister from './pages/super_admin/CompanyRegister'
 import CompanyEdit from './pages/super_admin/CompanyEdit'
 import CompanyView from './pages/super_admin/CompanyView'
+import EmployeeRegister from './pages/super_admin/EmployeeRegister'
+import EmployeeView from './pages/super_admin/EmployeeView'
+import EmployeeEdit from './pages/super_admin/EmployeeEdit'
 
 export default function App() {
   const location = useLocation();
-  const showSidebar = ['/company', '/employee', '/companyedit', '/companyregister', '/companyview'].includes(location.pathname);
+  const showSidebar = ['/company', '/employee', '/companyedit', '/companyregister', '/companyview', '/employeeregister', '/employeeview', '/employeeedit'].includes(location.pathname);
 
   return (
     <div>
@@ -31,6 +34,9 @@ export default function App() {
                 <Route path="/companyedit" element={<CompanyEdit />} />
                 <Route path='/companyview' element={<CompanyView />} />
                 <Route path="/employee" element={<Employee />} />
+                <Route path="/employeeregister" element={<EmployeeRegister />} />
+                <Route path="/employeeedit" element={<EmployeeEdit />} />
+                <Route path='/employeeview' element={<EmployeeView />} />
               </Routes>
             </div>
           </div>

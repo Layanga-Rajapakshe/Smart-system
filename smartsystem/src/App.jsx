@@ -1,5 +1,6 @@
 import React from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 
 import NavBar from './components/Navbar'
 import Footer from './components/Footer'
@@ -48,6 +49,7 @@ export default function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
       )}
+      <Toaster />
       <Footer />
     </div>
   )

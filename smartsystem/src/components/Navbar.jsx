@@ -1,13 +1,32 @@
 import React, { useState } from 'react';
 import { Navbar, NavbarBrand, NavbarContent, User, Input, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Switch, Badge, Button } from '@nextui-org/react';
 import { CiSearch } from "react-icons/ci";
-import { LuSunMedium } from "react-icons/lu";
-import { LuMoon } from "react-icons/lu";
 import { IoNotifications } from "react-icons/io5";
 import { FaRegMessage } from "react-icons/fa6";
+import toast from 'react-hot-toast';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { logout } from '../redux/features/auth/authSlice';
+import { useLogoutMutation } from '../redux/api/authApiSlice';
+import ModeToggle from './modetoggle/ModeToggle';
 
 const NavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [logoutApiCall, { isLoading }] = useLogoutMutation();
+
+  const handleLogout = async () => {
+    try {
+      await logoutApiCall.unwrap();
+      dispatch(logout());
+      navigate('/login');
+      toast.success('Logout Success');
+    } catch (error) {
+      toast.error('Failed to logout');
+    }
+  }
 
   return (
     <Navbar isBordered>
@@ -33,18 +52,7 @@ const NavBar = () => {
 
       <NavbarContent as="div" className="items-center" justify="end">
         <div className="hidden md:flex items-center space-x-4">
-          <Switch
-            defaultSelected
-            size="lg"
-            color="primary"
-            thumbIcon={({ isSelected, className }) =>
-              isSelected ? (
-                <LuSunMedium className={className} />
-              ) : (
-                <LuMoon className={className} />
-              )
-            }
-          />
+          <ModeToggle />
 
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
@@ -98,7 +106,7 @@ const NavBar = () => {
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem key="profile">My Profile</DropdownItem>
               <DropdownItem key="settings">My Settings</DropdownItem>
-              <DropdownItem key="logout" color="danger">Log Out</DropdownItem>
+              <DropdownItem key="logout" color="danger" onClick={handleLogout}>{isLoading ? 'Logging Out...' : 'Log out'}</DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </div>
@@ -132,18 +140,7 @@ const NavBar = () => {
                 />
               </DropdownItem>
               <DropdownItem key="toggle">
-                <Switch
-                  defaultSelected
-                  size="lg"
-                  color="primary"
-                  thumbIcon={({ isSelected, className }) =>
-                    isSelected ? (
-                      <LuSunMedium className={className} />
-                    ) : (
-                      <LuMoon className={className} />
-                    )
-                  }
-                />
+                <ModeToggle />
               </DropdownItem>
               <DropdownItem key="notifications" className=''>
                 <Badge content="99+" shape="circle" color="danger" size='sm' variant='solid'>
@@ -157,7 +154,7 @@ const NavBar = () => {
               </DropdownItem>
               <DropdownItem key="profile">My Profile</DropdownItem>
               <DropdownItem key="settings">My Settings</DropdownItem>
-              <DropdownItem key="logout" color="danger">Log Out</DropdownItem>
+              <DropdownItem key="logout" color="danger" onClick={handleLogout}>{isLoading ? 'Logging Out...' : 'Log Out'}</DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </div>

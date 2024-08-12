@@ -26,7 +26,7 @@ const Sidebar = () => {
                 {isOpen ? "×" : "☰"}
             </button>
             
-            <div className={`fixed top-0 left-0 h-full w-56 z-50 bg-white text-black transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0`}>
+            <div className={`fixed top-0 left-0 h-full w-56 z-50 bg-background text-black transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0`}>
                 <div className="flex flex-col h-full overflow-y-scroll">
                     <div className="flex gap-8 justify-center py-6 px-4">
                         <CompaniesDropdown />

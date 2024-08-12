@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Input, Image, Link, Checkbox } from '@nextui-org/react';
 import image1 from '../../assets/images/loginpage_image.png';
 import { useLoginMutation } from '../../redux/api/authApiSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCredentials } from '../../redux/features/auth/authSlice';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 const Login = () => {
@@ -16,15 +16,6 @@ const Login = () => {
   const navigate = useNavigate();
 
   const { userInfo } = useSelector((state) => state.auth);
-  // const { search } = useLocation();
-  // const sp = new URLSearchParams(search);
-  // const redirect = sp.get("redirect") || "/company";
-
-  // useEffect(() => {
-  //   if (userInfo) {
-  //     navigate(redirect);
-  //   }
-  // }, [navigate, userInfo]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,27 +31,28 @@ const Login = () => {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <div className="flex-1 flex-col flex items-center justify-center p-6">
-        <div className="md:hidden absolute left-0 right-0 bottom-0 top-0 z-0">
+      <div className="flex-1 flex flex-col items-center justify-center p-6">
+        <div className="absolute inset-0 z-0 md:hidden">
           <Image
             isBlurred
-            className="w-full h-screen/2 fill-inherit"
+            className="w-full h-full object-cover"
             src="https://nextui.org/gradients/docs-right.png"
             alt="Login page image"
           />
         </div>
 
-        <div className="text-center text-[25px] font-bold mb-6">
+        <div className="relative z-10 text-center text-[25px] font-bold mb-6">
           Welcome Back !!!
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col w-1/2 gap-4 mb-4">
+        <form onSubmit={handleSubmit} className="flex flex-col w-full max-w-md gap-4 mb-4">
           <Input
             variant="bordered"
             label="Email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <Input
             variant="bordered"
@@ -68,27 +60,26 @@ const Login = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
-          <div className="flex flex-row justify-between">
+          <div className="flex flex-row justify-between items-center">
             <Checkbox>Remember Me</Checkbox>
-            <Link href="#">Forgot Password?</Link>
+            <Link href="#" color="primary">Forgot Password?</Link>
           </div>
 
-          <Button type="submit" variant="flat" color="primary">
+          <Button type="submit" variant="flat" color="primary" disabled={isLoading}>
             {isLoading ? 'Loading...' : 'Login'}
           </Button>
         </form>
       </div>
 
       <div className="hidden md:flex flex-1 items-center justify-center p-6">
-        <div className="w-full h-full flex items-center justify-center">
-          <Image
-            isBlurred
-            className="w-full h-full object-fill"
-            src={image1}
-            alt="Login page image"
-          />
-        </div>
+        <Image
+          isBlurred
+          className="w-full h-full object-cover"
+          src={image1}
+          alt="Login page image"
+        />
       </div>
     </div>
   );

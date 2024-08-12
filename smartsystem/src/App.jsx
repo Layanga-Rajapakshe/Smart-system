@@ -16,14 +16,15 @@ import CompanyView from './pages/super_admin/CompanyView'
 import EmployeeRegister from './pages/super_admin/EmployeeRegister'
 import EmployeeView from './pages/super_admin/EmployeeView'
 import EmployeeEdit from './pages/super_admin/EmployeeEdit'
+import Attendance from './pages/admin/Attendance'
 
 export default function App() {
   const location = useLocation();
-  const showSidebar = ['/company', '/employee', '/companyedit', '/companyregister', '/companyview', '/employeeregister', '/employeeview', '/employeeedit'].includes(location.pathname);
+  const notShowSidebar = ['/login','/'].includes(location.pathname);
 
   return (
     <div>
-      {showSidebar ? (
+      { !notShowSidebar ? (
         <div className="flex h-screen">
           <Sidebar />
           <div className="flex flex-1 flex-col">
@@ -38,6 +39,7 @@ export default function App() {
                 <Route path="/employeeregister" element={<EmployeeRegister />} />
                 <Route path="/employeeedit" element={<EmployeeEdit />} />
                 <Route path='/employeeview' element={<EmployeeView />} />
+                <Route path='/attendance' element={<Attendance />} />
               </Routes>
             </div>
           </div>

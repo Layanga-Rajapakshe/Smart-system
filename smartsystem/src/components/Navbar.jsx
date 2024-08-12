@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navbar, NavbarBrand, NavbarContent, User, Input, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Switch, Badge, Button } from '@nextui-org/react';
+import { Navbar, NavbarBrand, NavbarContent, User, Input, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Badge } from '@nextui-org/react';
 import { CiSearch } from "react-icons/ci";
 import { IoNotifications } from "react-icons/io5";
 import { FaRegMessage } from "react-icons/fa6";
@@ -14,19 +14,20 @@ const NavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [logoutApiCall, { isLoading }] = useLogoutMutation();
+  const [logoutApiCall] = useLogoutMutation();
 
   const handleLogout = async () => {
     try {
-      await logoutApiCall.unwrap();
+      await logoutApiCall().unwrap();
       dispatch(logout());
       navigate('/login');
       toast.success('Logout Success');
     } catch (error) {
-      toast.error('Failed to logout');
+      toast.error(error.message);
     }
-  }
+  };
+
+  const toggleDropdown = () => setIsDropdownOpen(prev => !prev);
 
   return (
     <Navbar isBordered>
@@ -67,9 +68,9 @@ const NavBar = () => {
               color='default'
               variant='faded'
             >
-              <DropdownItem key="notification1">notification1</DropdownItem>
-              <DropdownItem key="notification2">notification2</DropdownItem>
-              <DropdownItem key="notification3">notification3</DropdownItem>
+              <DropdownItem key="notification1">Notification 1</DropdownItem>
+              <DropdownItem key="notification2">Notification 2</DropdownItem>
+              <DropdownItem key="notification3">Notification 3</DropdownItem>
             </DropdownMenu>
           </Dropdown>
 
@@ -86,9 +87,9 @@ const NavBar = () => {
               color='default'
               variant='faded'
             >
-              <DropdownItem key="message1">message1</DropdownItem>
-              <DropdownItem key="message2">message2</DropdownItem>
-              <DropdownItem key="message3">message3</DropdownItem>
+              <DropdownItem key="message1">Message 1</DropdownItem>
+              <DropdownItem key="message2">Message 2</DropdownItem>
+              <DropdownItem key="message3">Message 3</DropdownItem>
             </DropdownMenu>
           </Dropdown>
 
@@ -106,13 +107,15 @@ const NavBar = () => {
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem key="profile">My Profile</DropdownItem>
               <DropdownItem key="settings">My Settings</DropdownItem>
-              <DropdownItem key="logout" color="danger" onClick={handleLogout}>{isLoading ? 'Logging Out...' : 'Log out'}</DropdownItem>
+              <DropdownItem key="logout" color="danger" onClick={handleLogout}>
+                Logout
+              </DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </div>
 
         <div className="md:hidden flex items-center">
-          <Dropdown placement="bottom-end">
+          <Dropdown placement="bottom-end" isOpen={isDropdownOpen} onOpenChange={toggleDropdown}>
             <DropdownTrigger>
               <User   
                 name="Jane Doe"
@@ -123,7 +126,7 @@ const NavBar = () => {
                 }}
               />
             </DropdownTrigger>
-            <DropdownMenu aria-label="More Options" variant="flat" isOpen={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+            <DropdownMenu aria-label="More Options" variant="flat">
               <DropdownItem key="search">
                 <Input
                   classNames={{
@@ -142,7 +145,7 @@ const NavBar = () => {
               <DropdownItem key="toggle">
                 <ModeToggle />
               </DropdownItem>
-              <DropdownItem key="notifications" className=''>
+              <DropdownItem key="notifications">
                 <Badge content="99+" shape="circle" color="danger" size='sm' variant='solid'>
                   Notifications
                 </Badge>
@@ -154,7 +157,9 @@ const NavBar = () => {
               </DropdownItem>
               <DropdownItem key="profile">My Profile</DropdownItem>
               <DropdownItem key="settings">My Settings</DropdownItem>
-              <DropdownItem key="logout" color="danger" onClick={handleLogout}>{isLoading ? 'Logging Out...' : 'Log Out'}</DropdownItem>
+              <DropdownItem key="logout" color="danger" onClick={handleLogout}>
+                Logout
+              </DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </div>

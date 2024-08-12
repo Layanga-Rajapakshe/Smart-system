@@ -4,6 +4,7 @@ import CompaniesDropdown from './CompaniesDropdown';
 import SidebarItem from './SidebarItem';
 import { FaBuilding } from "react-icons/fa6";
 import { BsFillPersonVcardFill } from "react-icons/bs";
+import { SlCalender } from "react-icons/sl";
 import SidebarMenu from './SidebarMenu';
 
 const Sidebar = () => {
@@ -12,10 +13,15 @@ const Sidebar = () => {
     
     const toggleSidebar = () => setIsOpen(!isOpen);
     
-    const adminMenuItems = [
+    const superAdminMenuItems = [
         { title: 'Companies Menu', href: '/company', icon: <FaBuilding/>, isActive: ['/company', '/companyregister', '/companyedit', '/companyview'].includes(location.pathname) },
         { title: 'Employee Menu', href: '/employee', icon: <BsFillPersonVcardFill/>, isActive: ['/employee', '/employeeregister', '/employeeedit', '/employeeview'].includes(location.pathname) },
     ];
+
+    const adminMenuItems = [
+        {title: 'Attendance Menu', href: '/attendance', icon: <SlCalender/>, isActive: ['/attendance'].includes(location.pathname)},
+    ]
+
 
     return (
         <>
@@ -33,6 +39,18 @@ const Sidebar = () => {
                     </div>
 
                     <SidebarMenu title="Super Admin Menu">
+                        <nav className="flex-grow">
+                            <ul>
+                                {superAdminMenuItems.map((item, index) => (
+                                    <li key={index}>
+                                        <SidebarItem {...item} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    </SidebarMenu>
+
+                    <SidebarMenu title="Company Admin Menu">
                         <nav className="flex-grow">
                             <ul>
                                 {adminMenuItems.map((item, index) => (

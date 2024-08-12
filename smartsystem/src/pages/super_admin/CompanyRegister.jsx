@@ -4,14 +4,16 @@ import image1 from '../../assets/images/companyRegister.png';
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 
 const CompanyRegister = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [address, setAddress] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log("Email:", email);
-    console.log("Password:", password);
+    // Handle registration logic here
+    console.log("Company Name:", companyName);
+    console.log("Address:", address);
+    console.log("Phone Number:", phoneNumber);
   };
 
   const breadcrumbItems = [
@@ -38,17 +40,24 @@ const CompanyRegister = () => {
           <form onSubmit={handleSubmit} className='flex flex-col w-1/2 gap-4 mb-4'>
             <Input
               variant='bordered'
-              label='Email'
-              type='email'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              label='Company Name'
+              type='text'
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
             />
             <Input
               variant='bordered'
-              label='Password'
-              type='password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              label='Address'
+              type='text'
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+            <Input
+              variant='bordered'
+              label='Phone Number'
+              type='tel'
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
             />
 
             <Button type='submit' variant='flat' color='primary'>

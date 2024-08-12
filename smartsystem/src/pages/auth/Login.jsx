@@ -25,7 +25,7 @@ const Login = () => {
       navigate("/company");
       toast.success("Login Success");
     } catch (err) {
-      toast.error(err?.data?.message || err.error);
+      toast.error(err.message || "Login Failed");
     }
   };
 

@@ -9,12 +9,15 @@ import { useNavigate } from 'react-router-dom';
 import { logout } from '../redux/features/auth/authSlice';
 import { useLogoutMutation } from '../redux/api/authApiSlice';
 import ModeToggle from './modetoggle/ModeToggle';
+import { useSelector } from 'react-redux';
 
 const NavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [logoutApiCall] = useLogoutMutation();
+
+  const { userInfo } = useSelector((state) => state.auth);
 
   const handleLogout = async () => {
     try {
@@ -96,7 +99,7 @@ const NavBar = () => {
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
               <User   
-                name="Jane Doe"
+                name={userInfo.name || "Jane Doe"}
                 description="Product Designer"
                 className='cursor-pointer'
                 avatarProps={{

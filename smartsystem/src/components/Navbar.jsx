@@ -99,7 +99,7 @@ const NavBar = () => {
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
               <User   
-                name={userInfo.name || "Jane Doe"}
+                name={"Jane Doe"}
                 description="Product Designer"
                 className='cursor-pointer'
                 avatarProps={{

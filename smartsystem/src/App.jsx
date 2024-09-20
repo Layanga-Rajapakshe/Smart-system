@@ -17,6 +17,7 @@ import EmployeeRegister from './pages/super_admin/EmployeeRegister'
 import EmployeeView from './pages/super_admin/EmployeeView'
 import EmployeeEdit from './pages/super_admin/EmployeeEdit'
 import Attendance from './pages/admin/Attendance'
+import Supervisees from './pages/supervisor/Supervisees'
 
 export default function App() {
   const location = useLocation();
@@ -40,6 +41,7 @@ export default function App() {
                 <Route path="/employeeedit" element={<EmployeeEdit />} />
                 <Route path='/employeeview' element={<EmployeeView />} />
                 <Route path='/attendance' element={<Attendance />} />
+                <Route path="/superviseelist" element={<Supervisees />} />
               </Routes>
             </div>
           </div>

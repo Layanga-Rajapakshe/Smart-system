@@ -5,6 +5,7 @@ import SidebarItem from './SidebarItem';
 import { FaBuilding } from "react-icons/fa6";
 import { BsFillPersonVcardFill } from "react-icons/bs";
 import { SlCalender } from "react-icons/sl";
+import { MdSupervisorAccount } from "react-icons/md";
 import SidebarMenu from './SidebarMenu';
 
 const Sidebar = () => {
@@ -20,6 +21,10 @@ const Sidebar = () => {
 
     const adminMenuItems = [
         {title: 'Attendance Menu', href: '/attendance', icon: <SlCalender/>, isActive: ['/attendance'].includes(location.pathname)},
+    ]
+
+    const supervisorMenuItems = [
+        {title: 'Supervisee List', href: '/superviseelist', icon: <MdSupervisorAccount/>, isActive: ['/superviseelist'].includes(location.pathname)},
     ]
 
 
@@ -54,6 +59,18 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {adminMenuItems.map((item, index) => (
+                                    <li key={index}>
+                                        <SidebarItem {...item} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    </SidebarMenu>
+
+                    <SidebarMenu title="Supervisor Menu">
+                        <nav className="flex-grow">
+                            <ul>
+                                {supervisorMenuItems.map((item, index) => (
                                     <li key={index}>
                                         <SidebarItem {...item} />
                                     </li>

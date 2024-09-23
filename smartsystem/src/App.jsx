@@ -18,6 +18,9 @@ import EmployeeView from './pages/super_admin/EmployeeView'
 import EmployeeEdit from './pages/super_admin/EmployeeEdit'
 import Attendance from './pages/admin/Attendance'
 import Supervisees from './pages/supervisor/Supervisees'
+import Tasks from './pages/supervisor/Tasks'
+import AddTask from './pages/supervisor/AddTask'
+import SuperviseeDetails from './pages/supervisor/SuperviseeDetails'
 
 export default function App() {
   const location = useLocation();
@@ -42,6 +45,9 @@ export default function App() {
                 <Route path='/employeeview' element={<EmployeeView />} />
                 <Route path='/attendance' element={<Attendance />} />
                 <Route path="/superviseelist" element={<Supervisees />} />
+                <Route path="/superviseetasks" element={<Tasks />} />
+                <Route path="/newtask" element={<AddTask />} />
+                <Route path="/superviseedetails" element={<SuperviseeDetails />} />
               </Routes>
             </div>
           </div>

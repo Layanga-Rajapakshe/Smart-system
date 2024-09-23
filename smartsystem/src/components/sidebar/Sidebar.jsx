@@ -6,6 +6,7 @@ import { FaBuilding } from "react-icons/fa6";
 import { BsFillPersonVcardFill } from "react-icons/bs";
 import { SlCalender } from "react-icons/sl";
 import { MdSupervisorAccount } from "react-icons/md";
+import { FaTasks } from "react-icons/fa";
 import SidebarMenu from './SidebarMenu';
 
 const Sidebar = () => {
@@ -24,7 +25,8 @@ const Sidebar = () => {
     ]
 
     const supervisorMenuItems = [
-        {title: 'Supervisee List', href: '/superviseelist', icon: <MdSupervisorAccount/>, isActive: ['/superviseelist'].includes(location.pathname)},
+        {title: 'Supervisee List', href: '/superviseelist', icon: <MdSupervisorAccount/>, isActive: ['/superviseelist','/superviseedetails'].includes(location.pathname)},
+        {title: 'Supervisee Tasks', href: '/superviseetasks', icon: <FaTasks/>, isActive: ['/superviseetasks','/newtask'].includes(location.pathname)},
     ]
 
 

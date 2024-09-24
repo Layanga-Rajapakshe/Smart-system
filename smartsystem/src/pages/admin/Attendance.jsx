@@ -2,8 +2,15 @@ import React from 'react';
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 import AttendanceDropzone from './AttendanceDropzone';
 import { Button } from '@nextui-org/react';
+import { useNavigate } from 'react-router-dom';
 
 const Attendance = () => {
+    const navigate = useNavigate();
+
+    const handleNewClick = () => {
+        navigate('/viewattendence');
+    };
+
     const breadcrumbItems = [
         { label: 'Attendance Menu', href: '/attendance', isCurrentPage: true }
     ];
@@ -15,7 +22,7 @@ const Attendance = () => {
                 <div className="h-auto border-collapse rounded-lg lg:col-span-2">
                     <div className='flex justify-between items-center p-4 rounded-t-lg'>
                         <h1 className='text-xl font-semibold'>Attendance</h1>
-                        <Button color="primary" variant='flat'>
+                        <Button color="primary" variant='flat' onClick={handleNewClick}>
                             View Attendance
                         </Button>
                     </div>

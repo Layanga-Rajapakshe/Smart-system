@@ -7,6 +7,8 @@ import { BsFillPersonVcardFill } from "react-icons/bs";
 import { SlCalender } from "react-icons/sl";
 import { MdSupervisorAccount } from "react-icons/md";
 import { FaTasks } from "react-icons/fa";
+import { TbLayoutDashboard } from "react-icons/tb";
+import { MdOutlinePersonAddAlt } from "react-icons/md";
 import SidebarMenu from './SidebarMenu';
 
 const Sidebar = () => {
@@ -18,6 +20,7 @@ const Sidebar = () => {
     const superAdminMenuItems = [
         { title: 'Companies Menu', href: '/company', icon: <FaBuilding/>, isActive: ['/company', '/companyregister', '/companyedit', '/companyview'].includes(location.pathname) },
         { title: 'Employee Menu', href: '/employee', icon: <BsFillPersonVcardFill/>, isActive: ['/employee', '/employeeregister', '/employeeedit', '/employeeview'].includes(location.pathname) },
+        { title: 'Role Menu', href: '/role', icon: <MdOutlinePersonAddAlt/>, isActive: ['/role', '/roleregister', '/roleedit', '/roleview'].includes(location.pathname) },
     ];
 
     const adminMenuItems = [
@@ -27,6 +30,10 @@ const Sidebar = () => {
     const supervisorMenuItems = [
         {title: 'Supervisee List', href: '/superviseelist', icon: <MdSupervisorAccount/>, isActive: ['/superviseelist','/superviseedetails'].includes(location.pathname)},
         {title: 'Supervisee Tasks', href: '/superviseetasks', icon: <FaTasks/>, isActive: ['/superviseetasks','/newtask'].includes(location.pathname)},
+    ]
+
+    const ceoMenuItems = [
+        {title: 'CEO Dashboard', href: '/ceodashboard', icon: <TbLayoutDashboard/>, isActive: ['/ceodashboard'].includes(location.pathname)},
     ]
 
 
@@ -73,6 +80,18 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {supervisorMenuItems.map((item, index) => (
+                                    <li key={index}>
+                                        <SidebarItem {...item} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    </SidebarMenu>
+
+                    <SidebarMenu title="CEO Menu">
+                        <nav className="flex-grow">
+                            <ul>
+                                {ceoMenuItems.map((item, index) => (
                                     <li key={index}>
                                         <SidebarItem {...item} />
                                     </li>

@@ -21,6 +21,11 @@ import Supervisees from './pages/supervisor/Supervisees'
 import Tasks from './pages/supervisor/Tasks'
 import AddTask from './pages/supervisor/AddTask'
 import SuperviseeDetails from './pages/supervisor/SuperviseeDetails'
+import Dashboard from './pages/ceo/Dashboard'
+import Role from './pages/super_admin/Role'
+import RoleRegister from './pages/super_admin/RoleRegister'
+import RoleEdit from './pages/super_admin/RoleEdit'
+import ViewAttendance from './pages/admin/ViewAttendance'
 
 export default function App() {
   const location = useLocation();
@@ -43,11 +48,16 @@ export default function App() {
                 <Route path="/employeeregister" element={<EmployeeRegister />} />
                 <Route path="/employeeedit" element={<EmployeeEdit />} />
                 <Route path='/employeeview' element={<EmployeeView />} />
+                <Route path='/role' element={<Role />} />
+                <Route path='/roleregister' element={<RoleRegister />} />
+                <Route path="/roleedit" element={<RoleEdit />} />
                 <Route path='/attendance' element={<Attendance />} />
+                <Route path='/viewattendence' element={<ViewAttendance />} />
                 <Route path="/superviseelist" element={<Supervisees />} />
                 <Route path="/superviseetasks" element={<Tasks />} />
                 <Route path="/newtask" element={<AddTask />} />
                 <Route path="/superviseedetails" element={<SuperviseeDetails />} />
+                <Route path="/ceodashboard" element={<Dashboard />} />
               </Routes>
             </div>
           </div>

@@ -26,6 +26,7 @@ import Role from './pages/super_admin/Role'
 import RoleRegister from './pages/super_admin/RoleRegister'
 import RoleEdit from './pages/super_admin/RoleEdit'
 import ViewAttendance from './pages/admin/ViewAttendance'
+import MyDashboard from './pages/employee/MyDashboard'
 
 export default function App() {
   const location = useLocation();
@@ -58,6 +59,7 @@ export default function App() {
                 <Route path="/newtask" element={<AddTask />} />
                 <Route path="/superviseedetails" element={<SuperviseeDetails />} />
                 <Route path="/ceodashboard" element={<Dashboard />} />
+                <Route path="/dashboard" element={<MyDashboard />} />
               </Routes>
             </div>
           </div>

@@ -36,6 +36,10 @@ const Sidebar = () => {
         {title: 'CEO Dashboard', href: '/ceodashboard', icon: <TbLayoutDashboard/>, isActive: ['/ceodashboard'].includes(location.pathname)},
     ]
 
+    const employeeMenuItems = [
+        {title: 'My Dashboard', href: '/dashboard', icon: <TbLayoutDashboard/>, isActive: ['/dashboard'].includes(location.pathname)},
+    ]
+
 
     return (
         <>
@@ -92,6 +96,18 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {ceoMenuItems.map((item, index) => (
+                                    <li key={index}>
+                                        <SidebarItem {...item} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    </SidebarMenu>
+
+                    <SidebarMenu title="Employee Menu">
+                        <nav className="flex-grow">
+                            <ul>
+                                {employeeMenuItems.map((item, index) => (
                                     <li key={index}>
                                         <SidebarItem {...item} />
                                     </li>

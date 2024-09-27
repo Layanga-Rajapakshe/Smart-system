@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setCredentials } from '../../redux/features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import Password from './Password';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -71,6 +72,7 @@ const Login = () => {
             {isLoading ? 'Loading...' : 'Login'}
           </Button>
         </form>
+        <Password />
       </div>
 
       <div className="hidden md:flex flex-1 items-center justify-center p-6">

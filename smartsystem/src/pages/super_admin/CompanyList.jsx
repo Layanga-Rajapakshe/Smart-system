@@ -15,13 +15,13 @@ const statusColorMap = {
 export default function CompanyList() {
   const navigate = useNavigate();
 
-  const handleEditClick = () => {
-    navigate("/companyedit");
+  const handleEditClick = (companyId) => {
+    navigate(`/companyedit/${companyId}`);
   }
 
-  const handleViewClick = () => {
-    navigate("/companyview");
-  }
+  const handleViewClick = (companyId) => {
+    navigate(`/companyview/${companyId}`);
+  };
 
   const renderCell = React.useCallback((user, columnKey) => {
     const cellValue = user[columnKey];
@@ -55,12 +55,12 @@ export default function CompanyList() {
           <div className="relative flex items-center gap-2">
             <Tooltip content="Details">
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <GrView onClick={handleViewClick}/>
+                <GrView onClick={() => handleViewClick('66a78925ca5442a77c7f8e1c')} />
               </span>
             </Tooltip>
             <Tooltip content="Edit user" >
               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <CiEdit onClick={handleEditClick}/>
+                <CiEdit onClick={() => handleEditClick('66a78925ca5442a77c7f8e1c')} />
               </span>
             </Tooltip>
             <Tooltip color="danger" content="Delete user">

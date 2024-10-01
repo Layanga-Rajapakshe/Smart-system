@@ -1,65 +1,114 @@
-import React, {useState} from 'react'
-import image1 from '../../assets/images/companyEdit.jpeg'
-import { Input, Image } from '@nextui-org/react'
-import GeneralBreadCrumb from '../../components/GeneralBreadCrumb'    
+import React, { useState, useEffect } from 'react';
+import { useGetCompanyQuery } from '../../redux/api/companyApiSlice';
+import image1 from '../../assets/images/companyEdit.jpeg';
+import { Input, Image, CircularProgress } from '@nextui-org/react';
+import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
+import { useParams } from 'react-router-dom';
 
 const CompanyView = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+  const { id: companyId } = useParams();
+  const { data: company, isLoading, isError } = useGetCompanyQuery(companyId);
+  const [companyData, setCompanyData] = useState({
+    c_name: '',
+    address: {
+      street: '',
+      number: '',
+      lane: '',
+    },
+    p_number: '',
+    employees: [],
+  });
 
-    const breadcrumbItems = [
-        { label: 'Companies Menu', href: '/company' },
-        { label: 'Company View', href: '/companyview', isCurrentPage: true }
-      ];
+  const breadcrumbItems = [
+    { label: 'Companies Menu', href: '/company' },
+    { label: 'Company View', href: `/company/${companyId}`, isCurrentPage: true },
+  ];
+
+  useEffect(() => {
+    if (company) {
+      setCompanyData({
+        c_name: company.c_name,
+        address: company.address,
+        p_number: company.p_number,
+        employees: company.employees,
+      });
+    }
+  }, [company]);
+
+  if (isLoading) return <CircularProgress aria-label='Loading' />;
+  if (isError) return <div>Error fetching company data</div>;
+
   return (
     <div>
-     <GeneralBreadCrumb items={breadcrumbItems} />
-      <div className='flex h-screen overflow-hidden'>
-        <div className='flex-1 flex-col flex items-center justify-center p-6'>
-          <div className='md:hidden absolute left-0 right-0 bottom-0 top-0 z-0'>
+      <GeneralBreadCrumb items={breadcrumbItems} />
+      <div className="flex h-screen overflow-hidden">
+        <div className="flex-1 flex-col flex items-center justify-center p-6 relative">
+          <div className="md:hidden absolute inset-0 z-0">
             <Image
               isBlurred
-              className='w-full h-screen/2 fill-inherit'
+              className="w-full h-full object-cover"
               src="https://nextui.org/gradients/docs-right.png"
-              alt='Login page image'
+              alt="Background image"
             />
           </div>
 
-          <div className='text-center text-[25px] font-bold mb-6'>Company View</div>
+          <div className="text-center text-[25px] font-bold mb-6 z-10">Company View</div>
 
-          <form className='flex flex-col w-1/2 gap-4 mb-4'>
+          <form className="flex flex-col w-full max-w-md gap-4 mb-4 z-10">
             <Input
-              variant='bordered'
-              label='Email'
-              type='email'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <Input
-              variant='bordered'
-              label='Password'
-              type='password'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              variant="bordered"
+              label="Company Name"
+              type="text"
+              value={companyData.c_name}
+              readOnly
             />
 
+            <div className="font-semibold mt-4">Address</div>
+            <Input
+              variant="bordered"
+              label="Street"
+              type="text"
+              value={companyData.address.street}
+              readOnly
+            />
+            <Input
+              variant="bordered"
+              label="Number"
+              type="text"
+              value={companyData.address.number}
+              readOnly
+            />
+            <Input
+              variant="bordered"
+              label="Lane"
+              type="text"
+              value={companyData.address.lane}
+              readOnly
+            />
+
+            <Input
+              variant="bordered"
+              label="Phone Number"
+              type="text"
+              value={companyData.p_number}
+              readOnly
+            />
           </form>
-
         </div>
 
-        <div className='hidden md:flex flex-1 items-center justify-center p-6'>
-          <div className='w-full h-full flex items-center justify-center'>
+        <div className="hidden md:flex flex-1 items-center justify-center p-6">
+          <div className="w-full h-full flex items-center justify-center">
             <Image
               isBlurred
-              className='w-full h-full object-fill'
+              className="w-full h-full object-cover"
               src={image1}
-              alt='Edit page image'
+              alt="Edit page image"
             />
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CompanyView
+export default CompanyView;

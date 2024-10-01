@@ -53,6 +53,14 @@ export default function Employeelist() {
     navigate("/employeeregister");
   }
 
+  const handleViewClick = (id) => {
+    navigate(`/employeeview/${id}`);
+  }
+
+  const handleUpdateClick = (id) => {
+    navigate(`/employeeupdate/${id}`);
+  }
+
   const hasSearchFilter = Boolean(filterValue);
 
   const headerColumns = React.useMemo(() => {
@@ -133,8 +141,8 @@ export default function Employeelist() {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem startContent={<GrView/>} href="/employeeview">View</DropdownItem>
-                <DropdownItem startContent={<CiEdit/>} href="/employeeedit">Edit</DropdownItem>
+                <DropdownItem startContent={<GrView/>} onClick={() => handleViewClick('66b9b51c28300964bb78692c')}>View</DropdownItem>
+                <DropdownItem startContent={<CiEdit/>} onClick={() => handleUpdateClick('66b9b51c28300964bb78692c')}>Edit</DropdownItem>
                 <DropdownItem startContent={<RiDeleteBin6Line/>} color="danger" className="text-danger">Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>

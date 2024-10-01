@@ -95,12 +95,6 @@ const EmployeeRegister = () => {
               onChange={handleChange}
             />
             <Input
-              label="User ID"
-              name="userId"
-              value={employeeData.userId}
-              onChange={handleChange}
-            />
-            <Input
               label="Hired Date"
               name="hired_date"
               type="date"
@@ -162,7 +156,7 @@ const EmployeeRegister = () => {
               onChange={(value) => handleSelectChange('company', value)}
             >
               {companies?.map(company => (
-                <SelectItem key={company._id} value={company._id}>{company.name}</SelectItem>
+                <SelectItem key={company._id} value={company._id}>{company.c_name}</SelectItem>
               ))}
             </Select>
             <Input

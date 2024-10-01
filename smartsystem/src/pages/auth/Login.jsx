@@ -7,6 +7,7 @@ import { setCredentials } from '../../redux/features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Password from './Password';
+import image2 from '../../assets/images/companyLogo.png';
 
 const Login = () => {
   const [email, setEmail] = useState("");

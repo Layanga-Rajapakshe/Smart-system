@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Input, Button, Image, Checkbox, Spacer } from '@nextui-org/react';
+import { useCreateRoleMutation } from '../../redux/api/roleApiSlice'; // Import your mutation hook
 import image1 from '../../assets/images/companyRegister.png';
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 
@@ -11,6 +12,9 @@ const RoleRegister = () => {
         update: false,
         delete: false,
     });
+    
+    // Use mutation hook
+    const [createRole, { isLoading, isError, isSuccess }] = useCreateRoleMutation();
 
     const handlePermissionChange = (event) => {
         const { name, checked } = event.target;
@@ -20,14 +24,23 @@ const RoleRegister = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const roleData = {
             name: roleName,
             permissions: Object.keys(permissions).filter((perm) => permissions[perm]),
         };
-        // Handle registration logic here
-        console.log("Role Data:", roleData);
+
+        try {
+            await createRole(roleData).unwrap(); // Trigger the mutation and unwrap the result
+            // Handle success (e.g., show a success message, clear the form, navigate)
+            if (isSuccess) {
+                console.log("Role registered successfully!");
+            }
+        } catch (error) {
+            // Handle error (e.g., show an error message)
+            console.error("Error registering role:", error);
+        }
     };
 
     const breadcrumbItems = [
@@ -92,10 +105,13 @@ const RoleRegister = () => {
                             </Checkbox>
                         </div>
                         <Spacer y={1} />
-                        <Button type='submit' variant='flat' color='primary'>
-                            Register
+                        <Button type='submit' variant='flat' color='primary' disabled={isLoading}>
+                            {isLoading ? 'Registering...' : 'Register'}
                         </Button>
                     </form>
+
+                    {isError && <p className="text-red-500">Error registering role. Please try again.</p>}
+                    {isSuccess && <p className="text-green-500">Role registered successfully!</p>}
                 </div>
 
                 <div className='hidden md:flex flex-1 items-center justify-center p-6'>

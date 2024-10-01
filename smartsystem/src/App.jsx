@@ -93,6 +93,7 @@ import Tasks from './pages/supervisor/Tasks';
 import AddTask from './pages/supervisor/AddTask';
 import SuperviseeDetails from './pages/supervisor/SuperviseeDetails';
 import Salary_Dash from './pages/SeniorAccountant/Salary_Dash'; // Import Salary_Dash component
+import MedicalClaimProfile from './pages/MedicalClaim/MedicalClaimProfile';
 
 export default function App() {
   const location = useLocation();
@@ -125,6 +126,7 @@ export default function App() {
                 <Route path="/newtask" element={<AddTask />} /> {/* Add new task */}
                 <Route path="/superviseedetails" element={<SuperviseeDetails />} /> {/* Supervisee details */}
                 <Route path="/salaryDash" element={<Salary_Dash />} /> {/* Salary Dashboard */}
+                <Route path="/medicalclaimprofile" element={<MedicalClaimProfile />} /> {/* Medical Claim Profile */}
                 <Route path="*" element={<Navigate to="/NotFound" />} /> {/* Catch-all route to NotFound */}
               </Routes>
             </div>
@@ -143,5 +145,6 @@ export default function App() {
     </div>
   );
 }
+
 
 

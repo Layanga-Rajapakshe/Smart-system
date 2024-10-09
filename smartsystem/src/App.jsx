@@ -27,6 +27,9 @@ import RoleRegister from './pages/super_admin/RoleRegister'
 import RoleEdit from './pages/super_admin/RoleEdit'
 import ViewAttendance from './pages/admin/ViewAttendance'
 import MyDashboard from './pages/employee/MyDashboard'
+import LeaveStatus from './pages/employee/LeaveStatus'
+import LeaveRequest from './pages/employee/LeaveRequest'
+import Leave from './pages/employee/Leave'
 
 export default function App() {
   const location = useLocation();
@@ -60,6 +63,9 @@ export default function App() {
                 <Route path="/superviseedetails" element={<SuperviseeDetails />} />
                 <Route path="/ceodashboard" element={<Dashboard />} />
                 <Route path="/dashboard" element={<MyDashboard />} />
+                <Route path="/leave" element={<Leave />} />
+                <Route path='/leaverequest' element={<LeaveRequest />} />
+                <Route path='/leavestatus' element={<LeaveStatus />} />
               </Routes>
             </div>
           </div>

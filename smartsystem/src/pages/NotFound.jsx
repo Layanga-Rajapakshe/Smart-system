@@ -1,16 +1,3 @@
-/*import React from 'react'
-
-const NotFound = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
-
-export default NotFound*/
-
-
 import React from 'react';
 import { Link } from 'react-router-dom'; 
 

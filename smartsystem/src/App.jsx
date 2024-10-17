@@ -29,6 +29,7 @@ import ViewAttendance from './pages/admin/ViewAttendance'
 import MyDashboard from './pages/employee/MyDashboard'
 import LeaveStatus from './pages/employee/LeaveStatus'
 import LeaveRequest from './pages/employee/LeaveRequest'
+import WorkScedule from './pages/employee/WorkSchedule'
 // import Leave from './pages/employee/Leave'
 
 export default function App() {
@@ -66,6 +67,7 @@ export default function App() {
                 {/* <Route path="/leave" element={<Leave />} /> */}
                 <Route path='/leaverequest' element={<LeaveRequest />} />
                 <Route path='/leavestatus' element={<LeaveStatus />} />
+                <Route path='/schedule' element={<WorkScedule />} />
               </Routes>
             </div>
           </div>

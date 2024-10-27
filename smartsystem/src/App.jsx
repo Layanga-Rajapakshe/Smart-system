@@ -30,6 +30,10 @@ import MyDashboard from './pages/employee/MyDashboard'
 import LeaveStatus from './pages/employee/LeaveStatus'
 import LeaveRequest from './pages/employee/LeaveRequest'
 import WorkScedule from './pages/employee/WorkSchedule'
+import CreateTask from './pages/workschedule/CreateTask'
+import RepeatTask from './pages/workschedule/RepeatTask'
+import NonRepeatTask from './pages/workschedule/NonRepeatTask'
+import MyTasks from './pages/workschedule/MyTasks'
 // import Leave from './pages/employee/Leave'
 
 export default function App() {
@@ -60,7 +64,8 @@ export default function App() {
                 <Route path='/viewattendence' element={<ViewAttendance />} />
                 <Route path="/superviseelist" element={<Supervisees />} />
                 <Route path="/superviseetasks" element={<Tasks />} />
-                <Route path="/newtask" element={<AddTask />} />
+                <Route path="/newtask" element={<CreateTask />} />
+                <Route path="/mytasks" element={<MyTasks />} />
                 <Route path="/superviseedetails" element={<SuperviseeDetails />} />
                 <Route path="/ceodashboard" element={<Dashboard />} />
                 <Route path="/dashboard" element={<MyDashboard />} />

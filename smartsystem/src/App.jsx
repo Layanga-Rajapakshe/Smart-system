@@ -30,6 +30,11 @@ import MyDashboard from './pages/employee/MyDashboard'
 import LeaveStatus from './pages/employee/LeaveStatus'
 import LeaveRequest from './pages/employee/LeaveRequest'
 // import Leave from './pages/employee/Leave'
+import KPIWelcom from "./pages/KPI/KPIWelcom";
+import KPIDashboard from './pages/KPI/KPIDashboard'
+import KPIOverallDetails from "./pages/KPI/KPIOverallDetails";
+
+
 
 export default function App() {
   const location = useLocation();
@@ -66,6 +71,10 @@ export default function App() {
                 {/* <Route path="/leave" element={<Leave />} /> */}
                 <Route path='/leaverequest' element={<LeaveRequest />} />
                 <Route path='/leavestatus' element={<LeaveStatus />} />
+                <Route path="/KPIWelcom" element={<KPIWelcom />} />
+                <Route path="/KPIdashboard" element={<KPIDashboard />} />
+                <Route path="/kpi-overall-details" element={<KPIOverallDetails />} />
+                
               </Routes>
             </div>
           </div>
@@ -78,7 +87,7 @@ export default function App() {
             </Routes>
       )}
       <Toaster />
-      <Footer />
+      <Footer /> 
     </div>
   )
 }

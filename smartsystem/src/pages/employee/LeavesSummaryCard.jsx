@@ -40,7 +40,7 @@ export default function LeavesSummaryCard() {
   };
 
   return (
-    <Card className="">
+    <Card isBlurred shadow="none" >
       <CardHeader className="flex gap-3 justify-between">
         <div className="flex flex-col">
           <div className="text-lg">Leave Summary</div>

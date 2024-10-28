@@ -5,6 +5,9 @@ import TimeDateCard from './TimeDateCard';
 import KPICard from './KPICard';
 import LeavesSummaryCard from './LeavesSummaryCard';
 import WorkScheduleCard from './WorkscheduleCard';
+import MyScheduleCard from './MyScheduleCard';
+import AttendanceCard from './AttendaceCard';
+import MyMeetingsCard from './MyMeetingsCard';
 
 const MyDashboard = () => {
 
@@ -16,18 +19,18 @@ const MyDashboard = () => {
               <div className="rounded-lg lg:col-span-2"><GreetingCard /></div>
               <div className="rounded-lg "><TimeDateCard/></div>
             </div>
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8 pt-5">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8 pt-5 items-center">
               <div className="rounded-lg lg:col-span-2"><KPICard /></div>
               <div className="rounded-lg "><LeavesSummaryCard /></div>
             </div>
             </div>
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 pt-5">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 pt-5 items-center">
+              <div className="rounded-lg"><MyScheduleCard /></div>
               <div className="rounded-lg"><WorkScheduleCard /></div>
-              <div className="h-32 rounded-lg bg-gray-200"></div>
             </div>
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 pt-5">
-              <div className="h-32 rounded-lg bg-gray-200"></div>
-              <div className="h-32 rounded-lg bg-gray-200"></div>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 pt-5 items-center">
+              <div className="rounded-lg"><AttendanceCard /></div>
+              <div className="rounded-lg"><MyMeetingsCard /></div>
             </div>
         </div>
     </div>

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Input, Button, Image, Checkbox, Spacer } from '@nextui-org/react';
-import { useCreateRoleMutation } from '../../redux/api/roleApiSlice'; // Import your mutation hook
+import { useCreateRoleMutation } from '../../redux/api/roleApiSlice';
 import image1 from '../../assets/images/companyRegister.png';
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 
 const RoleRegister = () => {
     const [roleName, setRoleName] = useState("");
+    const [hierarchyLevel, setHierarchyLevel] = useState(1);
     const [permissions, setPermissions] = useState({
         create: false,
         read: false,
@@ -13,7 +14,6 @@ const RoleRegister = () => {
         delete: false,
     });
     
-    // Use mutation hook
     const [createRole, { isLoading, isError, isSuccess }] = useCreateRoleMutation();
 
     const handlePermissionChange = (event) => {
@@ -29,16 +29,15 @@ const RoleRegister = () => {
         const roleData = {
             name: roleName,
             permissions: Object.keys(permissions).filter((perm) => permissions[perm]),
+            hierarchyLevel,
         };
 
         try {
-            await createRole(roleData).unwrap(); // Trigger the mutation and unwrap the result
-            // Handle success (e.g., show a success message, clear the form, navigate)
+            await createRole(roleData).unwrap();
             if (isSuccess) {
                 console.log("Role registered successfully!");
             }
         } catch (error) {
-            // Handle error (e.g., show an error message)
             console.error("Error registering role:", error);
         }
     };
@@ -71,6 +70,13 @@ const RoleRegister = () => {
                             type='text'
                             value={roleName}
                             onChange={(e) => setRoleName(e.target.value)}
+                            required
+                        />
+                        <Input
+                            label="Hierarchy Level"
+                            min={1}
+                            value={hierarchyLevel}
+                            onChange={(value) => setHierarchyLevel(value)}
                             required
                         />
                         <div className='flex flex-col'>

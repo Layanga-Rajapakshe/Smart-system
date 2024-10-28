@@ -1,11 +1,17 @@
-import React from 'react'
+import React from "react";
+import TaskTable from "./TaskTable";
+import { tasks } from "./data";
 
-const MonthlyTask = () => {
-  return (
-    <div>
-      
-    </div>
-  )
+export default function MonthlyTask() {
+  const today = new Date();
+  const monthlyTasks = tasks.filter(task => {
+    const taskDate = new Date(task.date);
+    return (
+      taskDate.getMonth() === today.getMonth() &&
+      taskDate.getFullYear() === today.getFullYear()
+    );
+  });
+
+  return <TaskTable tasks={monthlyTasks} />;
 }
-
-export default MonthlyTask
+  

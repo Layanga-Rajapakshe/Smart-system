@@ -32,12 +32,10 @@ export default function WeeklyTask() {
   return (
     <div>
       <Tabs selectedValue={weekView} onSelectionChange={setWeekView}>
-        <Tab value="thisWeek">This Week</Tab>
-        <Tab value="previousWeek">Previous Week</Tab>
-        <Tab value="nextWeek">Next Week</Tab>
+        <Tab value="thisWeek" title='This Week'><TaskTable tasks={weeklyTasks} /></Tab>
+        <Tab value="previousWeek"title='Previous Week'><TaskTable tasks={weeklyTasks} /></Tab>
+        <Tab value="nextWeek" title='Next Week'><TaskTable tasks={weeklyTasks} /></Tab>
       </Tabs>
-
-      <TaskTable tasks={weeklyTasks} />
     </div>
   );
 }

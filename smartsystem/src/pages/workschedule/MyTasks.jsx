@@ -1,23 +1,36 @@
 import React, { useState } from "react";
-import { Tabs, Tab } from "@nextui-org/react";
+import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import DailyTask from "./DailyTask";
 import WeeklyTask from "./WeeklyTask";
 import MonthlyTask from "./MonthlyTask";
 
 export default function MyTasks() {
-  const [view, setView] = useState("daily");
 
   return (
-    <div>
-      <Tabs selectedValue={view} onSelectionChange={setView}>
-        <Tab value="daily">Daily</Tab>
-        <Tab value="weekly">Weekly</Tab>
-        <Tab value="monthly">Monthly</Tab>
+    <div className="flex w-full flex-col">
+      <Tabs >
+        <Tab value="daily" title='Daily'>Daily
+          <Card>
+            <CardBody>
+              <DailyTask />
+            </CardBody>
+          </Card>
+        </Tab>
+        <Tab value="weekly" title='Weekly'>Weekly
+        <Card>
+            <CardBody>
+              <WeeklyTask />
+            </CardBody>
+          </Card>
+        </Tab>
+        <Tab value="monthly" title='Monthly'>Monthly
+        <Card>
+            <CardBody>
+              <MonthlyTask />
+            </CardBody>
+          </Card>
+        </Tab>
       </Tabs>
-
-      {view === "daily" && <DailyTask />}
-      {view === "weekly" && <WeeklyTask />}
-      {view === "monthly" && <MonthlyTask />}
     </div>
   );
 }

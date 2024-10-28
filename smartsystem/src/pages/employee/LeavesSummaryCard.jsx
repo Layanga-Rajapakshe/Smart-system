@@ -1,45 +1,60 @@
-import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter, Divider, Link } from "@nextui-org/react";
 import React from "react";
 import { FiCalendar } from "react-icons/fi";
+import { Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function LeavesSummaryCard() {
   const leaveCategories = [
-    { name: "Total leave", value: "##" },
-    { name: "Approved leaves", value: "##" },
-    { name: "Balance leaves", value: "##" },
-    { name: "No pay leaves", value: "##" },
-    { name: "Unplanned leaves", value: "##" }
+    { name: "Total leave", value: 20 },
+    { name: "Approved leaves", value: 10 },
+    { name: "Balance leaves", value: 5 },
+    { name: "No pay leaves", value: 2 },
+    { name: "Unplanned leaves", value: 3 }
   ];
 
+  const data = {
+    labels: leaveCategories.map((leave) => leave.name),
+    datasets: [
+      {
+        label: "Leave Days",
+        data: leaveCategories.map((leave) => leave.value),
+        backgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4BC0C0",
+          "#9966FF"
+        ],
+        hoverBackgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4BC0C0",
+          "#9966FF"
+        ]
+      }
+    ]
+  };
+
   return (
-    <Card className="max-w-[400px]">
+    <Card className="">
       <CardHeader className="flex gap-3 justify-between">
         <div className="flex flex-col">
           <div className="text-lg">Leave Summary</div>
           <div className="text-default-500">Employee Leave Details</div>
         </div>
-        <div className="">
+        <div>
           <Link href="#">
             <FiCalendar size={24} />
           </Link>
         </div>
       </CardHeader>
       <Divider />
-      <CardBody>
-        <Table aria-label="Leave summary table">
-          <TableHeader>
-            <TableColumn>Leave Type</TableColumn>
-            <TableColumn>Days</TableColumn>
-          </TableHeader>
-          <TableBody>
-            {leaveCategories.map((leave) => (
-              <TableRow key={leave.name}>
-                <TableCell>{leave.name}</TableCell>
-                <TableCell>{leave.value}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+      <CardBody className="flex justify-center">
+        <Doughnut data={data} options={{ responsive: true, maintainAspectRatio: false }} />
       </CardBody>
       <Divider />
       <CardFooter className="justify-end">

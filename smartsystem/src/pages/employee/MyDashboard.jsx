@@ -16,9 +16,9 @@ const MyDashboard = () => {
               <div className="rounded-lg lg:col-span-2"><GreetingCard /></div>
               <div className="rounded-lg "><TimeDateCard/></div>
             </div>
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8 pt-5 items-center">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-8 pt-5">
               <div className="rounded-lg lg:col-span-2"><KPICard /></div>
-              <div className="rounded-lg"><LeavesSummaryCard /></div>
+              <div className="rounded-lg "><LeavesSummaryCard /></div>
             </div>
             </div>
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 pt-5">

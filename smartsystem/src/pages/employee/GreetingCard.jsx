@@ -1,12 +1,13 @@
 import React from "react";
 import { Card, CardBody, Image, Button, Slider, CardFooter } from "@nextui-org/react";
+import { CgProfile } from "react-icons/cg";
 
 export default function GreetingCard() {
   return (
     <Card
       isBlurred
       className="border-none bg-background/60 dark:bg-default-100/50 w-full"
-      shadow="sm"
+      shadow="none"
     >
       <CardBody>
         <div className="grid grid-cols-6 md:grid-cols-12 gap-6 md:gap-4 items-center justify-center">
@@ -30,7 +31,7 @@ export default function GreetingCard() {
               </div>
             </div>
             <CardFooter className="justify-center">
-                <Button className="text-sm" color="primary" radius="lg" size="sm">
+                <Button className="text-sm" color="primary" radius="sm" size="sm" startContent={<CgProfile/>}>
                     My Profile
                 </Button>
             </CardFooter>

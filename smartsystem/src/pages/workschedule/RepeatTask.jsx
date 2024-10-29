@@ -1,24 +1,31 @@
 import React, { useState } from 'react';
-import { Input, Textarea, Select, Button } from '@nextui-org/react';
+import { Input, Textarea, Select, SelectItem, Button } from '@nextui-org/react';
 import { toast } from 'react-hot-toast';
 
 const RepeatTask = () => {
   const [taskName, setTaskName] = useState('');
   const [description, setDescription] = useState('');
   const [frequency, setFrequency] = useState('Daily');
+  const [priorityLevel, setPriorityLevel] = useState(1);
+  const [estimatedHours, setEstimatedHours] = useState('');
+  const [startingDate, setStartingDate] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    if (!taskName || !description) {
+
+    if (!taskName || !description || !startingDate || !estimatedHours) {
       toast.error("Please fill out all fields");
       return;
     }
 
     const newTaskData = {
-      taskName,
-      description,
-      frequency,
+      Task: taskName,
+      Comment: description,
+      StartingDate: new Date(startingDate),
+      PriorityLevel: priorityLevel,
+      EstimatedHours: parseFloat(estimatedHours),
+      isRecurring: true,
+      TaskType: frequency,
     };
 
     // Assume the task creation logic here, like an API call
@@ -29,8 +36,10 @@ const RepeatTask = () => {
     setTaskName('');
     setDescription('');
     setFrequency('Daily');
+    setPriorityLevel(1);
+    setEstimatedHours('');
+    setStartingDate('');
   };
-
 
   return (
     <div>
@@ -46,7 +55,6 @@ const RepeatTask = () => {
               required
               placeholder='Enter task name'
             />
-
             <Textarea
               label='Description'
               value={description}
@@ -54,19 +62,40 @@ const RepeatTask = () => {
               required
               placeholder='Enter task description'
             />
-
+            <Input
+              label='Starting Date'
+              type='date'
+              value={startingDate}
+              onChange={(e) => setStartingDate(e.target.value)}
+              required
+            />
+            <Input
+              label='Estimated Hours'
+              type='number'
+              value={estimatedHours}
+              onChange={(e) => setEstimatedHours(e.target.value)}
+              required
+              placeholder='Enter estimated hours'
+            />
+            <Input
+              label='Priority Level'
+              type='number'
+              value={priorityLevel}
+              onChange={(e) => setPriorityLevel(parseInt(e.target.value))}
+              min={1}
+              max={5}
+              placeholder='Enter priority level (1-5)'
+            />
             <Select
               label="Frequency"
               value={frequency}
               onChange={setFrequency}
               placeholder="Select frequency"
-              options={[
-                { label: 'Daily', value: 'Daily' },
-                { label: 'Weekly', value: 'Weekly' },
-                { label: 'Monthly', value: 'Monthly' }
-              ]}
-            />
-
+            >
+              <SelectItem value="Daily">Daily</SelectItem>
+              <SelectItem value="Weekly">Weekly</SelectItem>
+              <SelectItem value="Monthly">Monthly</SelectItem>
+            </Select>
             <Button type='submit' color='primary'>
               Add Repeating Task
             </Button>

@@ -5,18 +5,25 @@ import { toast } from 'react-hot-toast';
 const NonRepeatTask = () => {
   const [taskName, setTaskName] = useState('');
   const [description, setDescription] = useState('');
+  const [priorityLevel, setPriorityLevel] = useState(1);
+  const [estimatedHours, setEstimatedHours] = useState('');
+  const [startingDate, setStartingDate] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    if (!taskName || !description) {
+
+    if (!taskName || !description || !startingDate || !estimatedHours) {
       toast.error("Please fill out all fields");
       return;
     }
 
     const newTaskData = {
-      taskName,
-      description,
+      Task: taskName,
+      Comment: description,
+      StartingDate: new Date(startingDate),
+      PriorityLevel: priorityLevel,
+      EstimatedHours: parseFloat(estimatedHours),
+      isRecurring: false,
     };
 
     // Assume the task creation logic here, like an API call
@@ -26,6 +33,9 @@ const NonRepeatTask = () => {
     // Clear form fields after successful submission
     setTaskName('');
     setDescription('');
+    setPriorityLevel(1);
+    setEstimatedHours('');
+    setStartingDate('');
   };
 
   return (
@@ -42,7 +52,6 @@ const NonRepeatTask = () => {
               required
               placeholder='Enter task name'
             />
-
             <Textarea
               label='Description'
               value={description}
@@ -50,7 +59,30 @@ const NonRepeatTask = () => {
               required
               placeholder='Enter task description'
             />
-
+            <Input
+              label='Starting Date'
+              type='date'
+              value={startingDate}
+              onChange={(e) => setStartingDate(e.target.value)}
+              required
+            />
+            <Input
+              label='Estimated Hours'
+              type='number'
+              value={estimatedHours}
+              onChange={(e) => setEstimatedHours(e.target.value)}
+              required
+              placeholder='Enter estimated hours'
+            />
+            <Input
+              label='Priority Level'
+              type='number'
+              value={priorityLevel}
+              onChange={(e) => setPriorityLevel(parseInt(e.target.value))}
+              min={1}
+              max={5}
+              placeholder='Enter priority level (1-5)'
+            />
             <Button type='submit' color='primary'>
               Add One-Time Task
             </Button>

@@ -1,30 +1,79 @@
 import React, { useState } from "react";
-import { Button, Container, Box, Stack, Typography, Paper } from "@mui/material";
+import {
+  Button,
+  Container,
+  Box,
+  Stack,
+  Typography,
+  Modal,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import Header from "../../components/KPI/Header";
-import EmployeeSelection from "../../components/KPI/EmployeeSelection";
 import ScoreTable from "../../components/KPI/ScoreTable";
 import KPIChart from "../../components/KPI/KPIChart";
+import EmployeeDetails from "../../components/KPI/EmployeeDetails";
+import { sampleEmployees } from "../../components/KPI/SampleData";
 import { useNavigate } from "react-router-dom";
 
-const sampleEmployees = [
-  { id: 1, name: 'John Doe' },
-  { id: 2, name: 'Jane Smith' },
-  { id: 3, name: 'Emily Johnson' }
-];
+const EmployeeSelection = ({ employees, onSelect, onMonthChange, selectedMonth }) => (
+  <Box sx={{ display: "flex", width: "100%", gap: 2 }}>
+    <FormControl sx={{ flex: 1 }}>
+      <InputLabel>Employee</InputLabel>
+      <Select
+        onChange={(e) => onSelect(e.target.value)}
+        label="Employee"
+        size="small"
+      >
+        {employees.map((employee) => (
+          <MenuItem key={employee.id} value={employee}>
+            {employee.name}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+    <FormControl sx={{ flex: 1 }}>
+      <TextField
+        label="Month"
+        type="month"
+        value={selectedMonth}
+        onChange={(e) => {
+          onMonthChange(e.target.value);
+        }}
+        InputLabelProps={{ shrink: true }}
+        size="small"
+      />
+    </FormControl>
+  </Box>
+);
 
 const KPIDashboard = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState("");
   const [scores, setScores] = useState(Array(6).fill(0));
   const [employeeScores, setEmployeeScores] = useState([]);
   const [showChart, setShowChart] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState(""); 
+  const [comment, setComment] = useState(""); // State for comment
   const navigate = useNavigate();
 
   const handleAddScores = () => {
-    if (selectedEmployee) {
-      const newEntry = { ...selectedEmployee, scores };
+    if (!selectedEmployee) {
+      setErrorMessage("Please select an employee.");
+    } else if (!selectedMonth) {
+      setErrorMessage("Please select a month.");
+    } else {
+      const newEntry = { ...selectedEmployee, scores, month: selectedMonth, comment };
       setEmployeeScores([...employeeScores, newEntry]);
-      setSelectedEmployee(null); // Reset the selected employee
-      setScores(Array(6).fill(0)); // Reset scores after adding
+      setSelectedEmployee(null);
+      setScores(Array(6).fill(0));
+      setComment(""); // Clear comment
+      setErrorMessage("");
+      setSuccessMessage("Successfully added scores!"); 
     }
   };
 
@@ -33,106 +82,164 @@ const KPIDashboard = () => {
   };
 
   const handleViewKPIDetails = () => {
-    navigate('/kpi-overall-details', { state: { employeeScores } });
-  };
-
-  const handleViewOverallKPI = () => {
-    // Logic for viewing overall KPI can be implemented here
-    console.log("Viewing Overall KPI");
+    navigate("/kpi-overall-details", { state: { employeeScores } });
   };
 
   return (
-    <Container>
+    <Container maxWidth="lg" sx={{ py: 4 }}>
       <Header />
-      <EmployeeSelection employees={sampleEmployees} onSelect={setSelectedEmployee} />
 
-      {!selectedEmployee ? (
-        <Paper elevation={2} sx={{ padding: 4, marginTop: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            KPI Scoring Guidelines
-          </Typography>
-          <Typography variant="body1" sx={{ lineHeight: 1.8 }}>
-            Each employee is evaluated based on several KPI parameters, ranging from Attitude, Habits, Skills, and Performance to Subject-specific knowledge and Overall KPI. The scores are scaled from 0 to 10, where:
-          </Typography>
-          <Box sx={{ marginTop: 2 }}>
-            <Typography variant="body2" component="ul" sx={{ lineHeight: 1.6 }}>
-              <li><strong>0-2:</strong> Very Poor - The employee shows minimal capability or effort in this area.</li>
-              <li><strong>3-4:</strong> Below Average - The employee needs significant improvement to meet expectations.</li>
-              <li><strong>5-6:</strong> Average - The employee meets the basic expectations but has room for growth.</li>
-              <li><strong>7-8:</strong> Good - The employee demonstrates strong performance and exceeds basic requirements.</li>
-              <li><strong>9-10:</strong> Excellent - The employee consistently exceeds expectations and excels in this area.</li>
-            </Typography>
-          </Box>
-          <Typography variant="body1" sx={{ marginTop: 2, lineHeight: 1.8 }}>
-            Supervisors should assign scores thoughtfully, considering the employee's contributions, consistency, and improvement over time. Use this scale as a guideline to provide constructive feedback that supports professional growth and development.
-          </Typography>
-        </Paper>
-      ) : (
-        <>
-          <ScoreTable scores={scores} setScores={setScores} />
-          <Stack direction="row" spacing={2} sx={{ marginTop: 2, justifyContent: 'space-between' }}>
-            <Box>
-              <Button
-                onClick={handleAddScores}
-                sx={{
-                  backgroundColor: '#cce6ff',
-                  color: '#0066cc',
-                  borderRadius: '20px',
-                  padding: '10px 20px',
-                  fontWeight: 'bold',
-                  textTransform: 'none',
-                  '&:hover': {
-                    backgroundColor: '#b3d9ff',
-                  },
-                }}
-              >
-                Add
-              </Button>
-              <Button
-                onClick={handleViewAnalysis}
-                sx={{
-                  backgroundColor: '#cce6ff',
-                  color: '#0066cc',
-                  borderRadius: '20px',
-                  padding: '10px 20px',
-                  fontWeight: 'bold',
-                  textTransform: 'none',
-                  '&:hover': {
-                    backgroundColor: '#b3d9ff',
-                  },
-                }}
-              >
-                View Analysis
-              </Button>
-            </Box>
-            <Box>
-              
-              <Button
-                onClick={handleViewKPIDetails}
-                sx={{
-                  backgroundColor: '#d3d3d3',
-                  color: '#333',
-                  borderRadius: '20px',
-                  padding: '10px 20px',
-                  fontWeight: 'bold',
-                  textTransform: 'none',
-                  '&:hover': {
-                    backgroundColor: '#bfbfbf',
-                  },
-                }}
-              >
-                View KPI Overall Details
-              </Button>
-            </Box>
-          </Stack>
-        </>
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+        <EmployeeSelection
+          employees={sampleEmployees}
+          onSelect={(employee) => {
+            setSelectedEmployee(employee);
+            setErrorMessage("");
+            setSuccessMessage(""); 
+          }}
+          onMonthChange={(month) => {
+            setSelectedMonth(month);
+            if (month) setErrorMessage("");
+          }}
+          selectedMonth={selectedMonth}
+        />
+      </Box>
+
+      <EmployeeDetails employee={selectedEmployee} />
+
+      {successMessage && (
+        <Typography
+          variant="h6"
+          color="success"
+          sx={{ mt: 1, textAlign: "center", fontWeight: 600 }}
+        >
+          {successMessage}
+        </Typography>
       )}
 
-      {showChart && (
-        <Box sx={{ marginTop: 4 }}>
+      {errorMessage && (
+        <Typography
+          variant="body2"
+          color="error"
+          sx={{ mt: 1, textAlign: "center", fontWeight: 600 }}
+        >
+          {errorMessage}
+        </Typography>
+      )}
+
+      <ScoreTable scores={scores} setScores={setScores} />
+
+      <Box sx={{ mt: 2 }}>
+        <Typography variant="h6" sx={{ mb: 1, fontWeight: 600 }}>
+          Supervisor's Comment
+        </Typography>
+        <TextField
+          fullWidth
+          multiline
+          rows={4}
+          variant="outlined"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Add comments about the employee’s performance"
+        />
+      </Box>
+
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          mt: 3,
+          justifyContent: "center",
+        }}
+      >
+        <Button
+          onClick={handleAddScores}
+          variant="contained"
+          color="primary"
+          sx={{
+            borderRadius: "20px",
+            px: 4,
+            fontWeight: 600,
+            transition: "background-color 0.3s",
+            "&:hover": {
+              backgroundColor: "#0056b3",
+            },
+          }}
+        >
+          Add Score
+        </Button>
+        <Button
+          onClick={handleViewAnalysis}
+          variant="contained"
+          color="primary"
+          sx={{
+            borderRadius: "20px",
+            px: 4,
+            fontWeight: 600,
+            transition: "background-color 0.3s",
+            "&:hover": {
+              backgroundColor: "#0056b3",
+            },
+          }}
+        >
+          View Analysis
+        </Button>
+        <Button
+          onClick={handleViewKPIDetails}
+          variant="outlined"
+          color="info"
+          sx={{
+            borderRadius: "20px",
+            px: 4,
+            fontWeight: 600,
+            transition: "background-color 0.3s",
+            "&:hover": {
+              backgroundColor: "#d1ecf1",
+              color: "#0c5460",
+            },
+          }}
+        >
+          View Overall KPI Details
+        </Button>
+      </Stack>
+
+      <Modal
+        open={showChart}
+        onClose={() => setShowChart(false)}
+        aria-labelledby="analysis-chart"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backdropFilter: "blur(5px)",
+        }}
+      >
+        <Box
+          sx={{
+            width: "80%",
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography id="analysis-chart" variant="h6" component="h2" sx={{ mb: 2 }}>
+            KPI Analysis Chart
+          </Typography>
           <KPIChart employeeScores={employeeScores} />
+          <Button
+            onClick={() => setShowChart(false)}
+            variant="contained"
+            color="error"
+            sx={{ mt: 3, borderRadius: "20px" }}
+          >
+            Close
+          </Button>
         </Box>
-      )}
+      </Modal>
     </Container>
   );
 };

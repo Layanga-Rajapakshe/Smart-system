@@ -1,58 +1,72 @@
 import React from "react";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Paper, Typography } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Slider, Paper, Typography, Tooltip } from "@mui/material";
 
-const parameters = ["Attitude", "Habits", "Skills", "Performance", "Subject Specific", "Overall KPI"];
+const parameters = ["Attitude", "Habits", "Skills", "Performance", "Subject Specific"];
 
 const getComment = (score) => {
   if (score >= 9) return "Excellent";
   if (score >= 7) return "Good";
   if (score >= 5) return "Average";
   if (score >= 3) return "Below Average";
-  if (score >= 0) return "Very Poor";
-  return ""; // Default for undefined scores
+  return "Very Poor";
 };
 
 const ScoreTable = ({ scores, setScores }) => {
+  const calculateOverallKPI = () => {
+    const sum = scores.reduce((acc, score) => acc + (score || 0), 0);
+    return (sum / 5).toFixed(1);
+  };
+
   const handleScoreChange = (index, value) => {
     const newScores = [...scores];
-    newScores[index] = parseFloat(value);
+    newScores[index] = value;
     setScores(newScores);
   };
 
   return (
-    <Paper elevation={3} sx={{ padding: '16px', borderRadius: '8px', marginBottom: '16px' }}>
-      <Typography variant="h6" component="h2" sx={{ marginBottom: '16px', fontWeight: 'bold', textAlign: 'center' }}>
+    <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
+      <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: "bold", textAlign: "center" }}>
         KPI Score Table
       </Typography>
       <TableContainer>
-        <Table>
+        <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '14px', padding: '4px', backgroundColor: '#f5f5f5', textAlign: 'center' }}>Parameter</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '14px', padding: '4px', backgroundColor: '#f5f5f5', textAlign: 'center' }}>Score (0-10)</TableCell>
-              <TableCell sx={{ fontWeight: 'bold', fontSize: '14px', padding: '4px', backgroundColor: '#f5f5f5', textAlign: 'center' }}>Comment</TableCell>
+              <TableCell sx={{ fontWeight: "bold", width: "30%", py: 0.5 }}>Parameter</TableCell>
+              <TableCell sx={{ fontWeight: "bold", width: "30%", textAlign: "center", py: 0.5 }}>Score</TableCell>
+              <TableCell sx={{ fontWeight: "bold", width: "40%", textAlign: "center", py: 0.5 }}>Comment</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {parameters.map((parameter, index) => (
-              <TableRow key={parameter}>
-                <TableCell sx={{ padding: '4px', borderBottom: '1px solid #ddd', textAlign: 'center', fontSize: '12px' }}>{parameter}</TableCell>
-                <TableCell sx={{ padding: '4px', borderBottom: '1px solid #ddd', textAlign: 'center' }}>
-                  <TextField
-                    type="number"
-                    inputProps={{ min: 0, max: 10 }}
-                    value={scores[index]}
-                    onChange={(e) => handleScoreChange(index, e.target.value)}
-                    variant="outlined"
-                    size="small"
-                    sx={{ width: '60px' }} // Sets a fixed width for a consistent look
-                  />
+              <TableRow key={index}>
+                <TableCell>{parameter}</TableCell>
+                <TableCell align="center">
+                  <Tooltip title={`Score: ${scores[index]}`} arrow>
+                    <Slider
+                      value={scores[index]}
+                      onChange={(e, value) => handleScoreChange(index, value)}
+                      step={1}
+                      min={0}
+                      max={10}
+                      marks
+                      sx={{ width: "90%" }}
+                      valueLabelDisplay="auto"
+                    />
+                  </Tooltip>
                 </TableCell>
-                <TableCell sx={{ padding: '4px', borderBottom: '1px solid #ddd', textAlign: 'center', fontSize: '12px' }}>
-                  {getComment(scores[index])} {/* Display the comment based on the score */}
-                </TableCell>
+                <TableCell align="center">{getComment(scores[index])}</TableCell>
               </TableRow>
             ))}
+            <TableRow>
+              <TableCell sx={{ fontWeight: "bold", color: "#00796b" }}>Overall KPI</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", color: "#00796b" }}>
+                {calculateOverallKPI()}
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold", color: "#00796b" }}>
+                {getComment(calculateOverallKPI())}
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </TableContainer>

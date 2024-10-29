@@ -1,12 +1,15 @@
-// src/components/KPI/EmployeeSelection.jsx
 import React from "react";
-import { FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select, TextField, Box } from "@mui/material";
 
 const EmployeeSelection = ({ employees, onSelect, onMonthChange }) => (
-  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
-    <FormControl fullWidth style={{ marginRight: 20 }}>
+  <Box sx={{ display: "flex", width: "100%", gap: 2 }}>
+    <FormControl sx={{ flex: 1 }}>
       <InputLabel>Employee</InputLabel>
-      <Select onChange={(e) => onSelect(e.target.value)} label="Employee">
+      <Select
+        onChange={(e) => onSelect(e.target.value)}
+        label="Employee"
+        size="small"
+      >
         {employees.map((employee) => (
           <MenuItem key={employee.id} value={employee}>
             {employee.name}
@@ -14,14 +17,16 @@ const EmployeeSelection = ({ employees, onSelect, onMonthChange }) => (
         ))}
       </Select>
     </FormControl>
-    <TextField
-      label="Month"
-      type="month"
-      onChange={(e) => onMonthChange(e.target.value)}
-      InputLabelProps={{ shrink: true }}
-      fullWidth
-    />
-  </div>
+    <FormControl sx={{ flex: 1 }}>
+      <TextField
+        label="Month"
+        type="month"
+        onChange={(e) => onMonthChange(e.target.value)}
+        InputLabelProps={{ shrink: true }}
+        size="small"
+      />
+    </FormControl>
+  </Box>
 );
 
 export default EmployeeSelection;

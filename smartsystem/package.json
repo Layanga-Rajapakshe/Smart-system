@@ -18,6 +18,8 @@
     "@reduxjs/toolkit": "^2.2.7",
     "chart.js": "^4.4.5",
     "framer-motion": "^11.3.8",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.2",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.5",
     "react-chartjs-2": "^5.2.0",

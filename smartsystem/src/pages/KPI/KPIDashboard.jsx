@@ -1,17 +1,5 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Container,
-  Box,
-  Stack,
-  Typography,
-  Modal,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+import {Button,Container,Box,Stack,Typography,Modal,FormControl,InputLabel,MenuItem,Select,TextField,} from "@mui/material";
 import Header from "../../components/KPI/Header";
 import ScoreTable from "../../components/KPI/ScoreTable";
 import KPIChart from "../../components/KPI/KPIChart";
@@ -58,7 +46,7 @@ const KPIDashboard = () => {
   const [showChart, setShowChart] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState(""); 
-  const [comment, setComment] = useState(""); // State for comment
+  const [comment, setComment] = useState(""); 
   const navigate = useNavigate();
 
   const handleAddScores = () => {
@@ -71,7 +59,7 @@ const KPIDashboard = () => {
       setEmployeeScores([...employeeScores, newEntry]);
       setSelectedEmployee(null);
       setScores(Array(6).fill(0));
-      setComment(""); // Clear comment
+      setComment(""); 
       setErrorMessage("");
       setSuccessMessage("Successfully added scores!"); 
     }

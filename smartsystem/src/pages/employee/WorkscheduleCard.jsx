@@ -1,8 +1,12 @@
 import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@nextui-org/react";
 import React from "react";
 import { FiClock } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 export default function WorkScheduleCard() {
+
+  const navigate = useNavigate();
+
   const workCategories = [
     "Total working Hrs in the Week",
     "Total Estimated Hours",
@@ -13,6 +17,10 @@ export default function WorkScheduleCard() {
   ];
   const weeks = Array.from({ length: 10 }, (_, i) => `W-${i + 1}`);
 
+  const handleClick = () => {
+    navigate("/mytasks");
+  }
+
   return (
     <Card className="max-w-[600px]">
       <CardHeader className="flex gap-3 justify-between">
@@ -21,7 +29,7 @@ export default function WorkScheduleCard() {
           <div className="text-default-500">Weekly Performance Metrics</div>
         </div>
         <div className="">
-          <Button className="text-sm" color="primary" radius="sm" size="sm" startContent={<FiClock />}>
+          <Button className="text-sm" color="primary" radius="sm" size="sm" startContent={<FiClock />} onClick={handleClick}>
             My Work Schedule
           </Button>
         </div>

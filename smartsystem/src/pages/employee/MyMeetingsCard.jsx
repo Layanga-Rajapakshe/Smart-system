@@ -1,13 +1,21 @@
-import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, useNavbarContext } from "@nextui-org/react";
 import React from "react";
 import { FaPeopleGroup } from "react-icons/fa6";
+import { Navigate, useNavigate} from "react-router-dom";
 
 export default function MyMeetingsCard() {
+
+  const navigate = useNavigate(); 
+
   const meetings = [
     { name: "Technical meeting", total: "", cpt: "", tbc: "" },
     { name: "Construction meeting", total: "", cpt: "", tbc: "" },
     { name: "Progress meeting", total: "", cpt: "", tbc: "" }
   ];
+
+  const handleClick = () => {
+    navigate("/schedule");
+  }
 
   return (
     <Card className="max-w-[600px]">
@@ -16,7 +24,7 @@ export default function MyMeetingsCard() {
           <div className="text-lg">My Meetings</div>
         </div>
         <div>
-          <Button className="text-sm" color="primary" radius="sm" size="sm" startContent={<FaPeopleGroup />}>
+          <Button className="text-sm" color="primary" radius="sm" size="sm" startContent={<FaPeopleGroup />} onClick={handleClick}>
             Schedule Meeting
           </Button>
         </div>

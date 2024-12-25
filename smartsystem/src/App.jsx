@@ -33,6 +33,7 @@ import LeaveRequest from './pages/employee/LeaveRequest'
 import KPIWelcom from "./pages/KPI/KPIWelcom";
 import KPIDashboard from './pages/KPI/KPIDashboard'
 import KPIOverallDetails from "./pages/KPI/KPIOverallDetails";
+import EmployeePerformance from "./pages/KPI/EmployeePerformance";
 
 
 
@@ -74,6 +75,8 @@ export default function App() {
                 <Route path="/KPIWelcom" element={<KPIWelcom />} />
                 <Route path="/KPIdashboard" element={<KPIDashboard />} />
                 <Route path="/kpi-overall-details" element={<KPIOverallDetails />} />
+                <Route path="/employee-performance" element={<EmployeePerformance />} />
+
                 
               </Routes>
             </div>

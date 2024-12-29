@@ -36,6 +36,8 @@ import SuperviseeDetails from './pages/supervisor/SuperviseeDetails';
 import Dashboard from './pages/ceo/Dashboard';
 import MedicalClaimProfile from './pages/MedicalClaim/MedicalClaimProfile';
 import EmployeeSalaryList from './pages/SeniorAccountant/EmployeeSalaryList';
+import ViewEmployeeSalary from './pages/SeniorAccountant/ViewEmployeeSalary';
+import EditEmployeeSalary from './pages/SeniorAccountant/EditEmployeeSalary';
 
 export default function App() {
   const location = useLocation();
@@ -77,6 +79,8 @@ export default function App() {
                 <Route path="/schedule" element={<WorkSchedule />} />
                 <Route path="/medicalclaimprofile" element={<MedicalClaimProfile />} />
                 <Route path='/employeesalarylist' element={<EmployeeSalaryList />} />
+                <Route path='/viewsalary' element={<ViewEmployeeSalary />} />
+                <Route path="/editsalary" element={<EditEmployeeSalary />} />
                 <Route path="*" element={<Navigate to="/NotFound" />} />
               </Routes>
             </div>

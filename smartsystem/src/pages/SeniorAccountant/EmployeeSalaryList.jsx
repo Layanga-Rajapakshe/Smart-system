@@ -22,7 +22,8 @@ import { FaChevronDown } from "react-icons/fa6";
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { GrView } from "react-icons/gr";
-import { columns, users } from "../super_admin/datanew";
+import { columns, users, companyOptions } from "../super_admin/datanew";
+import { capitalize } from "../super_admin/utils";
 import PaginationComponent from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
 
@@ -32,10 +33,10 @@ const statusColorMap = {
   vacation: "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["userName", "userRole", "userStatus", "userCompany", "userActions"];
+const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "company", "actions"];
 
-const RoleList = () => {
-  const navigate = useNavigate();
+const EmployeeSalaryList = () => {
+    const navigate = useNavigate();
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
@@ -43,35 +44,37 @@ const RoleList = () => {
   const [companyFilter, setCompanyFilter] = React.useState(new Set(["all"]));
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
-    column: "userAge",
+    column: "age",
     direction: "ascending",
   });
   const [page, setPage] = React.useState(1);
 
-  const handleNewClick = () => navigate("/roleregister");
+  const handleNewClick = () => {
+    navigate("/roleregister");
+  }
 
   const hasSearchFilter = Boolean(filterValue);
 
   const headerColumns = React.useMemo(() => {
     if (visibleColumns === "all") return columns;
-    return columns.filter((column) => visibleColumns.has(column.uid));
+    return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...users];
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.userName.toLowerCase().includes(filterValue.toLowerCase())
+        user.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (statusFilter.size && !statusFilter.has("all")) {
       filteredUsers = filteredUsers.filter((user) =>
-        statusFilter.has(user.userStatus)
+        statusFilter.has(user.status)
       );
     }
     if (companyFilter.size && !companyFilter.has("all")) {
       filteredUsers = filteredUsers.filter((user) =>
-        companyFilter.has(user.userCompany)
+        companyFilter.has(user.company)
       );
     }
     return filteredUsers;
@@ -81,7 +84,8 @@ const RoleList = () => {
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
-    return filteredItems.slice(start, start + rowsPerPage);
+    const end = start + rowsPerPage;
+    return filteredItems.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
 
   const sortedItems = React.useMemo(() => {
@@ -93,73 +97,229 @@ const RoleList = () => {
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = (user, columnKey) => {
+  const renderCell = React.useCallback((user, columnKey) => {
+    const cellValue = user[columnKey];
     switch (columnKey) {
-      case "userName":
+      case "name":
         return (
           <User
             avatarProps={{ radius: "lg", src: user.avatar }}
             description={user.email}
-            name={user.userName}
-          />
+            name={cellValue}
+          >
+            {user.email}
+          </User>
         );
-      case "userRole":
+      case "role":
         return (
-          <div>
-            <p className="capitalize">{user.userRole}</p>
-            <p className="text-tiny capitalize text-default-400">{user.team}</p>
+          <div className="flex flex-col">
+            <p className="text-bold text-small capitalize">{cellValue}</p>
+            <p className="text-bold text-tiny capitalize text-default-400">{user.team}</p>
           </div>
         );
-      case "userStatus":
+        case "status":
+            return (
+                <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
+                {cellValue}
+                </Chip>
+            );
+      case "actions":
         return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[user.userStatus]}
-            size="sm"
-            variant="flat"
-          >
-            {user.userStatus}
-          </Chip>
-        );
-      case "userActions":
-        return (
-          <Dropdown>
-            <DropdownTrigger>
-              <Button isIconOnly size="sm" variant="light">
-                <BsThreeDotsVertical className="text-default-300" />
-              </Button>
-            </DropdownTrigger>
-            <DropdownMenu>
-              <DropdownItem startContent={<GrView />} href="/employeeview">
-                View
-              </DropdownItem>
-              <DropdownItem startContent={<CiEdit />} href="/employeeedit">
-                Edit
-              </DropdownItem>
-              <DropdownItem startContent={<RiDeleteBin6Line />} color="danger">
-                Delete
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+          <div className="relative flex justify-end items-center gap-2">
+            <Dropdown>
+              <DropdownTrigger>
+                <Button isIconOnly size="sm" variant="light">
+                  <BsThreeDotsVertical className="text-default-300" />
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu>
+                <DropdownItem startContent={<GrView/>} href="/viewsalary">View</DropdownItem>
+                <DropdownItem startContent={<CiEdit/>} href="/editsalary">Edit</DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </div>
         );
       default:
-        return user[columnKey];
+        return cellValue;
     }
-  };
+  }, []);
+
+  const onNextPage = React.useCallback(() => {
+    if (page < pages) {
+      setPage(page + 1);
+    }
+  }, [page, pages]);
+
+  const onPreviousPage = React.useCallback(() => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  }, [page]);
+
+  const onRowsPerPageChange = React.useCallback((e) => {
+    setRowsPerPage(Number(e.target.value));
+    setPage(1);
+  }, []);
+
+  const onSearchChange = React.useCallback((value) => {
+    if (value) {
+      setFilterValue(value);
+      setPage(1);
+    } else {
+      setFilterValue("");
+    }
+  }, []);
+
+  const onClear = React.useCallback(() => {
+    setFilterValue("");
+    setPage(1);
+  }, []);
+
+  const topContent = React.useMemo(() => {
+    return (
+      <div className="flex flex-col gap-4">
+        <div className="flex justify-between gap-3 items-end">
+          <Input
+            isClearable
+            className="w-full sm:max-w-[44%]"
+            placeholder="Search by name..."
+            startContent={<CiSearch />}
+            value={filterValue}
+            onClear={() => onClear()}
+            onValueChange={onSearchChange}
+          />
+          <div className="flex gap-3">
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button endContent={<FaChevronDown className="text-small" />} variant="flat">
+                  Status
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Status Filter"
+                closeOnSelect={false}
+                selectedKeys={statusFilter}
+                selectionMode="multiple"
+                onSelectionChange={setStatusFilter}
+              >
+                {["all", "active", "paused", "vacation"].map((status) => (
+                  <DropdownItem key={status} className="capitalize">
+                    {capitalize(status)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button endContent={<FaChevronDown className="text-small" />} variant="flat">
+                  Company
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Company Filter"
+                closeOnSelect={false}
+                selectedKeys={companyFilter}
+                selectionMode="multiple"
+                onSelectionChange={setCompanyFilter}
+              >
+                {["all", ...companyOptions.map((company) => company.name)].map((company) => (
+                  <DropdownItem key={company} className="capitalize">
+                    {capitalize(company)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+            <Dropdown>
+              <DropdownTrigger className="hidden sm:flex">
+                <Button endContent={<FaChevronDown className="text-small" />} variant="flat">
+                  Columns
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                disallowEmptySelection
+                aria-label="Table Columns"
+                closeOnSelect={false}
+                selectedKeys={visibleColumns}
+                selectionMode="multiple"
+                onSelectionChange={setVisibleColumns}
+              >
+                {columns.map((column) => (
+                  <DropdownItem key={column.uid} className="capitalize">
+                    {capitalize(column.name)}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-default-400 text-small">Total {users.length} users</span>
+          <label className="flex items-center text-default-400 text-small">
+            Rows per page:
+            <select
+              className="bg-transparent outline-none text-default-400 text-small"
+              onChange={onRowsPerPageChange}
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    );
+  }, [
+    filterValue,
+    statusFilter,
+    companyFilter,
+    visibleColumns,
+    onRowsPerPageChange,
+    users.length,
+    onSearchChange,
+    hasSearchFilter,
+  ]);
 
   return (
     <Table
-      aria-label="User roles table"
+      aria-label="Example table with custom cells, pagination and sorting"
+      isHeaderSticky
+      bottomContent={
+        <PaginationComponent
+          page={page}
+          pages={pages}
+          onPageChange={setPage}
+          onPreviousPage={onPreviousPage}
+          onNextPage={onNextPage}
+          selectedKeys={selectedKeys}
+          filteredItems={filteredItems}
+        />
+      }
+      bottomContentPlacement="outside"
+      classNames={{
+        wrapper: "max-h-[382px]",
+      }}
+      selectedKeys={selectedKeys}
+      selectionMode="multiple"
       sortDescriptor={sortDescriptor}
+      topContent={topContent}
+      topContentPlacement="outside"
+      onSelectionChange={setSelectedKeys}
+      onSortChange={setSortDescriptor}
     >
       <TableHeader columns={headerColumns}>
         {(column) => (
-          <TableColumn key={column.uid} allowsSorting={column.sortable}>
+          <TableColumn
+            key={column.uid}
+            align={column.uid === "actions" ? "center" : "start"}
+            allowsSorting={column.sortable}
+          >
             {column.name}
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody items={sortedItems}>
+      <TableBody emptyContent={"No users found"} items={sortedItems}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
@@ -167,7 +327,7 @@ const RoleList = () => {
         )}
       </TableBody>
     </Table>
-  );
-};
+  )
+}
 
-export default RoleList;
+export default EmployeeSalaryList

@@ -40,6 +40,10 @@ const Sidebar = () => {
         {title: 'My Dashboard', href: '/dashboard', icon: <TbLayoutDashboard/>, isActive: ['/dashboard'].includes(location.pathname)},
     ]
 
+    const seniorAccountantMenuItems = [
+        {title: 'My Dashboard', href: '/dashboard', icon: <TbLayoutDashboard/>, isActive: ['/dashboard'].includes(location.pathname)},
+    ]
+
 
     return (
         <>

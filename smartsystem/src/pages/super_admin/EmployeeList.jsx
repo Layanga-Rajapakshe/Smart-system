@@ -22,10 +22,10 @@ import { FaChevronDown } from "react-icons/fa6";
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { GrView } from "react-icons/gr";
-import { columns, users, companyOptions } from "./datanew";
 import { capitalize } from "./utils";
 import PaginationComponent from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
+import { useGetEmployeesQuery } from "../../redux/api/employeeApiSlice";
 
 const statusColorMap = {
   active: "success",
@@ -36,101 +36,79 @@ const statusColorMap = {
 const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "company", "actions"];
 
 export default function Employeelist() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { data: employees, isLoading, error } = useGetEmployeesQuery();
+
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
   const [statusFilter, setStatusFilter] = React.useState(new Set(["all"]));
-  const [companyFilter, setCompanyFilter] = React.useState(new Set(["all"]));
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [sortDescriptor, setSortDescriptor] = React.useState({
-    column: "age",
-    direction: "ascending",
-  });
   const [page, setPage] = React.useState(1);
 
   const handleNewClick = () => {
     navigate("/employeeregister");
-  }
+  };
 
   const handleViewClick = (id) => {
     navigate(`/employeeview/${id}`);
-  }
+  };
 
   const handleUpdateClick = (id) => {
     navigate(`/employeeupdate/${id}`);
-  }
+  };
 
   const hasSearchFilter = Boolean(filterValue);
 
-  const headerColumns = React.useMemo(() => {
-    if (visibleColumns === "all") return columns;
-    return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
-  }, [visibleColumns]);
+  const filteredEmployees = React.useMemo(() => {
+    if (isLoading || error || !employees) return [];
+    let filtered = employees;
 
-  const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase())
+      filtered = filtered.filter((emp) =>
+        emp.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (statusFilter.size && !statusFilter.has("all")) {
-      filteredUsers = filteredUsers.filter((user) =>
-        statusFilter.has(user.status)
-      );
+      filtered = filtered.filter((emp) => statusFilter.has(emp.status));
     }
-    if (companyFilter.size && !companyFilter.has("all")) {
-      filteredUsers = filteredUsers.filter((user) =>
-        companyFilter.has(user.company)
-      );
-    }
-    return filteredUsers;
-  }, [users, filterValue, statusFilter, companyFilter]);
+    return filtered;
+  }, [employees, filterValue, statusFilter, isLoading, error]);
 
-  const pages = Math.ceil(filteredItems.length / rowsPerPage);
+  const pages = Math.ceil(filteredEmployees.length / rowsPerPage);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
+    return filteredEmployees.slice(start, end);
+  }, [page, filteredEmployees, rowsPerPage]);
 
-  const sortedItems = React.useMemo(() => {
-    return [...items].sort((a, b) => {
-      const first = a[sortDescriptor.column];
-      const second = b[sortDescriptor.column];
-      const cmp = first < second ? -1 : first > second ? 1 : 0;
-      return sortDescriptor.direction === "descending" ? -cmp : cmp;
-    });
-  }, [sortDescriptor, items]);
-
-  const renderCell = React.useCallback((user, columnKey) => {
-    const cellValue = user[columnKey];
+  const renderCell = React.useCallback((employee, columnKey) => {
+    const cellValue = employee[columnKey];
     switch (columnKey) {
       case "name":
         return (
           <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.email}
+            avatarProps={{ radius: "lg", src: employee.avatar }}
+            description={employee.email}
             name={cellValue}
           >
-            {user.email}
+            {employee.email}
           </User>
         );
       case "role":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-400">{user.team}</p>
+            <p className="text-bold text-tiny capitalize text-default-400">{employee.team}</p>
           </div>
         );
-        case "status":
-            return (
-                <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-                {cellValue}
-                </Chip>
-            );
+      case "status":
+        return (
+          <Chip className="capitalize" color={statusColorMap[employee.status]} size="sm" variant="flat">
+            {cellValue}
+          </Chip>
+        );
       case "actions":
         return (
           <div className="relative flex justify-end items-center gap-2">
@@ -141,9 +119,15 @@ export default function Employeelist() {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem startContent={<GrView/>} onClick={() => handleViewClick('66b9b51c28300964bb78692c')}>View</DropdownItem>
-                <DropdownItem startContent={<CiEdit/>} onClick={() => handleUpdateClick('66b9b51c28300964bb78692c')}>Edit</DropdownItem>
-                <DropdownItem startContent={<RiDeleteBin6Line/>} color="danger" className="text-danger">Delete</DropdownItem>
+                <DropdownItem startContent={<GrView />} onClick={() => handleViewClick(employee.id)}>
+                  View
+                </DropdownItem>
+                <DropdownItem startContent={<CiEdit />} onClick={() => handleUpdateClick(employee.id)}>
+                  Edit
+                </DropdownItem>
+                <DropdownItem startContent={<RiDeleteBin6Line />} color="danger">
+                  Delete
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -153,185 +137,49 @@ export default function Employeelist() {
     }
   }, []);
 
-  const onNextPage = React.useCallback(() => {
-    if (page < pages) {
-      setPage(page + 1);
-    }
-  }, [page, pages]);
-
-  const onPreviousPage = React.useCallback(() => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  }, [page]);
-
-  const onRowsPerPageChange = React.useCallback((e) => {
-    setRowsPerPage(Number(e.target.value));
-    setPage(1);
-  }, []);
-
-  const onSearchChange = React.useCallback((value) => {
-    if (value) {
-      setFilterValue(value);
-      setPage(1);
-    } else {
-      setFilterValue("");
-    }
-  }, []);
-
-  const onClear = React.useCallback(() => {
-    setFilterValue("");
-    setPage(1);
-  }, []);
-
-  const topContent = React.useMemo(() => {
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-3 items-end">
-          <Input
-            isClearable
-            className="w-full sm:max-w-[44%]"
-            placeholder="Search by name..."
-            startContent={<CiSearch />}
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          />
-          <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button endContent={<FaChevronDown className="text-small" />} variant="flat">
-                  Status
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Status Filter"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {["all", "active", "paused", "vacation"].map((status) => (
-                  <DropdownItem key={status} className="capitalize">
-                    {capitalize(status)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button endContent={<FaChevronDown className="text-small" />} variant="flat">
-                  Company
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Company Filter"
-                closeOnSelect={false}
-                selectedKeys={companyFilter}
-                selectionMode="multiple"
-                onSelectionChange={setCompanyFilter}
-              >
-                {["all", ...companyOptions.map((company) => company.name)].map((company) => (
-                  <DropdownItem key={company} className="capitalize">
-                    {capitalize(company)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button endContent={<FaChevronDown className="text-small" />} variant="flat">
-                  Columns
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={visibleColumns}
-                selectionMode="multiple"
-                onSelectionChange={setVisibleColumns}
-              >
-                {columns.map((column) => (
-                  <DropdownItem key={column.uid} className="capitalize">
-                    {capitalize(column.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Button color="primary" variant="flat" onClick={handleNewClick} endContent={<IoAdd />}>
-              Add Employee
-            </Button>
-          </div>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {users.length} users</span>
-          <label className="flex items-center text-default-400 text-small">
-            Rows per page:
-            <select
-              className="bg-transparent outline-none text-default-400 text-small"
-              onChange={onRowsPerPageChange}
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-            </select>
-          </label>
-        </div>
-      </div>
-    );
-  }, [
-    filterValue,
-    statusFilter,
-    companyFilter,
-    visibleColumns,
-    onRowsPerPageChange,
-    users.length,
-    onSearchChange,
-    hasSearchFilter,
-  ]);
+  if (isLoading) return <p>Loading employees...</p>;
+  if (error) return (
+    <div>
+      <p>Error loading employees: {error.message}</p>
+      <Button onClick={handleNewClick} endContent={<IoAdd />}>
+            Add Employee
+      </Button>
+    </div>
+  )
 
   return (
     <Table
-      aria-label="Example table with custom cells, pagination and sorting"
+      aria-label="Employee List"
       isHeaderSticky
       bottomContent={
         <PaginationComponent
           page={page}
           pages={pages}
           onPageChange={setPage}
-          onPreviousPage={onPreviousPage}
-          onNextPage={onNextPage}
-          selectedKeys={selectedKeys}
-          filteredItems={filteredItems}
         />
       }
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[382px]",
-      }}
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
+      topContent={
+        <div className="flex justify-between">
+          <Input
+            placeholder="Search by name..."
+            startContent={<CiSearch />}
+            value={filterValue}
+            onValueChange={(value) => setFilterValue(value)}
+          />
+          <Button onClick={handleNewClick} endContent={<IoAdd />}>
+            Add Employee
+          </Button>
+        </div>
+      }
     >
-      <TableHeader columns={headerColumns}>
+      <TableHeader columns={INITIAL_VISIBLE_COLUMNS}>
         {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
+          <TableColumn key={column} allowsSorting>
+            {capitalize(column)}
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No users found"} items={sortedItems}>
+      <TableBody items={items}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}

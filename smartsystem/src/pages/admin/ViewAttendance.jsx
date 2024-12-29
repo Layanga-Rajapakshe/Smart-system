@@ -6,8 +6,8 @@ import { useGetAttendanceDetailsQuery } from '../../redux/api/attendanceApiSlice
 
 const ViewAttendance = () => {
   const navigate = useNavigate();
-  const userId = 'exampleUserId'; // Replace with actual user ID
-  const month = '2023-10'; // Replace with actual month, if needed
+  const userId = '1234'; // Replace with actual user ID
+  const month = '2024-02'; // Replace with actual month, if needed
 
   // Query attendance records
   const { data: attendanceRecords = [], isLoading } = useGetAttendanceDetailsQuery({ userId, month });

@@ -34,8 +34,8 @@ import Tasks from './pages/supervisor/Tasks';
 import AddTask from './pages/supervisor/AddTask';
 import SuperviseeDetails from './pages/supervisor/SuperviseeDetails';
 import Dashboard from './pages/ceo/Dashboard';
-import Salary_Dash from './pages/SeniorAccountant/Salary_Dash';
 import MedicalClaimProfile from './pages/MedicalClaim/MedicalClaimProfile';
+import EmployeeSalaryList from './pages/SeniorAccountant/EmployeeSalaryList';
 
 export default function App() {
   const location = useLocation();
@@ -75,8 +75,8 @@ export default function App() {
                 <Route path="/leaverequest" element={<LeaveRequest />} />
                 <Route path="/leavestatus" element={<LeaveStatus />} />
                 <Route path="/schedule" element={<WorkSchedule />} />
-                <Route path="/salaryDash" element={<Salary_Dash />} />
                 <Route path="/medicalclaimprofile" element={<MedicalClaimProfile />} />
+                <Route path='/employeesalarylist' element={<EmployeeSalaryList />} />
                 <Route path="*" element={<Navigate to="/NotFound" />} />
               </Routes>
             </div>

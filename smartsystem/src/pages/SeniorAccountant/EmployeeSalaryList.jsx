@@ -22,8 +22,7 @@ import { FaChevronDown } from "react-icons/fa6";
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { GrView } from "react-icons/gr";
-import { columns, users, companyOptions } from "./datanew";
-import { capitalize } from "./utils";
+import { columns, users } from "../super_admin/datanew";
 import PaginationComponent from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
 
@@ -152,16 +151,6 @@ const RoleList = () => {
     <Table
       aria-label="User roles table"
       sortDescriptor={sortDescriptor}
-      topContent={
-        // Include search/filter options here
-      }
-      bottomContent={
-        <PaginationComponent
-          page={page}
-          pages={pages}
-          onPageChange={setPage}
-        />
-      }
     >
       <TableHeader columns={headerColumns}>
         {(column) => (

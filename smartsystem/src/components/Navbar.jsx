@@ -4,12 +4,12 @@ import { CiSearch } from "react-icons/ci";
 import { IoNotifications } from "react-icons/io5";
 import { FaRegMessage } from "react-icons/fa6";
 import toast from 'react-hot-toast';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../redux/features/auth/authSlice';
 import { useLogoutMutation } from '../redux/api/authApiSlice';
+import { useGetEmployeeQuery } from '../redux/api/employeeApiSlice';
 import ModeToggle from './modetoggle/ModeToggle';
-import { useSelector } from 'react-redux';
 
 const NavBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -18,6 +18,9 @@ const NavBar = () => {
   const [logoutApiCall] = useLogoutMutation();
 
   const { userInfo } = useSelector((state) => state.auth);
+  const { data: employee, error } = useGetEmployeeQuery(userInfo?.id, {
+    skip: !userInfo?.id,
+  });
 
   const handleLogout = async () => {
     try {
@@ -30,7 +33,11 @@ const NavBar = () => {
     }
   };
 
-  const toggleDropdown = () => setIsDropdownOpen(prev => !prev);
+  const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
+
+  const userName = employee?.name || "Guest User";
+  const userRole = employee?.role || "N/A";
+  const userAvatar = employee?.avatar || "https://i.pravatar.cc/150";
 
   return (
     <Navbar isBordered>
@@ -66,7 +73,7 @@ const NavBar = () => {
                 </Badge>
               </div>
             </DropdownTrigger>
-            <DropdownMenu 
+            <DropdownMenu
               aria-label="Notifications"
               color='default'
               variant='faded'
@@ -85,7 +92,7 @@ const NavBar = () => {
                 </Badge>
               </div>
             </DropdownTrigger>
-            <DropdownMenu 
+            <DropdownMenu
               aria-label="Messages"
               color='default'
               variant='faded'
@@ -98,12 +105,12 @@ const NavBar = () => {
 
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
-              <User   
-                name={"Jane Doe"}
-                description="Product Designer"
+              <User
+                name={userName}
+                description={userRole}
                 className='cursor-pointer'
                 avatarProps={{
-                  src: "https://i.pravatar.cc/150?u=a04258114e29026702d"
+                  src: userAvatar,
                 }}
               />
             </DropdownTrigger>
@@ -120,12 +127,12 @@ const NavBar = () => {
         <div className="md:hidden flex items-center">
           <Dropdown placement="bottom-end" isOpen={isDropdownOpen} onOpenChange={toggleDropdown}>
             <DropdownTrigger>
-              <User   
-                name="Jane Doe"
-                description="Product Designer"
+              <User
+                name={userName}
+                description={userRole}
                 className='cursor-pointer'
                 avatarProps={{
-                  src: "https://i.pravatar.cc/150?u=a04258114e29026702d"
+                  src: userAvatar,
                 }}
               />
             </DropdownTrigger>
@@ -169,6 +176,6 @@ const NavBar = () => {
       </NavbarContent>
     </Navbar>
   );
-}
+};
 
 export default NavBar;

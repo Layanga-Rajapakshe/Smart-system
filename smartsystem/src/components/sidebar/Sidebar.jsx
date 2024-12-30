@@ -41,7 +41,9 @@ const Sidebar = () => {
     ]
 
     const seniorAccountantMenuItems = [
-        {title: 'My Dashboard', href: '/dashboard', icon: <TbLayoutDashboard/>, isActive: ['/dashboard'].includes(location.pathname)},
+        {title: 'Employee Salary Details', href: '/employeesalarylist', icon: <TbLayoutDashboard/>, isActive: ['/employeesalarylist'].includes(location.pathname)},
+        {title: 'View Salary', href: '/viewsalary', icon: <TbLayoutDashboard/>, isActive: ['/viewsalary'].includes(location.pathname)},
+        {title: 'Edit Salary', href: '/editsalary', icon: <TbLayoutDashboard/>, isActive: ['/editsalary'].includes(location.pathname)},
     ]
 
 
@@ -112,6 +114,18 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {employeeMenuItems.map((item, index) => (
+                                    <li key={index}>
+                                        <SidebarItem {...item} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    </SidebarMenu>
+
+                    <SidebarMenu title="Senior Accountant Menu">
+                        <nav className="flex-grow">
+                            <ul>
+                                {seniorAccountantMenuItems.map((item, index) => (
                                     <li key={index}>
                                         <SidebarItem {...item} />
                                     </li>

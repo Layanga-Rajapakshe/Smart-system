@@ -1,57 +1,61 @@
-import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Image, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@nextui-org/react";
-import React from "react";
+import React from 'react';
+import { Card, CardHeader, CardBody, CardFooter, Divider, Link } from "@nextui-org/react";
 import { CgPerformance } from "react-icons/cg";
 
-export default function KIPCard() {
-  const categories = ["Attitude", "Habits", "Skills", "Performance", "Subject specific", "Overall KIP"];
-  const months = Array.from({ length: 12 }, (_, i) => `M-${i + 1}`);
+export default function KPISummaryCard() {
+  const kpiCategories = [
+    { name: "Attitude", value: 8.5, color: "#36A2EB" },
+    { name: "Habits", value: 7.8, color: "#4BC0C0" },
+    { name: "Skills", value: 9.0, color: "#FFCE56" },
+    { name: "Performance", value: 8.2, color: "#FF6384" },
+    { name: "Subject specific", value: 8.7, color: "#9966FF" },
+    { name: "Overall KPI", value: 8.4, color: "#2563eb" }
+  ];
+
+  const ProgressBar = ({ value, color }) => (
+    <div className="w-full bg-gray-200 rounded-full h-2.5">
+      <div 
+        className="h-2.5 rounded-full transition-all duration-500"
+        style={{ 
+          width: `${(value/10) * 100}%`,
+          backgroundColor: color
+        }}
+      />
+    </div>
+  );
 
   return (
-    <Card className="">
+    <Card shadow="" className="h-full w-full">
       <CardHeader className="flex gap-3 justify-between">
-        {/* <Image
-          alt="matrix icon"
-          height={40}
-          radius="sm"
-          src="https://your-image-url.png"
-          width={40}
-        /> */}
         <div className="flex flex-col">
           <div className="text-lg">KPI Matrix</div>
           <div className="text-default-500">Monthly Performance Tracker</div>
         </div>
-        <div className="">
-          <Button className="text-sm" color="primary" radius="sm" size="sm" startContent={<CgPerformance />}>
-            My KPI
-          </Button>
+        <div>
+          <Link href="#">
+            <CgPerformance size={24} />
+          </Link>
         </div>
       </CardHeader>
       <Divider />
       <CardBody>
-        <div className="space-y-4">
-          <Table aria-label="KPI summary table">
-            <TableHeader>
-              <TableColumn>Category</TableColumn>
-              {months.map((month) => (
-                <TableColumn key={month}>{month}</TableColumn>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {categories.map((category) => (
-                <TableRow key={category}>
-                  <TableCell>{category}</TableCell>
-                  {months.map((month) => (
-                    <TableCell key={month}>4</TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        <div className="space-y-6">
+          {kpiCategories.map((kpi, index) => (
+            <div key={index} className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium">{kpi.name}</span>
+                <span className="text-sm font-bold" style={{ color: kpi.color }}>
+                  {kpi.value.toFixed(1)}/10
+                </span>
+              </div>
+              <ProgressBar value={kpi.value} color={kpi.color} />
+            </div>
+          ))}
         </div>
       </CardBody>
       <Divider />
       <CardFooter className="justify-end">
-        <Link isExternal showAnchorIcon href="https://your-matrix-info-link.com">
+        <Link isExternal showAnchorIcon href="https://your-kpi-info-link.com">
           View detailed metrics
         </Link>
       </CardFooter>

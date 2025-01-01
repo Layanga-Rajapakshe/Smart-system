@@ -56,12 +56,12 @@ export default function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/company" element={<Company />} />
                 <Route path="/companyregister" element={<CompanyRegister />} />
-                <Route path="/companyedit" element={<CompanyEdit />} />
-                <Route path="/companyview" element={<CompanyView />} />
+                <Route path="/companyedit/:id" element={<CompanyEdit />} />
+                <Route path="/companyview/:id" element={<CompanyView />} />
                 <Route path="/employee" element={<Employee />} />
                 <Route path="/employeeregister" element={<EmployeeRegister />} />
-                <Route path="/employeeedit" element={<EmployeeEdit />} />
-                <Route path="/employeeview" element={<EmployeeView />} />
+                <Route path="/employeeedit/:id" element={<EmployeeEdit />} />
+                <Route path="/employeeview/:id" element={<EmployeeView />} />
                 <Route path="/role" element={<Role />} />
                 <Route path="/roleregister" element={<RoleRegister />} />
                 <Route path="/roleedit/:id" element={<RoleEdit />} />

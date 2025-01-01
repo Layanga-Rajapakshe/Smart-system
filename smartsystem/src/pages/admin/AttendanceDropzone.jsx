@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
+import { useUploadAttendanceSheetMutation } from '../../redux/api/attendanceApiSlice';
 
 function AttendanceDropzone() {
-  const [fileConfirmed, setFileConfirmed] = useState(false);
+  const [uploadAttendanceSheet, { isLoading }] = useUploadAttendanceSheetMutation();
   const navigate = useNavigate();
 
   const {
@@ -18,31 +19,21 @@ function AttendanceDropzone() {
     }
   });
 
-  const acceptedFileItems = acceptedFiles.map(file => (
-    <li key={file.path}>
-      {file.path} - {file.size} bytes
-    </li>
-  ));
+  const handleConfirmUpload = async () => {
+    if (!acceptedFiles.length) {
+      alert('Please upload a valid file before confirming.');
+      return;
+    }
 
-  const fileRejectionItems = fileRejections.map(({ file, errors }) => (
-    <li key={file.path}>
-      {file.path} - {file.size} bytes
-      <ul>
-        {errors.map(e => (
-          <li key={e.code}>{e.message}</li>
-        ))}
-      </ul>
-    </li>
-  ));
+    const formData = new FormData();
+    formData.append('file', acceptedFiles[0]);
 
-  const handleConfirmUpload = () => {
-    if (acceptedFiles.length > 0) {
-      setFileConfirmed(true);
-      // Logic to handle the file upload goes here
-      // After confirming, navigate to the attendance view page
+    try {
+      await uploadAttendanceSheet(formData).unwrap();
       navigate('/attendance-view'); // Replace with the actual route
-    } else {
-      alert("Please upload a valid file before confirming.");
+    } catch (error) {
+      console.error('Upload failed:', error);
+      alert('File upload failed. Please try again.');
     }
   };
 
@@ -50,23 +41,50 @@ function AttendanceDropzone() {
     <section className="flex flex-col items-center justify-center h-full border-2 border-dashed border-gray-400 p-4">
       <div {...getRootProps({ className: 'border-2 border-dashed border-gray-400 p-4 text-center w-full max-w-md' })}>
         <input {...getInputProps()} />
-        <p>Drag 'n' drop some files here, or click to select files</p>
-        <em>(Only *.xls and *.xlsx files will be accepted)</em>
+        <p>Drag and drop a file here, or click to select one</p>
+        <em>(Only .xls and .xlsx files are accepted)</em>
       </div>
+
       <aside className="mt-4 w-full max-w-md">
-        <h4 className="text-lg font-semibold">Accepted files</h4>
-        <ul className="list-none p-0">{acceptedFileItems}</ul>
-        <h4 className="text-lg font-semibold mt-4">Rejected files</h4>
-        <ul className="list-none p-0">{fileRejectionItems}</ul>
+        {acceptedFiles.length > 0 && (
+          <div className="mb-4">
+            <h4 className="text-lg font-semibold">Accepted Files</h4>
+            <ul className="list-disc pl-5">
+              {acceptedFiles.map((file) => (
+                <li key={file.path}>
+                  {file.path} - {file.size} bytes
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {fileRejections.length > 0 && (
+          <div>
+            <h4 className="text-lg font-semibold">Rejected Files</h4>
+            <ul className="list-disc pl-5">
+              {fileRejections.map(({ file, errors }) => (
+                <li key={file.path}>
+                  {file.path} - {file.size} bytes
+                  <ul className="list-disc pl-5 text-red-500">
+                    {errors.map((e) => (
+                      <li key={e.code}>{e.message}</li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </aside>
+
       <button
         className="mt-6 bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
         onClick={handleConfirmUpload}
-        disabled={acceptedFiles.length === 0}
+        disabled={isLoading || acceptedFiles.length === 0}
       >
-        Confirm Upload
+        {isLoading ? 'Uploading...' : 'Confirm Upload'}
       </button>
-      {fileConfirmed && <p className="text-green-500 mt-2">File upload confirmed! Redirecting...</p>}
     </section>
   );
 }

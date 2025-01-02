@@ -18,9 +18,6 @@ const NavBar = () => {
   const [logoutApiCall] = useLogoutMutation();
 
   const { userInfo } = useSelector((state) => state.auth);
-  const { data: employee, error } = useGetEmployeeQuery(userInfo?.id, {
-    skip: !userInfo?.id,
-  });
 
   const handleLogout = async () => {
     try {
@@ -35,9 +32,9 @@ const NavBar = () => {
 
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
 
-  const userName = employee?.name || "Guest User";
-  const userRole = employee?.role || "N/A";
-  const userAvatar = employee?.avatar || "https://i.pravatar.cc/150";
+  const userName = userInfo.name || "Guest User";
+  const userRole = userInfo.role || "N/A";
+  const userAvatar = userInfo.avatar || "https://i.pravatar.cc/150";
 
   return (
     <Navbar isBordered>

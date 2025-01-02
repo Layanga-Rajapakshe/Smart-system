@@ -27,7 +27,6 @@ export default function TimeDateCard() {
     <Card
       isBlurred
       className="border-none bg-background/60 dark:bg-default-100/50 w-full h-full"
-      shadow="none"
     >
       <CardBody className="flex justify-center items-center text-center">
         <div className="flex flex-col gap-2">

@@ -34,6 +34,11 @@ import KPIWelcom from "./pages/KPI/KPIWelcom";
 import KPIDashboard from './pages/KPI/KPIDashboard'
 import KPIOverallDetails from "./pages/KPI/KPIOverallDetails";
 import EmployeePerformance from "./pages/KPI/EmployeePerformance";
+import CEOKpiSettingPage from "./pages/KPI/CEOKpiSettingPage";
+import AddParameter from "./pages/KPI/Add_Parameter";
+import DetailsParameter from "./pages/KPI/ParameterDetails";
+
+
 
 
 
@@ -76,6 +81,10 @@ export default function App() {
                 <Route path="/KPIdashboard" element={<KPIDashboard />} />
                 <Route path="/kpi-overall-details" element={<KPIOverallDetails />} />
                 <Route path="/employee-performance" element={<EmployeePerformance />} />
+                <Route path="/KpiSetting" element={<CEOKpiSettingPage />} />
+                <Route path="/add-parameter" element={<AddParameter />} />
+                <Route path="/detail-parameter" element={<DetailsParameter />} />
+
 
                 
               </Routes>

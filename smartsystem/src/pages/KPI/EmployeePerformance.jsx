@@ -12,14 +12,21 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Button,
-  Grid,
 } from "@mui/material";
-import { grey, blue, green, yellow } from "@mui/material/colors";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import StarsIcon from "@mui/icons-material/Stars";
-import AssessmentIcon from "@mui/icons-material/Assessment";
+import { grey, blue, green } from "@mui/material/colors";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
 
 const employeeData = {
   name: "John Doe",
@@ -32,6 +39,20 @@ const employeeData = {
     { month: "April", year: 2024, scores: [8, 9, 9, 8, 10], feedback: "Excellent teamwork and progress." },
     { month: "May", year: 2024, scores: [7, 8, 9, 8, 7], feedback: "Steady improvement." },
   ],
+  yearPerformance: [
+    { month: "January", score: 7.8 },
+    { month: "February", score: 8.1 },
+    { month: "March", score: 8.0 },
+    { month: "April", score: 8.7 },
+    { month: "May", score: 8.3 },
+    { month: "June", score: 7.9 },
+    { month: "July", score: 8.2 },
+    { month: "August", score: 8.5 },
+    { month: "September", score: 8.0 },
+    { month: "October", score: 8.6 },
+    { month: "November", score: 8.4 },
+    { month: "December", score: 8.8 },
+  ],
 };
 
 const calculateOverallKPI = (scores) => {
@@ -40,10 +61,10 @@ const calculateOverallKPI = (scores) => {
 };
 
 const EmployeePerformance = () => {
-  const [selectedDate, setSelectedDate] = useState("");
   const [selectedPerformance, setSelectedPerformance] = useState(null);
   const [past3Months, setPast3Months] = useState([]);
   const [showPast3Months, setShowPast3Months] = useState(false);
+  const [showYearGraph, setShowYearGraph] = useState(false);
 
   useEffect(() => {
     setSelectedPerformance(employeeData.pastPerformances[employeeData.pastPerformances.length - 1]);
@@ -52,6 +73,40 @@ const EmployeePerformance = () => {
   const handleViewPast3Months = () => {
     setPast3Months(employeeData.pastPerformances.slice(0, 3));
     setShowPast3Months(true);
+  };
+
+  const handleViewYearGraph = () => {
+    setShowYearGraph(true);
+  };
+
+  // Data for the graph
+  const graphData = {
+    labels: employeeData.yearPerformance.map((item) => item.month),
+    datasets: [
+      {
+        label: "Monthly KPI Score",
+        data: employeeData.yearPerformance.map((item) => item.score),
+        borderColor: blue[500],
+        backgroundColor: blue[100],
+        tension: 0.4,
+        fill: true,
+      },
+    ],
+  };
+
+  const graphOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 10,
+      },
+    },
   };
 
   return (
@@ -126,10 +181,18 @@ const EmployeePerformance = () => {
             <Box sx={{ mt: 2, textAlign: "center" }}>
               <Button
                 variant="contained"
-                sx={{ backgroundColor: blue[500], color: "white", mt: 2 }}
+                sx={{ backgroundColor: blue[500], color: "white", mt: 2, mr: 2 }}
                 onClick={handleViewPast3Months}
               >
                 📊 View Past 3 Months Performance
+              </Button>
+
+              <Button
+                variant="contained"
+                sx={{ backgroundColor: blue[500], color: "white", mt: 2 }}
+                onClick={handleViewYearGraph}
+              >
+                📉 View Year Performance Graph
               </Button>
             </Box>
           </>
@@ -160,9 +223,7 @@ const EmployeePerformance = () => {
                   <TableRow key={`${item.month}-${item.year}`}>
                     <TableCell align="center">{item.month}</TableCell>
                     <TableCell align="center">{item.year}</TableCell>
-                    <TableCell align="center">
-                      {item.scores.join(", ")}
-                    </TableCell>
+                    <TableCell align="center">{item.scores.join(", ")}</TableCell>
                     <TableCell align="center">
                       <Typography>{item.feedback}</Typography>
                     </TableCell>
@@ -171,6 +232,16 @@ const EmployeePerformance = () => {
               </TableBody>
             </Table>
           </TableContainer>
+        </Paper>
+      )}
+
+      {/* Year Performance Graph */}
+      {showYearGraph && (
+        <Paper sx={{ padding: 3, mb: 5, boxShadow: 4, borderRadius: 2 }}>
+          <Typography variant="h6" fontWeight="bold" align="center">
+            📉 Year Performance Graph
+          </Typography>
+          <Line data={graphData} options={graphOptions} />
         </Paper>
       )}
     </Container>

@@ -38,6 +38,7 @@ import MedicalClaimProfile from './pages/MedicalClaim/MedicalClaimProfile';
 import EmployeeSalaryList from './pages/SeniorAccountant/EmployeeSalaryList';
 import ViewEmployeeSalary from './pages/SeniorAccountant/ViewEmployeeSalary';
 import EditEmployeeSalary from './pages/SeniorAccountant/EditEmployeeSalary';
+import RoleView from './pages/super_admin/RoleView';
 
 export default function App() {
   const location = useLocation();
@@ -64,6 +65,7 @@ export default function App() {
                 <Route path="/employeeview/:id" element={<EmployeeView />} />
                 <Route path="/role" element={<Role />} />
                 <Route path="/roleregister" element={<RoleRegister />} />
+                {/* <Route path="/roleview/:id" element={<RoleView />} /> */}
                 <Route path="/roleedit/:id" element={<RoleEdit />} />
                 <Route path="/attendance" element={<Attendance />} />
                 <Route path="/viewattendance" element={<ViewAttendance />} />

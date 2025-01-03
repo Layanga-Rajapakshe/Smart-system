@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Button, Image, Select, SelectItem } from '@nextui-org/react';
-import image1 from '../../assets/images/companyRegister.png';
-import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 import { useGetEmployeeQuery, useUpdateEmployeeMutation } from '../../redux/api/employeeApiSlice';
-import { useGetRolesQuery } from '../../redux/api/roleApiSlice';
-import { useGetCompaniesQuery } from '../../redux/api/companyApiSlice';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Input, Button, CircularProgress, Image } from '@nextui-org/react';
+import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
+import image1 from '../../assets/images/companyRegister.png';
 
 const EmployeeEdit = () => {
   const { id: employeeId } = useParams();
   const navigate = useNavigate();
   const { data: employee, isLoading, isError } = useGetEmployeeQuery(employeeId);
   const [updateEmployee, { isLoading: isUpdating }] = useUpdateEmployeeMutation();
-  const { data: roles } = useGetRolesQuery();
-  const { data: companies } = useGetCompaniesQuery();
 
   const [employeeData, setEmployeeData] = useState({
     name: '',
@@ -22,10 +18,13 @@ const EmployeeEdit = () => {
     hired_date: '',
     post: '',
     role: '',
-    status: 'active',
+    status: '',
     age: '',
+    avatar: '',
     email: '',
     company: '',
+    supervisor: '',
+    supervisees: [],
     agreed_basic: 0,
     re_allowance: 0,
     single_ot: 0,
@@ -33,67 +32,36 @@ const EmployeeEdit = () => {
     meal_allowance: 0,
   });
 
-  const [errors, setErrors] = useState({});
+  const breadcrumbItems = [
+    { label: 'Employees Menu', href: '/employee' },
+    { label: 'Employee Edit', href: `/employee/edit/${employeeId}`, isCurrentPage: true },
+  ];
 
   useEffect(() => {
     if (employee) {
-      setEmployeeData({
-        name: employee.name,
-        birthday: new Date(employee.birthday).toISOString().split('T')[0],
-        userId: employee.userId,
-        hired_date: new Date(employee.hired_date).toISOString().split('T')[0],
-        post: employee.post,
-        role: employee.role,
-        status: employee.status,
-        age: employee.age,
-        email: employee.email,
-        company: employee.company,
-        agreed_basic: employee.agreed_basic,
-        re_allowance: employee.re_allowance,
-        single_ot: employee.single_ot,
-        double_ot: employee.double_ot,
-        meal_allowance: employee.meal_allowance,
-      });
+      setEmployeeData(employee);
     }
   }, [employee]);
 
-  const validateFields = () => {
-    const newErrors = {};
-    if (!employeeData.name) newErrors.name = 'Name is required';
-    if (!employeeData.email) newErrors.email = 'Email is required';
-    if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(employeeData.email)) {
-      newErrors.email = 'Invalid email format';
-    }
-    if (!employeeData.age || employeeData.age <= 0) newErrors.age = 'Age must be a positive number';
-    return newErrors;
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEmployeeData((prev) => ({ ...prev, [name]: value }));
+    setEmployeeData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const fieldErrors = validateFields();
-    if (Object.keys(fieldErrors).length > 0) {
-      setErrors(fieldErrors);
-      return;
-    }
     try {
       await updateEmployee({ id: employeeId, ...employeeData }).unwrap();
-      navigate(`/employee/${employeeId}`);
-    } catch (err) {
-      console.error('Failed to update employee:', err);
+      navigate(`/employee/${employeeId}`); // Redirect to the Employee View page
+    } catch (error) {
+      console.error('Failed to update employee:', error);
     }
   };
 
-  const breadcrumbItems = [
-    { label: 'Employee Menu', href: '/employee' },
-    { label: 'Employee Edit', href: `/employee/edit/${employeeId}`, isCurrentPage: true },
-  ];
-
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <CircularProgress aria-label="Loading" />;
   if (isError) return <div>Error fetching employee data</div>;
 
   return (
@@ -112,127 +80,139 @@ const EmployeeEdit = () => {
 
           <div className="text-center text-[25px] font-bold mb-6 z-10">Employee Edit</div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col w-full max-w-md gap-4 mb-4 z-10 overflow-auto ">
+          <form className="flex flex-col w-full max-w-md gap-4 mb-4 z-10 overflow-auto" onSubmit={handleSubmit}>
             <Input
+              variant="bordered"
               label="Name"
+              type="text"
               name="name"
               value={employeeData.name}
               onChange={handleChange}
-              helperText={errors.name}
-              status={errors.name ? 'error' : 'default'}
             />
             <Input
+              variant="bordered"
               label="Birthday"
+              type="text"
               name="birthday"
-              type="date"
               value={employeeData.birthday}
               onChange={handleChange}
             />
             <Input
+              variant="bordered"
               label="User ID"
+              type="text"
               name="userId"
               value={employeeData.userId}
               onChange={handleChange}
+              readOnly
             />
             <Input
+              variant="bordered"
               label="Hired Date"
+              type="text"
               name="hired_date"
-              type="date"
               value={employeeData.hired_date}
               onChange={handleChange}
             />
             <Input
+              variant="bordered"
               label="Post"
+              type="text"
               name="post"
               value={employeeData.post}
               onChange={handleChange}
             />
-            <Select
+            <Input
+              variant="bordered"
               label="Role"
+              type="text"
               name="role"
               value={employeeData.role}
-              onChange={(value) => setEmployeeData((prev) => ({ ...prev, role: value }))}
-            >
-              {roles?.map((role) => (
-                <SelectItem key={role._id} value={role._id}>{role.name}</SelectItem>
-              ))}
-            </Select>
-            <Select
+              onChange={handleChange}
+            />
+            <Input
+              variant="bordered"
               label="Status"
+              type="text"
               name="status"
               value={employeeData.status}
-              onChange={(value) => setEmployeeData((prev) => ({ ...prev, status: value }))}
-            >
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
-            </Select>
+              onChange={handleChange}
+            />
             <Input
+              variant="bordered"
               label="Age"
+              type="text"
               name="age"
-              type="number"
               value={employeeData.age}
               onChange={handleChange}
-              helperText={errors.age}
-              status={errors.age ? 'error' : 'default'}
             />
             <Input
+              variant="bordered"
               label="Email"
+              type="text"
               name="email"
-              type="email"
               value={employeeData.email}
               onChange={handleChange}
-              helperText={errors.email}
-              status={errors.email ? 'error' : 'default'}
             />
-            <Select
+            <Input
+              variant="bordered"
               label="Company"
+              type="text"
               name="company"
               value={employeeData.company}
-              onChange={(value) => setEmployeeData((prev) => ({ ...prev, company: value }))}
-            >
-              {companies?.map((company) => (
-                <SelectItem key={company._id} value={company._id}>{company.name}</SelectItem>
-              ))}
-            </Select>
+              onChange={handleChange}
+            />
             <Input
+              variant="bordered"
+              label="Supervisor"
+              type="text"
+              name="supervisor"
+              value={employeeData.supervisor}
+              onChange={handleChange}
+            />
+            <Input
+              variant="bordered"
               label="Agreed Basic"
-              name="agreed_basic"
               type="number"
+              name="agreed_basic"
               value={employeeData.agreed_basic}
               onChange={handleChange}
             />
             <Input
-              label="RE Allowance"
-              name="re_allowance"
+              variant="bordered"
+              label="Re-allowance"
               type="number"
+              name="re_allowance"
               value={employeeData.re_allowance}
               onChange={handleChange}
             />
             <Input
+              variant="bordered"
               label="Single OT"
-              name="single_ot"
               type="number"
+              name="single_ot"
               value={employeeData.single_ot}
               onChange={handleChange}
             />
             <Input
+              variant="bordered"
               label="Double OT"
-              name="double_ot"
               type="number"
+              name="double_ot"
               value={employeeData.double_ot}
               onChange={handleChange}
             />
             <Input
+              variant="bordered"
               label="Meal Allowance"
-              name="meal_allowance"
               type="number"
+              name="meal_allowance"
               value={employeeData.meal_allowance}
               onChange={handleChange}
             />
-
-              <div>
-            <Button type="submit" color="primary" disabled={isUpdating}>
-              {isUpdating ? 'Updating...' : 'Update Employee'}
+            <div>
+            <Button type="submit" color="primary" isDisabled={isUpdating}>
+              {isUpdating ? 'Saving...' : 'Save Changes'}
             </Button>
             </div>
           </form>
@@ -244,7 +224,7 @@ const EmployeeEdit = () => {
               isBlurred
               className="w-full h-full object-cover"
               src={image1}
-              alt="Edit page image"
+              alt="Employee Avatar"
             />
           </div>
         </div>

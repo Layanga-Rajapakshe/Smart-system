@@ -1,72 +1,74 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { apiSlice } from "./apiSlice";
+import { ATTENDANCE_URL } from "../constants";
 
-export const attendanceApiSlice = createApi({
-  reducerPath: 'attendanceApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api/attendance' }), // Adjust your base URL as necessary
+export const attendanceApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    // Endpoint for uploading attendance Excel sheet
-    uploadAttendanceSheet: builder.mutation({
-      query: (formData) => ({
-        url: '/upload',
+    // Upload attendance Excel sheet
+    uploadAttendance: builder.mutation({
+      query: (file) => ({
+        url: `${ATTENDANCE_URL}/upload`,
         method: 'POST',
-        body: formData,
+        body: file,
       }),
     }),
-    // Endpoint for uploading holidays Excel sheet
-    uploadHolidaySheet: builder.mutation({
-      query: (formData) => ({
-        url: '/uploadholidays',
+
+    // Upload holidays Excel sheet
+    uploadHolidays: builder.mutation({
+      query: (file) => ({
+        url: `${ATTENDANCE_URL}/uploadholidays`,
         method: 'POST',
-        body: formData,
+        body: file,
       }),
     }),
-    // Endpoint for adding a holiday
-    addHoliday: builder.mutation({
-      query: (holidayData) => ({
-        url: '/addholiday',
-        method: 'POST',
-        body: holidayData,
-      }),
-    }),
-    // Endpoint for deleting a holiday by date
+
+    // Remove a holiday
     removeHoliday: builder.mutation({
       query: (date) => ({
-        url: `/deleteholiday/${date}`,
+        url: `${ATTENDANCE_URL}/deleteholiday/${date}`,
         method: 'DELETE',
       }),
     }),
-    // Endpoint for getting a specific holiday by date
+
+    // Get holiday by date
     getHoliday: builder.query({
-      query: (date) => `/getholiday/${date}`,
+      query: (date) => ({
+        url: `${ATTENDANCE_URL}/getholiday/${date}`,
+        method: 'GET',
+      }),
     }),
-    // Endpoint for getting holidays by year
+
+    // Get holidays by year
     getHolidays: builder.query({
-      query: (year) => `/getholidays/${year}`,
+      query: (year) => ({
+        url: `${ATTENDANCE_URL}/getholidays/${year}`,
+        method: 'GET',
+      }),
     }),
-    // Endpoint for adding a salary month
+
+    // Add salary month
     addSalMonth: builder.mutation({
       query: (month) => ({
-        url: `/addsalmonth/${month}`,
+        url: `${ATTENDANCE_URL}/addsalmonth/${month}`,
         method: 'POST',
       }),
     }),
-    // Endpoint for getting attendance details for a specific user and month
+
+    // Get attendance details
     getAttendanceDetails: builder.query({
-      query: ({ userId, month }) => `/getattendancedetails/${userId}/${month}`,
+      query: ({ userId, month }) => ({
+        url: `${ATTENDANCE_URL}/getattendancedetails/${userId}/${month}`,
+        method: 'GET',
+      }),
     }),
   }),
 });
 
-// Export hooks for usage in functional components
 export const {
-  useUploadAttendanceSheetMutation,
-  useUploadHolidaySheetMutation,
-  useAddHolidayMutation,
+  useUploadAttendanceMutation,
+  useUploadHolidaysMutation,
   useRemoveHolidayMutation,
   useGetHolidayQuery,
   useGetHolidaysQuery,
   useAddSalMonthMutation,
   useGetAttendanceDetailsQuery,
 } = attendanceApiSlice;
-
-export default attendanceApiSlice.reducer;

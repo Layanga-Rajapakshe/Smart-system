@@ -1,15 +1,12 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
-import { useUploadAttendanceMutation, useAddSalMonthMutation } from '../../redux/api/attendanceApiSlice';
+import { useUploadHolidaysMutation } from '../../redux/api/attendanceApiSlice';
 import { toast } from 'react-hot-toast';
-import AddSalaryMonthCard from './AddSalaryMonthCard';
 
-function AttendanceDropzone() {
-  const [uploadAttendanceSheet, { isLoading }] = useUploadAttendanceMutation();
-  const [addSalaryMonth] = useAddSalMonthMutation();
+function HolidayDropzone() {
+  const [uploadHolidaysSheet, { isLoading }] = useUploadHolidaysMutation();
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onDrop = useCallback((acceptedFiles) => {
     // Validate file size (e.g., 10MB limit)
@@ -36,37 +33,31 @@ function AttendanceDropzone() {
     onDrop,
   });
 
-  const handleConfirmUpload = useCallback(() => {
+  const handleConfirmUpload = useCallback(async () => {
     if (!acceptedFiles.length) {
       toast.error('Please upload a valid file before confirming.');
       return;
     }
-    setIsModalOpen(true);
-  }, [acceptedFiles]);
- 
-  const handleCancel = useCallback(() => {
-    removeAll();
-  })
 
-  const handleSubmitSalaryMonth = async (startMonth) => {
     try {
-      // Add salary month first
-      const salaryMonthResult = await addSalaryMonth(startMonth).unwrap();
-      
-      // Prepare and upload file
       const formData = new FormData();
       formData.append('file', acceptedFiles[0]);
-      formData.append('salaryMonthId', salaryMonthResult.id); // Assuming the API returns an ID
       
-      await uploadAttendanceSheet(formData).unwrap();
+      const loadingToast = toast.loading('Uploading holidays file...');
       
-      toast.success('File uploaded successfully');
-      setIsModalOpen(false);
+      await uploadHolidaysSheet(formData).unwrap();
+      
+      toast.dismiss(loadingToast);
+      toast.success('Holidays file uploaded successfully');
     } catch (error) {
-      toast.error(error.data?.message || 'Error processing your request. Please try again.');
+      toast.error(error.data?.message || 'Error uploading holidays file. Please try again.');
       console.error('Upload error:', error);
     }
-  };
+  }, [acceptedFiles, uploadHolidaysSheet]);
+ 
+  const handleCancel = useCallback(() => {
+    acceptedFiles.splice(0, acceptedFiles.length);
+  }, [acceptedFiles]);
 
   return (
     <section className="flex flex-col items-center justify-center min-h-[400px] p-6">
@@ -76,7 +67,7 @@ function AttendanceDropzone() {
       >
         <input {...getInputProps()} />
         <div className="text-center space-y-4">
-          <p className="text-lg">Drag and drop an attendance sheet here, or click to select</p>
+          <p className="text-lg">Drag and drop a holidays sheet here, or click to select</p>
           <p className="text-sm text-gray-500">(Only .xls and .xlsx files are accepted)</p>
         </div>
       </div>
@@ -86,8 +77,8 @@ function AttendanceDropzone() {
           {acceptedFiles.length > 0 && (
             <div className="bg-green-50 p-4 rounded-lg">
               <div className='flex justify-between'>
-              <h4 className="text-lg font-semibold text-green-800">Selected File</h4>
-              <button onClick={handleCancel} className='text-md'>x</button>
+                <h4 className="text-lg font-semibold text-green-800">Selected File</h4>
+                <button onClick={handleCancel} className='text-md'>×</button>
               </div>
               <ul className="mt-2">
                 {acceptedFiles.map((file) => (
@@ -124,20 +115,10 @@ function AttendanceDropzone() {
         onClick={handleConfirmUpload}
         disabled={isLoading || acceptedFiles.length === 0}
       >
-        {isLoading ? (
-          'Uploading'
-        ) : (
-          'Confirm Upload'
-        )}
+        {isLoading ? 'Uploading' : 'Confirm Upload'}
       </button>
-
-      <AddSalaryMonthCard
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-        onSubmit={handleSubmitSalaryMonth}
-      />
     </section>
   );
 }
 
-export default AttendanceDropzone;
+export default HolidayDropzone;

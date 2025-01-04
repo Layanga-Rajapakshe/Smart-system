@@ -19,7 +19,7 @@ import EmployeeEdit from './pages/super_admin/EmployeeEdit';
 import Role from './pages/super_admin/Role';
 import RoleRegister from './pages/super_admin/RoleRegister';
 import RoleEdit from './pages/super_admin/RoleEdit';
-import ViewAttendance from './pages/admin/ViewAttendance';
+import AttendanceView from './pages/admin/ViewAttendance';
 import MyDashboard from './pages/employee/MyDashboard';
 import LeaveStatus from './pages/employee/LeaveStatus';
 import LeaveRequest from './pages/employee/LeaveRequest';
@@ -68,7 +68,7 @@ export default function App() {
                 {/* <Route path="/roleview/:id" element={<RoleView />} /> */}
                 <Route path="/roleedit/:id" element={<RoleEdit />} />
                 <Route path="/attendance" element={<Attendance />} />
-                <Route path="/viewattendance" element={<ViewAttendance />} />
+                <Route path="/viewattendance" element={<AttendanceView />} />
                 <Route path="/superviseelist" element={<Supervisees />} />
                 <Route path="/superviseetasks" element={<Tasks />} />
                 <Route path="/newtask" element={<CreateTask />} />

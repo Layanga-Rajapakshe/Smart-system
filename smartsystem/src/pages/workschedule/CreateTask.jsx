@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Tabs, Tab, Card } from "@nextui-org/react";
 import { TbRepeat, TbRepeatOff } from "react-icons/tb";
 import NonRepeatTask from './NonRepeatTask';
-import RepeatTask from './RepeatTask';
+import RepeatTask from './RepeatTask';  
+import GeneralBreadCrumb from "../../components/GeneralBreadCrumb";
+
 
 const CreateTask = () => {
   const [selectedTab, setSelectedTab] = useState('non-repeat');
@@ -11,8 +13,19 @@ const CreateTask = () => {
     setSelectedTab(key);
   };
 
+  const breadcrumbItems = [
+    { label: 'My Tasks', href: '/mytasks', isCurrentPage: true },
+    { label: 'Add New Task', href: '/newtask', isCurrentPage: true }
+  ];
+
   return (
     <div>
+      <GeneralBreadCrumb items={breadcrumbItems} />
+      <div className="container rounded-lg px-4">
+          <div className="flex flex-col">
+          <div className='flex justify-between'>
+            <h1 className='text-2xl font-bold'>Add New Task</h1>
+          </div>
       <div className="flex w-full flex-col items-center p-6">
         <Tabs
           color='primary'
@@ -49,6 +62,8 @@ const CreateTask = () => {
         </Tabs>
       </div>
     </div>
+  </div>
+</div>
   );
 };
 

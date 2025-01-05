@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
 import { Input, Textarea, Select, SelectItem, Button } from '@nextui-org/react';
 import { toast } from 'react-hot-toast';
+import { useCreateTaskMutation } from '../../redux/api/taskApiSlice';
+import { useSelector } from 'react-redux';
 
 const RepeatTask = () => {
   const [taskName, setTaskName] = useState('');
   const [description, setDescription] = useState('');
   const [frequency, setFrequency] = useState('Daily');
-  const [priorityLevel, setPriorityLevel] = useState(1);
+  const [priorityLevel, setPriorityLevel] = useState('Medium');
   const [estimatedHours, setEstimatedHours] = useState('');
   const [startingDate, setStartingDate] = useState('');
 
-  const handleSubmit = (e) => {
+  const { userInfo } = useSelector((state) => state.auth);
+  const [createTask, { isLoading }] = useCreateTaskMutation();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!taskName || !description || !startingDate || !estimatedHours) {
@@ -18,28 +23,36 @@ const RepeatTask = () => {
       return;
     }
 
-    const newTaskData = {
-      Task: taskName,
-      Comment: description,
-      StartingDate: new Date(startingDate),
-      PriorityLevel: priorityLevel,
-      EstimatedHours: parseFloat(estimatedHours),
-      isRecurring: true,
-      TaskType: frequency,
-    };
+    try {
+      const newTaskData = {
+        UserId: userInfo.userId,
+        Task: taskName,
+        Comment: description,
+        StartingDate: new Date(startingDate),
+        PriorityLevel: priorityLevel,
+        EstimatedHours: parseFloat(estimatedHours),
+        isRecurring: true,
+        TaskType: frequency,
+        TaskId: `REC-${frequency}-${Date.now()}`,
+        deadLine: new Date(startingDate)
+      };
 
-    // Assume the task creation logic here, like an API call
-    console.log(newTaskData);
-    toast.success("Repeating Task Added Successfully");
+      await createTask(newTaskData).unwrap();
+      toast.success(`${frequency} Recurring Task Added Successfully`);
 
-    // Clear form fields after successful submission
-    setTaskName('');
-    setDescription('');
-    setFrequency('Daily');
-    setPriorityLevel(1);
-    setEstimatedHours('');
-    setStartingDate('');
+      setTaskName('');
+      setDescription('');
+      setFrequency('Daily');
+      setPriorityLevel('Medium');
+      setEstimatedHours('');
+      setStartingDate('');
+      
+    } catch (err) {
+      toast.error(err?.data?.message || err.error || 'An error occurred while creating recurring task');
+    }
   };
+
+  const today = new Date().toISOString().split('T')[0];
 
   return (
     <div>
@@ -54,6 +67,7 @@ const RepeatTask = () => {
               onChange={(e) => setTaskName(e.target.value)}
               required
               placeholder='Enter task name'
+              isDisabled={isLoading}
             />
             <Textarea
               label='Description'
@@ -61,13 +75,16 @@ const RepeatTask = () => {
               onChange={(e) => setDescription(e.target.value)}
               required
               placeholder='Enter task description'
+              isDisabled={isLoading}
             />
             <Input
               label='Starting Date'
               type='date'
               value={startingDate}
               onChange={(e) => setStartingDate(e.target.value)}
+              min={today}
               required
+              isDisabled={isLoading}
             />
             <Input
               label='Estimated Hours'
@@ -76,28 +93,39 @@ const RepeatTask = () => {
               onChange={(e) => setEstimatedHours(e.target.value)}
               required
               placeholder='Enter estimated hours'
-            />
-            <Input
-              label='Priority Level'
-              type='number'
-              value={priorityLevel}
-              onChange={(e) => setPriorityLevel(parseInt(e.target.value))}
-              min={1}
-              max={5}
-              placeholder='Enter priority level (1-5)'
+              min="0.5"
+              step="0.5"
+              isDisabled={isLoading}
             />
             <Select
-              label="Frequency"
-              value={frequency}
-              onChange={setFrequency}
-              placeholder="Select frequency"
+              label="Priority Level"
+              selectedKeys={[priorityLevel]}
+              onChange={(e) => setPriorityLevel(e.target.value)}
+              defaultSelectedKeys={["Medium"]}
+              isDisabled={isLoading}
             >
-              <SelectItem value="Daily">Daily</SelectItem>
-              <SelectItem value="Weekly">Weekly</SelectItem>
-              <SelectItem value="Monthly">Monthly</SelectItem>
+              <SelectItem key="High" value="High" className="text-danger">High</SelectItem>
+              <SelectItem key="Medium" value="Medium" className="text-warning">Medium</SelectItem>
+              <SelectItem key="Low" value="Low" className="text-success">Low</SelectItem>
             </Select>
-            <Button type='submit' color='primary'>
-              Add Repeating Task
+            <Select
+              label="Frequency"
+              selectedKeys={[frequency]}
+              onChange={(e) => setFrequency(e.target.value)}
+              placeholder="Select frequency"
+              isDisabled={isLoading}
+            >
+              <SelectItem key="Daily" value="Daily">Daily</SelectItem>
+              <SelectItem key="Weekly" value="Weekly">Weekly</SelectItem>
+              <SelectItem key="Monthly" value="Monthly">Monthly</SelectItem>
+            </Select>
+            <Button 
+              type='submit' 
+              color='primary'
+              isLoading={isLoading}
+              isDisabled={isLoading}
+            >
+              {isLoading ? 'Adding Recurring Task...' : 'Add Repeating Task'}
             </Button>
           </form>
         </div>

@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
-import { Input, Textarea, Button } from '@nextui-org/react';
+import { Input, Textarea, Select, SelectItem, Button } from '@nextui-org/react';
 import { toast } from 'react-hot-toast';
+import { useCreateTaskMutation } from '../../redux/api/taskApiSlice';
+import { useSelector } from 'react-redux';
 
 const NonRepeatTask = () => {
   const [taskName, setTaskName] = useState('');
   const [description, setDescription] = useState('');
-  const [priorityLevel, setPriorityLevel] = useState(1);
+  const [priorityLevel, setPriorityLevel] = useState('Medium');
   const [estimatedHours, setEstimatedHours] = useState('');
   const [startingDate, setStartingDate] = useState('');
 
-  const handleSubmit = (e) => {
+  const { userInfo } = useSelector((state) => state.auth);
+  const [createTask, { isLoading }] = useCreateTaskMutation();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!taskName || !description || !startingDate || !estimatedHours) {
@@ -17,25 +22,32 @@ const NonRepeatTask = () => {
       return;
     }
 
-    const newTaskData = {
-      Task: taskName,
-      Comment: description,
-      StartingDate: new Date(startingDate),
-      PriorityLevel: priorityLevel,
-      EstimatedHours: parseFloat(estimatedHours),
-      isRecurring: false,
-    };
+    try {
+      const newTaskData = {
+        UserId: userInfo.userId,
+        Task: taskName,
+        Comment: description,
+        StartingDate: new Date(startingDate),
+        PriorityLevel: priorityLevel,
+        EstimatedHours: parseFloat(estimatedHours),
+        isRecurring: false,
+        TaskType: 'Weekly',
+        TaskId: `TASK-${Date.now()}`,
+        deadLine: new Date(startingDate),
+      };
 
-    // Assume the task creation logic here, like an API call
-    console.log(newTaskData);
-    toast.success("One-Time Task Added Successfully");
+      await createTask(newTaskData).unwrap();
+      toast.success("One-Time Task Added Successfully");
 
-    // Clear form fields after successful submission
-    setTaskName('');
-    setDescription('');
-    setPriorityLevel(1);
-    setEstimatedHours('');
-    setStartingDate('');
+      setTaskName('');
+      setDescription('');
+      setPriorityLevel('Medium');
+      setEstimatedHours('');
+      setStartingDate('');
+      
+    } catch (err) {
+      toast.error(err?.data?.message || err.error || 'An error occurred');
+    }
   };
 
   return (
@@ -51,6 +63,7 @@ const NonRepeatTask = () => {
               onChange={(e) => setTaskName(e.target.value)}
               required
               placeholder='Enter task name'
+              isDisabled={isLoading}
             />
             <Textarea
               label='Description'
@@ -58,6 +71,7 @@ const NonRepeatTask = () => {
               onChange={(e) => setDescription(e.target.value)}
               required
               placeholder='Enter task description'
+              isDisabled={isLoading}
             />
             <Input
               label='Starting Date'
@@ -65,6 +79,7 @@ const NonRepeatTask = () => {
               value={startingDate}
               onChange={(e) => setStartingDate(e.target.value)}
               required
+              isDisabled={isLoading}
             />
             <Input
               label='Estimated Hours'
@@ -73,18 +88,28 @@ const NonRepeatTask = () => {
               onChange={(e) => setEstimatedHours(e.target.value)}
               required
               placeholder='Enter estimated hours'
+              min="0.5"
+              step="0.5"
+              isDisabled={isLoading}
             />
-            <Input
-              label='Priority Level'
-              type='number'
-              value={priorityLevel}
-              onChange={(e) => setPriorityLevel(parseInt(e.target.value))}
-              min={1}
-              max={5}
-              placeholder='Enter priority level (1-5)'
-            />
-            <Button type='submit' color='primary'>
-              Add One-Time Task
+            <Select
+              label="Priority Level"
+              selectedKeys={[priorityLevel]}
+              onChange={(e) => setPriorityLevel(e.target.value)}
+              defaultSelectedKeys={["Medium"]}
+              isDisabled={isLoading}
+            >
+              <SelectItem key="High" value="High" className="text-danger">High</SelectItem>
+              <SelectItem key="Medium" value="Medium" className="text-warning">Medium</SelectItem>
+              <SelectItem key="Low" value="Low" className="text-success">Low</SelectItem>
+            </Select>
+            <Button 
+              type='submit' 
+              color='primary'
+              isLoading={isLoading}
+              isDisabled={isLoading}
+            >
+              {isLoading ? 'Adding Task...' : 'Add One-Time Task'}
             </Button>
           </form>
         </div>

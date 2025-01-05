@@ -38,6 +38,7 @@ const Sidebar = () => {
 
     const employeeMenuItems = [
         {title: 'My Dashboard', href: '/dashboard', icon: <TbLayoutDashboard/>, isActive: ['/dashboard'].includes(location.pathname)},
+        {title: 'My Tasks', href: '/mytasks', icon: <TbLayoutDashboard/>, isActive: ['/mytasks'].includes(location.pathname)},
     ]
 
     const seniorAccountantMenuItems = [

@@ -60,7 +60,7 @@ export const tasksApiSlice = apiSlice.injectEndpoints({
     // Get weekly tasks for a specific date
     getWeeklyTasks: builder.query({
       query: ( UserId, StartingDate ) => ({
-        url: `${TASKS_URL}/weeklytasks/${UserId}/${StartingDate}`,
+        url: `${TASKS_URL}/weeklytasks`,
         method: 'GET',
         body: { UserId, StartingDate }
       }),

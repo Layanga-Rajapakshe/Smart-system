@@ -17,7 +17,7 @@ const DailyTask = () => {
     error
   } = useGetRecurringTasksQuery({
     UserId: userInfo.userId,
-    TaskType: 'Daily',
+    taskType: 'Daily',
   });
 
   console.log(dailyTasks);

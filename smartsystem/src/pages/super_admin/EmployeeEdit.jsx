@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { useGetEmployeeQuery, useUpdateEmployeeMutation } from '../../redux/api/employeeApiSlice';
+import {
+  useGetEmployeeQuery,
+  useUpdateEmployeeMutation,
+  useGetEmployeesQuery,
+} from '../../redux/api/employeeApiSlice';
+import { useGetRolesQuery } from '../../redux/api/roleApiSlice';
+import { useGetCompaniesQuery } from '../../redux/api/companyApiSlice';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Input, Button, CircularProgress, Image } from '@nextui-org/react';
+import { Input, Button, CircularProgress, Image, Select, SelectItem } from '@nextui-org/react';
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 import image1 from '../../assets/images/companyRegister.png';
+import { toast } from 'react-hot-toast';
 
 const EmployeeEdit = () => {
   const { id: employeeId } = useParams();
   const navigate = useNavigate();
+
   const { data: employee, isLoading, isError } = useGetEmployeeQuery(employeeId);
   const [updateEmployee, { isLoading: isUpdating }] = useUpdateEmployeeMutation();
   const { data: rolesData, isLoading: rolesLoading } = useGetRolesQuery();
@@ -58,9 +66,11 @@ const EmployeeEdit = () => {
     e.preventDefault();
     try {
       await updateEmployee({ id: employeeId, ...employeeData }).unwrap();
-      navigate(`/employee/${employeeId}`); // Redirect to the Employee View page
+      toast.success('Employee updated successfully!');
+      navigate(`/employeeview/${employeeId}`); // Redirect to Employee View page
     } catch (error) {
-      console.error('Failed to update employee:', error);
+      toast.error('Failed to update employee. Please try again.');
+      console.error('Error updating employee:', error);
     }
   };
 
@@ -83,7 +93,10 @@ const EmployeeEdit = () => {
 
           <div className="text-center text-[25px] font-bold mb-6 z-10">Employee Edit</div>
 
-          <form className="flex flex-col w-full max-w-md gap-4 mb-4 z-10 overflow-auto" onSubmit={handleSubmit}>
+          <form
+            className="flex flex-col w-full max-w-md gap-4 mb-4 z-10 overflow-auto"
+            onSubmit={handleSubmit}
+          >
             <Input
               variant="bordered"
               label="Name"
@@ -125,14 +138,14 @@ const EmployeeEdit = () => {
               value={employeeData.post}
               onChange={handleChange}
             />
-            <Input
-              variant="bordered"
-              label="Role"
-              type="text"
-              name="role"
-              value={employeeData.role}
-              onChange={handleChange}
-            />
+            <Select label="Role" name="role" value={employeeData.role} onChange={handleChange}>
+              {rolesData &&
+                rolesData.map((role) => (
+                  <SelectItem key={role._id} value={role._id}>
+                    {role.name}
+                  </SelectItem>
+                ))}
+            </Select>
             <Input
               variant="bordered"
               label="Status"
@@ -157,22 +170,32 @@ const EmployeeEdit = () => {
               value={employeeData.email}
               onChange={handleChange}
             />
-            <Input
-              variant="bordered"
+            <Select
               label="Company"
-              type="text"
               name="company"
               value={employeeData.company}
               onChange={handleChange}
-            />
-            <Input
-              variant="bordered"
+            >
+              {companiesData &&
+                companiesData.map((company) => (
+                  <SelectItem key={company._id} value={company._id}>
+                    {company.c_name}
+                  </SelectItem>
+                ))}
+            </Select>
+            <Select
               label="Supervisor"
-              type="text"
               name="supervisor"
               value={employeeData.supervisor}
               onChange={handleChange}
-            />
+            >
+              {employeesData &&
+                employeesData.map((employee) => (
+                  <SelectItem key={employee._id} value={employee._id} textValue='string'>
+                    {employee.name}
+                  </SelectItem>
+                ))}
+            </Select>
             <Input
               variant="bordered"
               label="Agreed Basic"
@@ -214,9 +237,9 @@ const EmployeeEdit = () => {
               onChange={handleChange}
             />
             <div>
-            <Button type="submit" color="primary" isDisabled={isUpdating}>
-              {isUpdating ? 'Saving...' : 'Save Changes'}
-            </Button>
+              <Button type="submit" color="primary" isDisabled={isUpdating}>
+                {isUpdating ? 'Saving...' : 'Save Changes'}
+              </Button>
             </div>
           </form>
         </div>

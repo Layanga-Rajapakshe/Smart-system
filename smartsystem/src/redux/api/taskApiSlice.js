@@ -59,8 +59,8 @@ export const tasksApiSlice = apiSlice.injectEndpoints({
 
     // Get weekly tasks for a specific date
     getWeeklyTasks: builder.query({
-      query: ({ UserId, StartingDate }) => ({
-        url: `${TASKS_URL}/weeklytasks`,
+      query: ( UserId, StartingDate ) => ({
+        url: `${TASKS_URL}/weeklytasks/${UserId}/${StartingDate}`,
         method: 'GET',
         body: { UserId, StartingDate }
       }),
@@ -68,10 +68,9 @@ export const tasksApiSlice = apiSlice.injectEndpoints({
 
     // Get recurring tasks
     getRecurringTasks: builder.query({
-      query: ({ UserId, taskType }) => ({
-        url: `${TASKS_URL}/showrecurringtasks`,
+      query: ( UserId, taskType ) => ({
+        url: `${TASKS_URL}/showrecurringtasks/${UserId}/${taskType}`,
         method: 'GET',
-        body: { UserId, taskType }
       }),
     }),
   }),

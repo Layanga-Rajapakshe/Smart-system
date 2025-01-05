@@ -11,7 +11,7 @@ const DailyTask = () => {
   const { userInfo } = useSelector((state) => state.auth);
 
   const {
-    data: weeklyTasks,
+    data: dailyTasks,
     isLoading,
     isError,
     error
@@ -20,26 +20,7 @@ const DailyTask = () => {
     TaskType: 'Daily',
   });
 
-  // Transform tasks to match the expected format for the TaskTable
-  const transformTasks = (tasks) => {
-    return tasks?.map(task => ({
-      id: task.id,
-      userId: task.userId,
-      name: task.name,
-      status: task.status || 'pending',
-      role: task.role || 'user',
-      date: task.date
-    })) || [];
-  };
-
-  const dailyTasks = weeklyTasks ? 
-    transformTasks(
-      weeklyTasks.filter(task => {
-        const taskDate = new Date(task.date);
-        taskDate.setHours(0, 0, 0, 0);
-        return taskDate.getTime() === today.getTime();
-      })
-    ) : [];
+  console.log(dailyTasks);
 
   if (isLoading) {
     return (

@@ -65,6 +65,7 @@ const EmployeeEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log(employeeData);
       await updateEmployee({ id: employeeId, ...employeeData }).unwrap();
       toast.success('Employee updated successfully!');
       navigate(`/employeeview/${employeeId}`); // Redirect to Employee View page
@@ -138,10 +139,10 @@ const EmployeeEdit = () => {
               value={employeeData.post}
               onChange={handleChange}
             />
-            <Select label="Role" name="role" value={employeeData.role} onChange={handleChange}>
+            <Select label="Role" name="role" value={employeeData.role} defaultSelectedKeys={employeeData.role} onChange={handleChange}>
               {rolesData &&
                 rolesData.map((role) => (
-                  <SelectItem key={role._id} value={role._id}>
+                  <SelectItem key={role._id} value={role._id} textValue="string">
                     {role.name}
                   </SelectItem>
                 ))}
@@ -178,7 +179,7 @@ const EmployeeEdit = () => {
             >
               {companiesData &&
                 companiesData.map((company) => (
-                  <SelectItem key={company._id} value={company._id}>
+                  <SelectItem key={company._id} value={company._id} textValue="string">
                     {company.c_name}
                   </SelectItem>
                 ))}
@@ -191,7 +192,7 @@ const EmployeeEdit = () => {
             >
               {employeesData &&
                 employeesData.map((employee) => (
-                  <SelectItem key={employee._id} value={employee._id} textValue='string'>
+                  <SelectItem key={employee._id} value={employee._id} textValue='string' >
                     {employee.name}
                   </SelectItem>
                 ))}

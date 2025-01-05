@@ -15,8 +15,7 @@ const AttendanceView = () => {
     data: attendanceData = [], 
     isLoading, 
     isError,
-    error,
-    refetch
+    error 
   } = useGetAttendanceDetailsQuery({ userId, month });
 
   const getStatusColor = (status) => {

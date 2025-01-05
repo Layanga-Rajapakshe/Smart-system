@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Input, Button, Image, Select, SelectItem } from "@nextui-org/react";
 import GeneralBreadCrumb from "../../components/GeneralBreadCrumb";
-import { useCreateEmployeeMutation } from "../../redux/api/employeeApiSlice";
+import { useCreateEmployeeMutation, useGetEmployeesQuery } from "../../redux/api/employeeApiSlice";
 import { useGetRolesQuery } from "../../redux/api/roleApiSlice";
 import { useGetCompaniesQuery } from "../../redux/api/companyApiSlice";
 import { toast } from "react-hot-toast";
@@ -11,6 +11,7 @@ const EmployeeRegister = () => {
   const [createEmployee, { isLoading }] = useCreateEmployeeMutation();
   const { data: rolesData, isLoading: rolesLoading } = useGetRolesQuery();
   const { data: companiesData, isLoading: companiesLoading } = useGetCompaniesQuery();
+  const { data: employeesData, isLoading: employeesLoading } = useGetEmployeesQuery();
 
   const [name, setName] = useState("");
   const [birthday, setBirthday] = useState("");
@@ -185,12 +186,15 @@ const EmployeeRegister = () => {
               value={avatar}
               onChange={(e) => setAvatar(e.target.value)}
             />
-            {/* <Input
-              variant="bordered"
-              label="Supervisor (ObjectId)"
-              value={supervisor}
-              onChange={(e) => setSupervisor(e.target.value)}
-            /> */}
+            <Select className="max-w-xs" 
+            label="Select Supervisor"
+            onChange={(e) => setSupervisor(e.target.value)}
+            required
+            >
+              {employeesData?.map((employee) => (
+                <SelectItem key={employee._id} textValue="string" value={employee._id}>{employee.name}</SelectItem>
+              ))}
+            </Select>
             <Input
               variant="bordered"
               label="Agreed Basic"

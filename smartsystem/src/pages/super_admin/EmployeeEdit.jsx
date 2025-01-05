@@ -10,6 +10,9 @@ const EmployeeEdit = () => {
   const navigate = useNavigate();
   const { data: employee, isLoading, isError } = useGetEmployeeQuery(employeeId);
   const [updateEmployee, { isLoading: isUpdating }] = useUpdateEmployeeMutation();
+  const { data: rolesData, isLoading: rolesLoading } = useGetRolesQuery();
+  const { data: companiesData, isLoading: companiesLoading } = useGetCompaniesQuery();
+  const { data: employeesData, isLoading: employeesLoading } = useGetEmployeesQuery();
 
   const [employeeData, setEmployeeData] = useState({
     name: '',

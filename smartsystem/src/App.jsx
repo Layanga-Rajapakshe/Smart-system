@@ -68,7 +68,7 @@ export default function App() {
                 {/* <Route path="/roleview/:id" element={<RoleView />} /> */}
                 <Route path="/roleedit/:id" element={<RoleEdit />} />
                 <Route path="/attendance" element={<Attendance />} />
-                <Route path="/viewattendance" element={<AttendanceView />} />
+                <Route path="/viewattendance/:userId/:month" element={<AttendanceView />} />
                 <Route path="/superviseelist" element={<Supervisees />} />
                 <Route path="/superviseetasks" element={<Tasks />} />
                 <Route path="/newtask" element={<CreateTask />} />

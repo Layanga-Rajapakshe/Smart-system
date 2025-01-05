@@ -10,7 +10,7 @@ const Attendance = () => {
     const [selectedDropzone, setSelectedDropzone] = useState("attendance");
 
     const handleNewClick = () => {
-        navigate('/viewattendance   ');
+        navigate('/viewattendance/1/2024-03');
     };
 
     const breadcrumbItems = [

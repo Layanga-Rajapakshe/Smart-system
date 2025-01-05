@@ -1,0 +1,16 @@
+.meeting-list {
+    margin-top: 1.5rem;
+  }
+  
+  .meeting-item {
+    padding: 1rem 0;
+  }
+  
+  .meeting-topic {
+    font-weight: 600;
+  }
+  
+  .no-meetings {
+    color: #757575;
+  }
+  

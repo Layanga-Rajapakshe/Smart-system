@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {Button,Container,Box,Stack,Typography,Modal,FormControl,InputLabel,MenuItem,Select,TextField,} from "@mui/material";
+import { Button, Container, Box, Stack, Typography, Modal, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import Header from "../../components/KPI/Header";
 import ScoreTable from "../../components/KPI/ScoreTable";
 import KPIChart from "../../components/KPI/KPIChart";
@@ -11,11 +11,7 @@ const EmployeeSelection = ({ employees, onSelect, onMonthChange, selectedMonth }
   <Box sx={{ display: "flex", width: "100%", gap: 2 }}>
     <FormControl sx={{ flex: 1 }}>
       <InputLabel>Employee</InputLabel>
-      <Select
-        onChange={(e) => onSelect(e.target.value)}
-        label="Employee"
-        size="small"
-      >
+      <Select onChange={(e) => onSelect(e.target.value)} label="Employee" size="small">
         {employees.map((employee) => (
           <MenuItem key={employee.id} value={employee}>
             {employee.name}
@@ -41,12 +37,18 @@ const EmployeeSelection = ({ employees, onSelect, onMonthChange, selectedMonth }
 const KPIDashboard = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState("");
-  const [scores, setScores] = useState(Array(6).fill(0));
+  const [scores, setScores] = useState({
+    Attitude: { subParams: Array(3).fill(0) },
+    Habits: { subParams: Array(3).fill(0) },
+    Skills: { subParams: Array(3).fill(0) },
+    Performance: { subParams: Array(3).fill(0) },
+    "Subject Specific": { subParams: Array(3).fill(0) },
+  });
   const [employeeScores, setEmployeeScores] = useState([]);
   const [showChart, setShowChart] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState(""); 
-  const [comment, setComment] = useState(""); 
+  const [successMessage, setSuccessMessage] = useState("");
+  const [comment, setComment] = useState("");
   const navigate = useNavigate();
 
   const handleAddScores = () => {
@@ -58,10 +60,16 @@ const KPIDashboard = () => {
       const newEntry = { ...selectedEmployee, scores, month: selectedMonth, comment };
       setEmployeeScores([...employeeScores, newEntry]);
       setSelectedEmployee(null);
-      setScores(Array(6).fill(0));
-      setComment(""); 
+      setScores({
+        Attitude: { subParams: Array(3).fill(0) },
+        Habits: { subParams: Array(3).fill(0) },
+        Skills: { subParams: Array(3).fill(0) },
+        Performance: { subParams: Array(3).fill(0) },
+        "Subject Specific": { subParams: Array(3).fill(0) },
+      });
+      setComment("");
       setErrorMessage("");
-      setSuccessMessage("Successfully added scores!"); 
+      setSuccessMessage("Successfully added scores!");
     }
   };
 
@@ -83,7 +91,7 @@ const KPIDashboard = () => {
           onSelect={(employee) => {
             setSelectedEmployee(employee);
             setErrorMessage("");
-            setSuccessMessage(""); 
+            setSuccessMessage("");
           }}
           onMonthChange={(month) => {
             setSelectedMonth(month);
@@ -96,21 +104,13 @@ const KPIDashboard = () => {
       <EmployeeDetails employee={selectedEmployee} />
 
       {successMessage && (
-        <Typography
-          variant="h6"
-          color="success"
-          sx={{ mt: 1, textAlign: "center", fontWeight: 600 }}
-        >
+        <Typography variant="h6" color="success" sx={{ mt: 1, textAlign: "center", fontWeight: 600 }}>
           {successMessage}
         </Typography>
       )}
 
       {errorMessage && (
-        <Typography
-          variant="body2"
-          color="error"
-          sx={{ mt: 1, textAlign: "center", fontWeight: 600 }}
-        >
+        <Typography variant="body2" color="error" sx={{ mt: 1, textAlign: "center", fontWeight: 600 }}>
           {errorMessage}
         </Typography>
       )}
@@ -132,98 +132,25 @@ const KPIDashboard = () => {
         />
       </Box>
 
-      <Stack
-        direction="row"
-        spacing={2}
-        sx={{
-          mt: 3,
-          justifyContent: "center",
-        }}
-      >
-        <Button
-          onClick={handleAddScores}
-          variant="contained"
-          color="primary"
-          sx={{
-            borderRadius: "20px",
-            px: 4,
-            fontWeight: 600,
-            transition: "background-color 0.3s",
-            "&:hover": {
-              backgroundColor: "#0056b3",
-            },
-          }}
-        >
+      <Stack direction="row" spacing={2} sx={{ mt: 3, justifyContent: "center" }}>
+        <Button onClick={handleAddScores} variant="contained" color="primary" sx={{ borderRadius: "20px", px: 4, fontWeight: 600 }}>
           Add Score
         </Button>
-        <Button
-          onClick={handleViewAnalysis}
-          variant="contained"
-          color="primary"
-          sx={{
-            borderRadius: "20px",
-            px: 4,
-            fontWeight: 600,
-            transition: "background-color 0.3s",
-            "&:hover": {
-              backgroundColor: "#0056b3",
-            },
-          }}
-        >
+        <Button onClick={handleViewAnalysis} variant="contained" color="primary" sx={{ borderRadius: "20px", px: 4, fontWeight: 600 }}>
           View Analysis
         </Button>
-        <Button
-          onClick={handleViewKPIDetails}
-          variant="outlined"
-          color="info"
-          sx={{
-            borderRadius: "20px",
-            px: 4,
-            fontWeight: 600,
-            transition: "background-color 0.3s",
-            "&:hover": {
-              backgroundColor: "#d1ecf1",
-              color: "#0c5460",
-            },
-          }}
-        >
+        <Button onClick={handleViewKPIDetails} variant="outlined" color="info" sx={{ borderRadius: "20px", px: 4, fontWeight: 600 }}>
           View Overall KPI Details
         </Button>
       </Stack>
 
-      <Modal
-        open={showChart}
-        onClose={() => setShowChart(false)}
-        aria-labelledby="analysis-chart"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backdropFilter: "blur(5px)",
-        }}
-      >
-        <Box
-          sx={{
-            width: "80%",
-            bgcolor: "background.paper",
-            borderRadius: 2,
-            boxShadow: 24,
-            p: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
+      <Modal open={showChart} onClose={() => setShowChart(false)} aria-labelledby="analysis-chart" sx={{ display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(5px)" }}>
+        <Box sx={{ width: "80%", bgcolor: "background.paper", borderRadius: 2, boxShadow: 24, p: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
           <Typography id="analysis-chart" variant="h6" component="h2" sx={{ mb: 2 }}>
             KPI Analysis Chart
           </Typography>
           <KPIChart employeeScores={employeeScores} />
-          <Button
-            onClick={() => setShowChart(false)}
-            variant="contained"
-            color="error"
-            sx={{ mt: 3, borderRadius: "20px" }}
-          >
+          <Button onClick={() => setShowChart(false)} variant="contained" color="error" sx={{ mt: 3, borderRadius: "20px" }}>
             Close
           </Button>
         </Box>

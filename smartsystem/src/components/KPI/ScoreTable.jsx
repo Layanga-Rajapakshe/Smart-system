@@ -1,7 +1,13 @@
 import React from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Slider, Paper, Typography, Tooltip } from "@mui/material";
 
-const parameters = ["Attitude", "Habits", "Skills", "Performance", "Subject Specific"];
+const categories = [
+  { name: "Attitude", subParams: ["Communication", "Behavior", "Teamwork"] },
+  { name: "Habits", subParams: ["Punctuality", "Consistency", "Proactiveness"] },
+  { name: "Skills", subParams: ["Technical Skills", "Problem Solving", "Creativity"] },
+  { name: "Performance", subParams: ["Task Completion", "Efficiency", "Quality of Work"] },
+  { name: "Subject Specific", subParams: ["Knowledge", "Application", "Research"] },
+];
 
 const getComment = (score) => {
   if (score >= 9) return "Excellent";
@@ -13,13 +19,14 @@ const getComment = (score) => {
 
 const ScoreTable = ({ scores, setScores }) => {
   const calculateOverallKPI = () => {
-    const sum = scores.reduce((acc, score) => acc + (score || 0), 0);
-    return (sum / 5).toFixed(1);
+    const sum = Object.values(scores).reduce((acc, category) => acc + category.subParams.reduce((subAcc, score) => subAcc + (score || 0), 0), 0);
+    const totalSubParams = Object.values(scores).reduce((acc, category) => acc + category.subParams.length, 0);
+    return (sum / totalSubParams).toFixed(1);
   };
 
-  const handleScoreChange = (index, value) => {
-    const newScores = [...scores];
-    newScores[index] = value;
+  const handleScoreChange = (category, index, value) => {
+    const newScores = { ...scores };
+    newScores[category].subParams[index] = value;
     setScores(newScores);
   };
 
@@ -32,31 +39,40 @@ const ScoreTable = ({ scores, setScores }) => {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: "bold", width: "30%", py: 0.5 }}>Parameter</TableCell>
+              <TableCell sx={{ fontWeight: "bold", width: "30%", py: 0.5 }}>Category</TableCell>
               <TableCell sx={{ fontWeight: "bold", width: "30%", textAlign: "center", py: 0.5 }}>Score</TableCell>
               <TableCell sx={{ fontWeight: "bold", width: "40%", textAlign: "center", py: 0.5 }}>Comment</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {parameters.map((parameter, index) => (
-              <TableRow key={index}>
-                <TableCell>{parameter}</TableCell>
-                <TableCell align="center">
-                  <Tooltip title={`Score: ${scores[index]}`} arrow>
-                    <Slider
-                      value={scores[index]}
-                      onChange={(e, value) => handleScoreChange(index, value)}
-                      step={1}
-                      min={0}
-                      max={10}
-                      marks
-                      sx={{ width: "90%" }}
-                      valueLabelDisplay="auto"
-                    />
-                  </Tooltip>
-                </TableCell>
-                <TableCell align="center">{getComment(scores[index])}</TableCell>
-              </TableRow>
+            {categories.map((category) => (
+              <React.Fragment key={category.name}>
+                <TableRow>
+                  <TableCell sx={{ fontWeight: "bold" }} colSpan={3}>
+                    {category.name}
+                  </TableCell>
+                </TableRow>
+                {category.subParams.map((subParam, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{subParam}</TableCell>
+                    <TableCell align="center">
+                      <Tooltip title={`Score: ${scores[category.name].subParams[index]}`} arrow>
+                        <Slider
+                          value={scores[category.name].subParams[index]}
+                          onChange={(e, value) => handleScoreChange(category.name, index, value)}
+                          step={1}
+                          min={0}
+                          max={10}
+                          marks
+                          sx={{ width: "90%" }}
+                          valueLabelDisplay="auto"
+                        />
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell align="center">{getComment(scores[category.name].subParams[index])}</TableCell>
+                  </TableRow>
+                ))}
+              </React.Fragment>
             ))}
             <TableRow>
               <TableCell sx={{ fontWeight: "bold", color: "#00796b" }}>Overall KPI</TableCell>

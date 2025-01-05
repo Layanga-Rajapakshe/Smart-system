@@ -23,10 +23,13 @@ const KPIChart = ({ employeeScores }) => {
   const labels = ["Attitude", "Habits", "Skills", "Performance", "Subject Specific"];
   const criticalThreshold = 5;
 
-  // Data for each employee 
+  // Data for each employee
   const datasets = employeeScores.map((employee, index) => ({
     label: employee.name,
-    data: employee.scores.slice(0, labels.length), 
+    data: labels.map((label) => {
+      const score = employee.scores[label] || 0;  // Ensure score exists for each category
+      return score > 10 ? 10 : score;  // Cap score at 10 if it's higher
+    }),
     borderColor: `hsl(${(index * 70 + 50) % 360}, 70%, 50%)`,
     backgroundColor: `hsla(${(index * 70 + 50) % 360}, 70%, 50%, 0.3)`,
     pointBorderColor: `hsl(${(index * 70 + 50) % 360}, 70%, 40%)`,
@@ -36,12 +39,12 @@ const KPIChart = ({ employeeScores }) => {
     tension: 0.4,
   }));
 
-  //  critical region
+  // Critical region (zone under the threshold)
   datasets.push({
     label: "Critical Zone",
     data: Array(labels.length).fill(criticalThreshold),
-    borderColor: "rgba(255, 165, 0, 0)", 
-    backgroundColor: "rgba(255, 165, 0, 0.2)", 
+    borderColor: "rgba(255, 165, 0, 0)",
+    backgroundColor: "rgba(255, 165, 0, 0.2)",
     pointRadius: 0,
     fill: true,
     tension: 0,
@@ -84,7 +87,7 @@ const KPIChart = ({ employeeScores }) => {
     const chart = chartRef.current;
     const downloadButton = document.getElementById("download-button");
 
-   
+    // Hide the button while downloading
     downloadButton.style.visibility = "hidden";
 
     html2canvas(chart).then((canvas) => {
@@ -93,7 +96,7 @@ const KPIChart = ({ employeeScores }) => {
       pdf.addImage(imgData, "PNG", 10, 10, 280, 150);
       pdf.save("Employee_KPI_Analysis.pdf");
 
-      
+      // Show the button after downloading
       downloadButton.style.visibility = "visible";
     });
   };

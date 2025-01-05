@@ -37,6 +37,10 @@ import EmployeePerformance from "./pages/KPI/EmployeePerformance";
 import CEOKpiSettingPage from "./pages/KPI/CEOKpiSettingPage";
 import AddParameter from "./pages/KPI/Add_Parameter";
 import DetailsParameter from "./pages/KPI/ParameterDetails";
+import MeetingHome from "./pages/MeetingMinute/MeetingHome";
+import Meetings from "./pages/MeetingMinute/Meetings";
+import Notifications from './pages/MeetingMinute/Notifications'
+import NotificationList from './pages/MeetingMinute/NotificationList'
 
 
 
@@ -84,8 +88,10 @@ export default function App() {
                 <Route path="/KpiSetting" element={<CEOKpiSettingPage />} />
                 <Route path="/add-parameter" element={<AddParameter />} />
                 <Route path="/detail-parameter" element={<DetailsParameter />} />
-
-
+                <Route path="/meetingHome" element={<MeetingHome />} />
+                <Route path="/meetings" element={<Meetings />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/notificationsList" element={<NotificationList />} />
                 
               </Routes>
             </div>

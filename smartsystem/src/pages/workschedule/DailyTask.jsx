@@ -16,7 +16,7 @@ const DailyTask = () => {
     isError,
     error
   } = useGetRecurringTasksQuery({
-    UserId: userInfo.userId,
+    userId: userInfo.userId,
     taskType: 'Daily',
   });
 
@@ -47,8 +47,8 @@ const DailyTask = () => {
   return (
     <Card className="w-full">
       <CardBody>
-        {dailyTasks.length > 0 ? (
-          <TaskTable tasks={dailyTasks} />
+        {dailyTasks.tasks.length > 0 ? (
+          <TaskTable tasks={dailyTasks.tasks} />
         ) : (
           <div className="flex justify-center items-center h-48 text-default-500">
             No tasks scheduled for today

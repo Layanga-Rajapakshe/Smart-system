@@ -5,28 +5,25 @@ export const tasksApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // Get this week's tasks
     getThisWeekTasks: builder.query({
-      query: (userId) => ({
-        url: `${TASKS_URL}/thisweek`,
+      query: ({userId}) => ({
+        url: `${TASKS_URL}/thisweek/${userId}`,
         method: 'GET',
-        body: { UserId: userId }
       }),
     }),
 
     // Get next week's tasks
     getNextWeekTasks: builder.query({
-      query: (userId) => ({
-        url: `${TASKS_URL}/nextweek`,
+      query: ({userId}) => ({
+        url: `${TASKS_URL}/nextweek/${userId}`,
         method: 'GET',
-        body: { UserId: userId }
       }),
     }),
 
     // Get previous week's tasks
     getPrevWeekTasks: builder.query({
-      query: (userId) => ({
-        url: `${TASKS_URL}/prevweek`,
+      query: ({userId}) => ({
+        url: `${TASKS_URL}/prevweek/${userId}`,
         method: 'GET',
-        body: { UserId: userId }
       }),
     }),
 
@@ -68,8 +65,8 @@ export const tasksApiSlice = apiSlice.injectEndpoints({
 
     // Get recurring tasks
     getRecurringTasks: builder.query({
-      query: ( UserId, taskType ) => ({
-        url: `${TASKS_URL}/showrecurringtasks/${UserId}/${taskType}`,
+      query: ( {userId, taskType} ) => ({
+        url: `${TASKS_URL}/showrecurringtasks/${userId}/${taskType}`,
         method: 'GET',
       }),
     }),

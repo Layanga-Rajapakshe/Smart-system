@@ -47,6 +47,16 @@ const Sidebar = () => {
         {title: 'Edit Salary', href: '/editsalary', icon: <TbLayoutDashboard/>, isActive: ['/editsalary'].includes(location.pathname)},
     ]
 
+    const kpiMenuItems = [
+        {title: 'KPI Management', href: '/KPIWelcom', icon: <TbLayoutDashboard/>, isActive: ['/KPIWelcom'].includes(location.pathname)},
+        {title: 'KPI Dashboard', href: '/KPIdashboard', icon: <TbLayoutDashboard/>, isActive: ['/KPIdashboard'].includes(location.pathname)},
+    ]
+
+    const meetingMinuteMenuItems = [
+        {title: 'Meeting Minute Home', href: '/meetingHome', icon: <TbLayoutDashboard/>, isActive: ['/meetingHome'].includes(location.pathname)},
+        {title: 'Meetings', href: '/meetings', icon: <TbLayoutDashboard/>, isActive: ['/meetings'].includes(location.pathname)},
+    ]
+
 
     return (
         <>
@@ -59,8 +69,8 @@ const Sidebar = () => {
             
             <div className={`fixed top-0 left-0 h-full w-56 z-50 bg-background text-black transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out `}>
                 <div className="flex flex-col h-full overflow-y-scroll">
-                    <div className="flex gap-8 justify-center py-6 px-4">
-                        <CompaniesDropdown />
+                    <div className="justify-center py-6 px-4">
+                        <h1 className="text-2xl font-bold">Smart System</h1>
                     </div>
 
                     <SidebarMenu title="Super Admin Menu">
@@ -134,15 +144,34 @@ const Sidebar = () => {
                             </ul>
                         </nav>
                     </SidebarMenu>
+
+                    <SidebarMenu title="KPI Menu">
+                        <nav className="flex-grow">
+                            <ul>
+                                {kpiMenuItems.map((item, index) => (
+                                    <li key={index}>
+                                        <SidebarItem {...item} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    </SidebarMenu>
+
+                    <SidebarMenu title="Meeting Minute Menu">
+                        <nav className="flex-grow">
+                            <ul>
+                                {meetingMinuteMenuItems.map((item, index) => (
+                                    <li key={index}>
+                                        <SidebarItem {...item} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    </SidebarMenu>
                     
                     <div className="p-5 mt-auto">
                         <div className="flex items-center">
-                            <img
-                                src="/api/placeholder/32/32"
-                                alt="User"
-                                className="w-8 h-8 rounded-full mr-3"
-                            />
-                            <span>John Doe</span>
+                            <span>© 2025 Smart Systems Inc. All rights reserved.</span>
                         </div>
                     </div>
                 </div>

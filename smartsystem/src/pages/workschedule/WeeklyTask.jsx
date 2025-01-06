@@ -1,111 +1,58 @@
-import React, { useState } from "react";
-import { Tabs, Tab, Card, CardBody, Spinner } from "@nextui-org/react";
+import React from 'react';
+import { useGetRecurringTasksQuery } from '../../redux/api/taskApiSlice';
+import TaskTable from './TaskTable';
+import { Card, CardBody, Spinner } from "@nextui-org/react";
 import { useSelector } from 'react-redux';
-import { 
-  useGetThisWeekTasksQuery,
-  useGetNextWeekTasksQuery,
-  useGetPrevWeekTasksQuery 
-} from '../../redux/api/taskApiSlice';
-import TaskTable from "./TaskTable";
 
 const WeeklyTask = () => {
-  const [weekView, setWeekView] = useState("thisWeek");
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   const { userInfo } = useSelector((state) => state.auth);
 
   const {
-    data: thisWeekTasks,
-    isLoading: isLoadingThisWeek,
-    isError: isErrorThisWeek,
-    error: errorThisWeek
-  } = useGetThisWeekTasksQuery({ userId: userInfo.userId });
+    data: weeklyTasks,
+    isLoading,
+    isError,
+    error
+  } = useGetRecurringTasksQuery({
+    userId: userInfo.userId,
+    taskType: 'Weekly',
+  });
 
-  const {
-    data: nextWeekTasks,
-    isLoading: isLoadingNextWeek,
-    isError: isErrorNextWeek,
-    error: errorNextWeek
-  } = useGetNextWeekTasksQuery({ userId: userInfo.userId });
-
-  const {
-    data: prevWeekTasks,
-    isLoading: isLoadingPrevWeek,
-    isError: isErrorPrevWeek,
-    error: errorPrevWeek
-  } = useGetPrevWeekTasksQuery({ userId: userInfo.userId });
-
-  const renderTabContent = (tasks, isLoading, isError, error) => {
-    if (isLoading) {
-      return (
+  if (isLoading) {
+    return (
+      <Card className="w-full">
         <CardBody className="flex justify-center items-center h-48">
           <Spinner size="lg" />
         </CardBody>
-      );
-    }
+      </Card>
+    );
+  }
 
-    if (isError) {
-      return (
+  if (isError) {
+    return (
+      <Card className="w-full">
         <CardBody className="p-6">
           <div className="text-red-500">
             Error loading tasks: {error?.data?.message || 'Something went wrong'}
           </div>
         </CardBody>
-      );
-    }
+      </Card>
+    );
+  }
 
-    return (
+  return (
+    <Card className="w-full">
       <CardBody>
-        {tasks.length > 0 ? (
-          <TaskTable tasks={tasks} />
+        {weeklyTasks.tasks.length > 0 ? (
+          <TaskTable tasks={weeklyTasks.tasks} />
         ) : (
           <div className="flex justify-center items-center h-48 text-default-500">
             No tasks scheduled for this week
           </div>
         )}
       </CardBody>
-    );
-  };
-
-  return (
-    <Card className="w-full">
-      <Tabs 
-        selectedKey={weekView} 
-        onSelectionChange={setWeekView}
-        className="p-0"
-      >
-        <Tab 
-          key="thisWeek" 
-          title="This Week"
-        >
-          {renderTabContent(
-            thisWeekTasks?.tasks || [], 
-            isLoadingThisWeek, 
-            isErrorThisWeek, 
-            errorThisWeek
-          )}
-        </Tab>
-        <Tab 
-          key="previousWeek" 
-          title="Previous Week"
-        >
-          {renderTabContent(
-            prevWeekTasks?.tasks || [], 
-            isLoadingPrevWeek, 
-            isErrorPrevWeek, 
-            errorPrevWeek
-          )}
-        </Tab>
-        <Tab 
-          key="nextWeek" 
-          title="Next Week"
-        >
-          {renderTabContent(
-            nextWeekTasks?.tasks || [], 
-            isLoadingNextWeek, 
-            isErrorNextWeek, 
-            errorNextWeek
-          )}
-        </Tab>
-      </Tabs>
     </Card>
   );
 };

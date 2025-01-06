@@ -15,8 +15,23 @@ const AttendanceView = () => {
     data: attendanceData = [], 
     isLoading, 
     isError,
-    error 
-  } = useGetAttendanceDetailsQuery({ userId, month });
+    error,
+    isFetching // Add this to check if query is attempting to fetch
+  } = useGetAttendanceDetailsQuery(
+    { userId, month },
+    {
+      // Add skip condition to prevent invalid requests
+      skip: !userId || !month
+    }
+  );
+
+  console.log('Query State:', { 
+    isLoading, 
+    isError, 
+    error, 
+    isFetching,
+    resultData: attendanceData 
+  });
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {

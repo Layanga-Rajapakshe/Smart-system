@@ -61,7 +61,7 @@ export const attendanceApiSlice = apiSlice.injectEndpoints({
       }),
     }),
   }),
-});
+}); 
 
 export const {
   useUploadAttendanceMutation,

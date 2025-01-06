@@ -9,41 +9,62 @@ const NonRepeatTask = () => {
   const [description, setDescription] = useState('');
   const [priorityLevel, setPriorityLevel] = useState('Medium');
   const [estimatedHours, setEstimatedHours] = useState('');
-  const [startingDate, setStartingDate] = useState('');
+  const [startingDateType, setStartingDateType] = useState('thisWeek');
+  const [deadlineDate, setDeadlineDate] = useState('');
 
   const { userInfo } = useSelector((state) => state.auth);
   const [createTask, { isLoading }] = useCreateTaskMutation();
 
+  const computeStartingDate = (dateType) => {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    if (dateType === "thisWeek") {
+      return startOfWeek;
+    } else if (dateType === "nextWeek") {
+      const nextWeekDate = new Date(startOfWeek);
+      nextWeekDate.setDate(nextWeekDate.getDate() + 7);
+      return nextWeekDate;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!taskName || !description || !startingDate || !estimatedHours) {
+    if (!taskName || !description || !startingDateType || !estimatedHours || !deadlineDate) {
       toast.error("Please fill out all fields");
       return;
     }
 
     try {
+      const computedDate = computeStartingDate(startingDateType);
+      
       const newTaskData = {
         UserId: userInfo.userId,
         Task: taskName,
         Comment: description,
-        StartingDate: new Date(startingDate),
+        StartingDate: startingDateType,
         PriorityLevel: priorityLevel,
         EstimatedHours: parseFloat(estimatedHours),
         isRecurring: false,
-        TaskType: 'Weekly',
+        TaskType: '',
         TaskId: `TASK-${Date.now()}`,
-        deadLine: new Date(startingDate),
+        deadLine: new Date(deadlineDate),
       };
 
       await createTask(newTaskData).unwrap();
       toast.success("One-Time Task Added Successfully");
 
+      // Reset form
       setTaskName('');
       setDescription('');
       setPriorityLevel('Medium');
       setEstimatedHours('');
-      setStartingDate('');
+      setStartingDateType('thisWeek');
+      setDeadlineDate('');
       
     } catch (err) {
       toast.error(err?.data?.message || err.error || 'An error occurred');
@@ -65,6 +86,7 @@ const NonRepeatTask = () => {
               placeholder='Enter task name'
               isDisabled={isLoading}
             />
+            
             <Textarea
               label='Description'
               value={description}
@@ -73,14 +95,27 @@ const NonRepeatTask = () => {
               placeholder='Enter task description'
               isDisabled={isLoading}
             />
+            
+            <Select
+              label="Starting Week"
+              selectedKeys={[startingDateType]}
+              onChange={(e) => setStartingDateType(e.target.value)}
+              defaultSelectedKeys={["thisWeek"]}
+              isDisabled={isLoading}
+            >
+              <SelectItem key="thisWeek" value="thisWeek">This Week</SelectItem>
+              <SelectItem key="nextWeek" value="nextWeek">Next Week</SelectItem>
+            </Select>
+            
             <Input
-              label='Starting Date'
+              label='Deadline'
               type='date'
-              value={startingDate}
-              onChange={(e) => setStartingDate(e.target.value)}
+              value={deadlineDate}
+              onChange={(e) => setDeadlineDate(e.target.value)}
               required
               isDisabled={isLoading}
             />
+            
             <Input
               label='Estimated Hours'
               type='number'
@@ -92,6 +127,7 @@ const NonRepeatTask = () => {
               step="0.5"
               isDisabled={isLoading}
             />
+            
             <Select
               label="Priority Level"
               selectedKeys={[priorityLevel]}
@@ -103,6 +139,7 @@ const NonRepeatTask = () => {
               <SelectItem key="Medium" value="Medium" className="text-warning">Medium</SelectItem>
               <SelectItem key="Low" value="Low" className="text-success">Low</SelectItem>
             </Select>
+            
             <Button 
               type='submit' 
               color='primary'

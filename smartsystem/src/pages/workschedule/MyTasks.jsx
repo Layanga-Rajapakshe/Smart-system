@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@nextui-org/react";
 import { IoAdd } from "react-icons/io5";
 import GeneralBreadCrumb from "../../components/GeneralBreadCrumb";
+import OneTimeTask from "./OneTimeTask";
 
 export default function MyTasks() {
   const navigate = useNavigate();
@@ -32,6 +33,13 @@ export default function MyTasks() {
           </div>
     <div className="flex w-full flex-col">
       <Tabs >
+      <Tab value="Onetime" title='Onetime'>Onetime
+          <Card>
+            <CardBody>
+              <OneTimeTask />
+            </CardBody>
+          </Card>
+        </Tab>
         <Tab value="daily" title='Daily'>Daily
           <Card>
             <CardBody>

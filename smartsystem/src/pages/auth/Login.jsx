@@ -8,6 +8,7 @@ import { toast } from 'react-hot-toast';
 import Password from './Password';
 import image2 from '../../assets/images/companyLogo.png';
 import image1 from '../../assets/images/loginpage.jpeg';
+import { createApi } from "unsplash-js";  
 
 // Array of interesting facts - you can move this to a separate API endpoint
 const facts = [
@@ -22,6 +23,12 @@ const facts = [
   "The first email was sent in 1971",
   "The QWERTY keyboard layout was designed to slow down typing"
 ];
+
+const api = createApi({
+  // Don't forget to set your access token here!
+  // See https://unsplash.com/developers
+  accessKey: 'U4mVpQ-eEGWhorkq7zou7HgumiSJGcZoqRj6Qxi7LOg',
+});
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -39,16 +46,11 @@ const Login = () => {
     // Get random background image from Unsplash
     const fetchRandomImage = async () => {
       try {
-        const response = await fetch(
-          'https://api.unsplash.com/photos/random?query=nature,architecture&orientation=landscape',
-          {
-            headers: {
-              'Authorization': UNSPLASH_API_KEY // Replace with your Unsplash API key
-            }
-          }
-        );
-        const data = await response.json();
-        setBackgroundImage(data.urls.regular);
+        api.photos.getRandom({ query: "company", orientation: "landscape" })
+        .then(result => {
+          setBackgroundImage(result.response.urls.regular);
+          console.log(result);
+        });
       } catch (error) {
         // Fallback image if API fails
         console.log(error);

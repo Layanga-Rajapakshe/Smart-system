@@ -32,5 +32,6 @@ export default defineConfig({
     },
   },
   envDir: './env',
+  UNSPLASH_API_KEY:'U4mVpQ-eEGWhorkq7zou7HgumiSJGcZoqRj6Qxi7LOg',
 });
 

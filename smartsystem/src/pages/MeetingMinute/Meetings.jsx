@@ -87,7 +87,7 @@ function Meetings() {
         Seamlessly manage your company's meetings with ease and efficiency.
       </p>
       <Button color="primary" onPress={() => setIsFormOpen(true)}>
-        Create Meeting
+        Create Project
       </Button>
 
       <Modal isOpen={isFormOpen} onOpenChange={setIsFormOpen}>

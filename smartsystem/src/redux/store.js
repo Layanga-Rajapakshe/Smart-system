@@ -2,11 +2,13 @@ import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from "@reduxjs/toolkit/query/react";
 import { apiSlice } from "./api/apiSlice";
 import authReducer from './features/auth/authSlice';
+import categoriesReducer from "./features/categoriesSlice";
 
 const store = configureStore({
   reducer: {
     // API slices reducers
     [apiSlice.reducerPath]: apiSlice.reducer,
+    categories: categoriesReducer,
 
     // Authentication reducer
     auth: authReducer,
@@ -28,3 +30,6 @@ const store = configureStore({
 setupListeners(store.dispatch);
 
 export default store;
+
+
+

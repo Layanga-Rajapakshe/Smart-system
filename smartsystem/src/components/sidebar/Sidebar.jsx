@@ -86,6 +86,8 @@ const Sidebar = () => {
                 ref={sidebarRef}
                 className={`fixed top-0 left-0 h-full w-56 z-50 bg-background text-black transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out`}
             >
+
+
                 <div className="flex flex-col h-full overflow-y-scroll">
                     {/* Companies Dropdown */}
                   { /* <div className="flex gap-8 justify-center py-6 px-4">
@@ -164,8 +166,6 @@ const Sidebar = () => {
                             </ul>
                         </nav>
                     </SidebarMenu>
-
-                    {/* Sidebar Footer */}
                     
                 </div>
             </div>

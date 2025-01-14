@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Card, Badge, Select, SelectItem } from "@nextui-org/react";
-import { useGetAttendanceDetailsQuery } from '../../redux/api/attendanceApiSlice';
+import { useAttendance } from './useAttendance';
 import AttendanceDropzone from './AttendanceDropzone';
 import HolidayDropzone from './HolidayDropzone';
 
@@ -16,39 +16,20 @@ const AttendanceView = () => {
     isLoading, 
     isError,
     error,
-    isFetching // Add this to check if query is attempting to fetch
-  } = useGetAttendanceDetailsQuery(
-    { userId, month },
-    {
-      // Add skip condition to prevent invalid requests
-      skip: !userId || !month
-    }
-  );
-
-  console.log('Query State:', { 
-    isLoading, 
-    isError, 
-    error, 
     isFetching,
-    resultData: attendanceData 
-  });
+    refetch
+  } = useAttendance(userId, month);
 
-  const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'present':
-        return 'success';
-      case 'absent':
-        return 'danger';
-      case 'half-day':
-        return 'warning';
-      default:
-        return 'default';
-    }
+  const getStatusColor = (isLeave) => {
+    if (isLeave) return 'danger';
+    return 'success';
   };
 
   const formatTime = (timeString) => {
     if (!timeString) return '-';
-    return format(new Date(timeString), 'hh:mm a');
+    // Handle time in HH:mm:ss format
+    const [hours, minutes] = timeString.split(':');
+    return `${hours}:${minutes}`;
   };
 
   const renderDropzoneSection = () => {
@@ -83,7 +64,7 @@ const AttendanceView = () => {
     if (isError) {
       return (
         <div className="text-center text-red-500 p-4">
-          Error: {error?.data?.message || 'Failed to fetch attendance records'}
+          Error: {error?.message || 'Failed to fetch attendance records'}
         </div>
       );
     }
@@ -95,8 +76,7 @@ const AttendanceView = () => {
           <div className="flex gap-4 items-center">
             <div className="flex gap-2">
               <Badge content="Present" color="success" />
-              <Badge content="Absent" color="danger" />
-              <Badge content="Half-day" color="warning" />
+              <Badge content="Leave" color="danger" />
             </div>
             <Select 
               label="View"
@@ -117,11 +97,13 @@ const AttendanceView = () => {
         >
           <TableHeader>
             <TableColumn>Date</TableColumn>
-            <TableColumn>Status</TableColumn>
-            <TableColumn>Check In</TableColumn>
-            <TableColumn>Check Out</TableColumn>
-            <TableColumn>Work Hours</TableColumn>
-            <TableColumn>Notes</TableColumn>
+            <TableColumn>In Time</TableColumn>
+            <TableColumn>Out Time</TableColumn>
+            <TableColumn>Time Period</TableColumn>
+            <TableColumn>Standard Hours</TableColumn>
+            <TableColumn>OT Hours</TableColumn>
+            <TableColumn>Extra Hours</TableColumn>
+            <TableColumn>Short Hours</TableColumn>
           </TableHeader>
           <TableBody>
             {attendanceData.map((record) => (
@@ -129,17 +111,20 @@ const AttendanceView = () => {
                 <TableCell>
                   {format(new Date(record.Date), 'MMM dd, yyyy')}
                 </TableCell>
+        
+                <TableCell>{formatTime(record.In)}</TableCell>
+                <TableCell>{formatTime(record.Out)}</TableCell>
+                <TableCell>{formatTime(record.TimePeriod)}</TableCell>
+                <TableCell>{formatTime(record.stdHours)}</TableCell>
                 <TableCell>
-                  <Badge color={getStatusColor(record.Status)} variant="flat">
-                    {record.Status}
-                  </Badge>
+                  <div className="space-y-1">
+                    <div>Single: {formatTime(record.singleOt)}</div>
+                    <div>Double: {formatTime(record.doubleOt)}</div>
+                    <div>Poya: {formatTime(record.poyaOt)}</div>
+                  </div>
                 </TableCell>
-                <TableCell>{formatTime(record.CheckIn)}</TableCell>
-                <TableCell>{formatTime(record.CheckOut)}</TableCell>
-                <TableCell>
-                  {record.WorkHours ? `${record.WorkHours.toFixed(2)} hrs` : '-'}
-                </TableCell>
-                <TableCell>{record.Notes || '-'}</TableCell>
+                <TableCell>{formatTime(record.extraWorkingHrs)}</TableCell>
+                <TableCell>{formatTime(record.shortWorkingHrs)}</TableCell>
               </TableRow>
             ))}
           </TableBody>

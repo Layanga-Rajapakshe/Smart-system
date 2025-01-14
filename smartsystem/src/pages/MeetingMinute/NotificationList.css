@@ -27,11 +27,11 @@
     background-color: #ffffff;
   }
   
-  .button {
+  button {
     text-transform: uppercase;
   }
   
-  .button:hover {
+  button:hover {
     background-color: #0056b3;
   }
   

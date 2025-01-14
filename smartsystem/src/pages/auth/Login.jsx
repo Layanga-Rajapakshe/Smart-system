@@ -46,7 +46,7 @@ const Login = () => {
     // Get random background image from Unsplash
     const fetchRandomImage = async () => {
       try {
-        api.photos.getRandom({ query: "company", orientation: "landscape" })
+        api.photos.getRandom({ query: "cinematic", orientation: "landscape" })
         .then(result => {
           setBackgroundImage(result.response.urls.regular);
           console.log(result);

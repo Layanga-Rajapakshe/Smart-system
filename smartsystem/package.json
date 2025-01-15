@@ -44,6 +44,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.24.1",
     "recharts": "^2.13.0",
+    "redux": "^5.0.1",
     "tailwind-forms": "^1.0.6",
     "unsplash-js": "^7.0.19"
   },

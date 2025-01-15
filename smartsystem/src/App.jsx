@@ -40,6 +40,7 @@ import AddParameter from "./pages/KPI/Add_Parameter";
 import DetailsParameter from "./pages/KPI/ParameterDetails";
 import MeetingHome from "./pages/MeetingMinute/MeetingHome";
 import Meetings from "./pages/MeetingMinute/Meetings";
+import ProjectDetails from "./pages/MeetingMinute/ProjectDetails"
 import Notifications from './pages/MeetingMinute/Notifications';
 import NotificationList from './pages/MeetingMinute/NotificationList';
 
@@ -87,6 +88,7 @@ export default function App() {
                   <Route path="/detail-parameter" element={<DetailsParameter />} />
                   <Route path="/meetingHome" element={<MeetingHome />} />
                   <Route path="/meetings" element={<Meetings />} />
+                  <Route path="/project/:projectId" element={<ProjectDetails />} />
                   <Route path="/notifications" element={<Notifications />} />
                   <Route path="/notificationsList" element={<NotificationList />} />
                 </Routes>

@@ -1,13 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Slider, Paper, Typography, Tooltip } from "@mui/material";
-
-const categories = [
-  { name: "Attitude", subParams: ["Communication", "Behavior", "Teamwork"] },
-  { name: "Habits", subParams: ["Punctuality", "Consistency", "Proactiveness"] },
-  { name: "Skills", subParams: ["Technical Skills", "Problem Solving", "Creativity"] },
-  { name: "Performance", subParams: ["Task Completion", "Efficiency", "Quality of Work"] },
-  { name: "Subject Specific", subParams: ["Knowledge", "Application", "Research"] },
-];
+import axios from "axios";
 
 const getComment = (score) => {
   if (score >= 9) return "Excellent";
@@ -17,11 +10,40 @@ const getComment = (score) => {
   return "Very Poor";
 };
 
-const ScoreTable = ({ scores, setScores }) => {
+const ScoreTable = () => {
+  const [categories, setCategories] = useState([]);
+  const [scores, setScores] = useState({});
+
+  useEffect(() => {
+    // Fetch categories from backend
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("http://localhost:4400/api/kpiParameter/");
+        setCategories(response.data);
+
+        // Initialize scores with empty values
+        const initialScores = {};
+        response.data.forEach((category) => {
+          initialScores[category.name] = {
+            subParams: Array(category.parameters.length).fill(0),
+          };
+        });
+        setScores(initialScores);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   const calculateOverallKPI = () => {
-    const sum = Object.values(scores).reduce((acc, category) => acc + category.subParams.reduce((subAcc, score) => subAcc + (score || 0), 0), 0);
+    const sum = Object.values(scores).reduce(
+      (acc, category) => acc + category.subParams.reduce((subAcc, score) => subAcc + (score || 0), 0),
+      0
+    );
     const totalSubParams = Object.values(scores).reduce((acc, category) => acc + category.subParams.length, 0);
-    return (sum / totalSubParams).toFixed(1);
+    return totalSubParams > 0 ? (sum / totalSubParams).toFixed(1) : 0;
   };
 
   const handleScoreChange = (category, index, value) => {
@@ -52,13 +74,13 @@ const ScoreTable = ({ scores, setScores }) => {
                     {category.name}
                   </TableCell>
                 </TableRow>
-                {category.subParams.map((subParam, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{subParam}</TableCell>
+                {category.parameters.map((parameter, index) => (
+                  <TableRow key={parameter._id}>
+                    <TableCell>{parameter.name}</TableCell>
                     <TableCell align="center">
-                      <Tooltip title={`Score: ${scores[category.name].subParams[index]}`} arrow>
+                      <Tooltip title={`Score: ${scores[category.name]?.subParams[index] || 0}`} arrow>
                         <Slider
-                          value={scores[category.name].subParams[index]}
+                          value={scores[category.name]?.subParams[index] || 0}
                           onChange={(e, value) => handleScoreChange(category.name, index, value)}
                           step={1}
                           min={0}
@@ -69,7 +91,7 @@ const ScoreTable = ({ scores, setScores }) => {
                         />
                       </Tooltip>
                     </TableCell>
-                    <TableCell align="center">{getComment(scores[category.name].subParams[index])}</TableCell>
+                    <TableCell align="center">{getComment(scores[category.name]?.subParams[index] || 0)}</TableCell>
                   </TableRow>
                 ))}
               </React.Fragment>

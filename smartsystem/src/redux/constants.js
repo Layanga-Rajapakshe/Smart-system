@@ -6,3 +6,4 @@ export const ROLE_URL = "/api/role";
 export const ATTENDANCE_URL = "api/attendance"
 export const TASKS_URL = "/api/twoweek";
 export const NOTIFICATIONS_URL = "/api/notifications";
+export const KPI_URL="/api/kpis"

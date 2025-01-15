@@ -1,133 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ParameterDetails = () => {
-  const kpiData = [
-    {
-      name: "Attitude",
-      parameters: [
-        {
-          name: "Positive mental attitude (PMA)",
-          description:
-            "Faith, integrity, hope, optimism, courage, initiative, generosity, tolerance, tactfulness, kindliness, good common sense",
-          weight: 10,
-        },
-      ],
-    },
-    {
-      name: "Habits/Behavior",
-      parameters: [
-        {
-          name: "7th habits",
-          description: "Practices for personal and professional growth",
-          weight: 9,
-        },
-        {
-          name: "Connectivity",
-          description: "Response to email, messages, and calls",
-          weight: 8,
-        },
-        {
-          name: "Teamwork",
-          description: "Supporting the team",
-          weight: 9,
-        },
-        {
-          name: "Meeting habits",
-          description:
-            "Attend to meeting, Come prepared, Following meeting minutes and completing the activity",
-          weight: 9,
-        },
-        {
-          name: "Time management",
-          description:
-            "Prioritizing work correctly, Allocated time efficiently, Meet deadline",
-          weight: 9,
-        },
-        {
-          name: "Positive thinking",
-          description: "",
-          weight: 9,
-        },
-        {
-          name: "Send the time happily",
-          description: "",
-          weight: 9,
-        },
-        {
-          name: "Planning the leaves",
-          description: "",
-          weight: 9,
-        },
-        {
-          name: "Punctuality",
-          description: "",
-          weight: 9,
-        },
-        {
-          name: "Actively",
-          description: "",
-          weight: 9,
-        },
-      ],
-    },
-    {
-      name: "Skills",
-      parameters: [
-        {
-          name: "Communicates",
-          description: "Warble Communication, Written Communication",
-          weight: 10,
-        },
-        {
-          name: "Stakeholder Management",
-          description:
-            "Client, Consultant, Main Contractor, Other sub-contractors",
-          weight: 10,
-        },
-      ],
-    },
-    {
-      name: "Performance",
-      parameters: [
-        {
-          name: "Dedication",
-          description:
-            "Highlight important work and issues to be addressed, Focus, Deliver complete output",
-          weight: 10,
-        },
-        {
-          name: "Key Performance",
-          description: "Safe organize, Time management, Working speed",
-          weight: 10,
-        },
-        {
-          name: "Problem-solving skills",
-          description: "",
-          weight: 10,
-        },
-      ],
-    },
-    {
-      name: "Knowledge",
-      parameters: [
-        {
-          name: "Product knowledge",
-          description: "",
-          weight: 10,
-        },
-        {
-          name: "Knowledge Organization & objectives",
-          description: "",
-          weight: 10,
-        },
-        {
-          name: "Operational knowledge",
-          description: "",
-          weight: 10,
-        },
-      ],
-    },
-  ];
+  const [kpiData, setKpiData] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch KPI data from backend
+    const fetchKpiData = async () => {
+      try {
+        const response = await axios.get("http://localhost:4400/api/kpiParameter/");
+        setKpiData(response.data);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+
+    fetchKpiData();
+  }, []);
 
   return (
     <div style={styles.container}>
@@ -137,6 +28,21 @@ const ParameterDetails = () => {
           Comprehensive view of KPI Categories, Parameters, and Weights
         </p>
       </header>
+      <div style={styles.buttonWrapper}>
+        <button
+          style={styles.button}
+          onClick={() => navigate("/add-parameter")}
+        >
+          Edit Parameter
+        </button>
+        
+        <button
+          style={styles.button}
+          onClick={() => navigate("/KPIdashboard")}
+        >
+          Add Score
+        </button>
+      </div>
       <div style={styles.tableWrapper}>
         <table style={styles.table}>
           <thead>
@@ -203,6 +109,26 @@ const styles = {
     fontSize: "1.2rem",
     color: "#666",
   },
+  buttonWrapper: {
+    display: "flex",
+    justifyContent: "center",
+    gap: "15px",
+    marginBottom: "20px",
+  },
+  button: {
+    backgroundColor: "#6200ea",
+    color: "#fff",
+    border: "none",
+    padding: "10px 20px",
+    fontSize: "1rem",
+    fontWeight: "bold",
+    borderRadius: "5px",
+    cursor: "pointer",
+    transition: "background-color 0.3s",
+  },
+  buttonHover: {
+    backgroundColor: "#4b00d1",
+  },
   tableWrapper: {
     overflowX: "auto",
     borderRadius: "10px",
@@ -241,5 +167,6 @@ const styles = {
     verticalAlign: "top",
   },
 };
+
 
 export default ParameterDetails;

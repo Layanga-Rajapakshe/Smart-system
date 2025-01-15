@@ -1,241 +1,231 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Card,
-  Form,
-  Input,
-  Collapse,
-  Modal,
-  Space,
-  notification,
-  Empty,
-  Typography,
-  Tooltip,
-} from "antd";
-import {
-  PlusCircleOutlined,
-  DeleteFilled,
-  SaveFilled,
-  EditFilled,
-} from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux";
+import {Button,Card,Form,Input,Collapse,Modal,Space,notification,Empty,Typography,Tooltip,} from "antd";
+import {PlusCircleOutlined,DeleteFilled,SaveFilled,EditFilled,} from "@ant-design/icons";
 import { motion } from "framer-motion";
+import axios from "axios"; // Import axios for API requests
+import {setCategories,addCategory,addParameterToCategory,deleteCategory,deleteParameterFromCategory} from "../../redux/features/categoriesSlice";
 
 const { Title, Text } = Typography;
 const { Panel } = Collapse;
 
 const Add_Parameter = () => {
-  const [categories, setCategories] = useState([]);
+  const dispatch = useDispatch();
+  const categories = useSelector((state) => state.categories);
   const [newCategory, setNewCategory] = useState("");
   const [newParameter, setNewParameter] = useState("");
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [description, setDescription] = useState("");
   const [weight, setWeight] = useState("");
   const [activeKey, setActiveKey] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editData, setEditData] = useState({});
   const [editCategoryIndex, setEditCategoryIndex] = useState(null);
   const [editParameterIndex, setEditParameterIndex] = useState(null);
 
   useEffect(() => {
-    setCategories([
-      {
-        name: "Attitude",
-        parameters: [
-          {
-            name: "Positive mental attitude (PMA)",
-            description:
-              "Faith, integrity, hope, optimism, courage, initiative, generosity, tolerance, tactfulness, kindliness, good common sense",
-            weight: 10,
-          },
-        ],
-      },
-      {
-        name: "Habits/Behavior",
-        parameters: [
-          {
-            name: "7th habits",
-            description: "Practices for personal and professional growth",
-            weight: 9,
-          },
-          {
-            name: "Connectivity",
-            description: "Response to email, messages, and calls",
-            weight: 8,
-          },
-          {
-            name: "Teamwork",
-            description: "Supporting the team",
-            weight: 9,
-          },
-          {
-            name: "Meeting habits ",
-            description: "Attend to meeting,Come prepared, Following meeting minutes and completing the activity,",
-            weight: 9,
-          },
-          {
-            name: "Time management ",
-            description: "Prioritizing work correctly, Allocated time efficiently ,Meet deadline ",
-            weight: 9,
-          },
-          {
-            name: "Positive thinking ",
-            description: " ",
-            weight: 9,
-          },
-          {
-            name: "Send the time happily ",
-            description: " ",
-            weight: 9,
-          },
-          {
-            name: "Planning the leaves  ",
-            description: " ",
-            weight: 9,
-          },
-          {
-            name: "Punctuality  ",
-            description: " ",
-            weight: 9,
-          },
-          {
-            name: "Actively  ",
-            description: " ",
-            weight: 9,
-          },
-          
-        ],
-      },
-      {
-        name: "Skills",
-        parameters: [
-          {
-            name: "Communicates",
-            description:
-              "Warble Communication,Written Communication",
-            weight: 10,
-          },
-          {
-            name: "Stakeholder Management",
-            description:
-              "Client,Consultant,Main Contractor,Other sub-contractors",
-            weight: 10,
-          },
-        ],
-      },
-      {
-        name: "Performance",
-        parameters: [
-          {
-            name: "Dedicataion",
-            description:
-              "Highlight important work and issues to be addressed ,Focus,Deliver complete output",
-            weight: 10,
-          },
-          {
-            name: "Key Performance",
-            description:
-              "Safe organize ,TIme management,Working speed",
-            weight: 10,
-          },
-          {
-            name: "Problem-solving skills ",
-            description:
-              "  ",
-            weight: 10,
-          },
-        ],
-      },
-      {
-        name: "Knowledge",
-        parameters: [
-          {
-            name: "Product knowledge",
-            description:
-              " ",
-            weight: 10,
-          },
-          {
-            name: "knowledge Organization & objectives ",
-            description:
-              " ",
-            weight: 10,
-          },
-          {
-            name: "Operational knowledge ",
-            description:
-              "  ",
-            weight: 10,
-          },
-          {
-            name: "Operational knowledge ",
-            description:
-              "  ",
-            weight: 10,
-          },
-        ],
-      },
-    ]);
-  }, []);
+    fetch("http://localhost:4400/api/kpiParameter")
+      .then((res) => res.json())
+      .then((data) => dispatch(setCategories(data)))
+      .catch((err) => console.error(err));
+  }, [dispatch]);
 
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
     if (!newCategory) {
       notification.error({ message: "Please enter a category name." });
       return;
     }
-    setCategories([...categories, { name: newCategory, parameters: [] }]);
-    setNewCategory("");
-    setIsModalVisible(false);
-    notification.success({ message: "Category added successfully!" });
+    try {
+      const response = await fetch("http://localhost:4400/api/kpiParameter/category", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: newCategory }),
+      });
+      const data = await response.json();
+      dispatch(addCategory(data));
+      setNewCategory("");
+      setIsModalVisible(false);
+      notification.success({ message: "Category added successfully!" });
+    } catch (err) {
+      console.error(err);
+      notification.error({ message: "Failed to add category." });
+    }
   };
 
-  const handleAddParameter = (index) => {
+  const handleAddParameter = async (categoryId) => {
     if (!newParameter || !weight) {
       notification.error({
-        message: "Please enter parameter name and weight.",
+        message: "Please enter both parameter name and weight.",
       });
       return;
     }
-    const updatedCategories = [...categories];
-    updatedCategories[index].parameters.push({
-      name: newParameter,
-      description: description || "No description provided.",
-      weight,
+    try {
+      const response = await fetch("http://localhost:4400/api/kpiParameter/parameter", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          categoryId,
+          name: newParameter,
+          description, // Use the provided description directly
+          weight,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to add parameter");
+      }
+  
+      // Extract the updated category from the response
+      const updatedCategory = await response.json();
+  
+      // Get the last parameter added (assuming it’s the last one in the array)
+      const newParameterIndex = updatedCategory.parameters.length - 1;
+      const newlyAddedParameter = updatedCategory.parameters[newParameterIndex];
+  
+      dispatch(addParameterToCategory({ categoryId, parameter: newlyAddedParameter }));
+  
+      // Reset form inputs
+      setNewParameter("");
+      setDescription("");
+      setWeight("");
+  
+      notification.success({ message: "Parameter added successfully!" });
+    } catch (err) {
+      console.error(err);
+      notification.error({ message: "Failed to add parameter." });
+    }
+  };
+  
+  
+  const handleDeleteCategory = async (categoryId) => {
+    try {
+      await fetch(`http://localhost:4400/api/kpiParameter/category/${categoryId}`, {
+        method: "DELETE",
+      });
+      dispatch(deleteCategory(categoryId));
+      notification.info({ message: "Category deleted." });
+    } catch (err) {
+      console.error(err);
+      notification.error({ message: "Failed to delete category." });
+    }
+  };
+
+  const handleDeleteParameter = async (categoryId, parameterId) => {
+    try {
+      await fetch(`http://localhost:4400/api/kpiParameter/category/${categoryId}/parameter/${parameterId}`, {
+        method: "DELETE",
+      });
+      dispatch(deleteParameterFromCategory({ categoryId, parameterId }));
+      notification.info({ message: "Parameter deleted." });
+    } catch (err) {
+      console.error(err);
+      notification.error({ message: "Failed to delete parameter." });
+    }
+  };
+  
+
+
+  const confirmDeleteCategory = (categoryId) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this category?",
+      content: "This action cannot be undone.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk: () => handleDeleteCategory(categoryId),
     });
-    setCategories(updatedCategories);
-    setNewParameter("");
-    setDescription("");
-    setWeight("");
-    notification.success({ message: "Parameter added successfully!" });
   };
 
-  const handleDeleteCategory = (index) => {
-    const updatedCategories = categories.filter((_, i) => i !== index);
-    setCategories(updatedCategories);
-    notification.info({ message: "Category deleted." });
-  };
-
-  const handleDeleteParameter = (categoryIndex, parameterIndex) => {
-    const updatedCategories = [...categories];
-    updatedCategories[categoryIndex].parameters.splice(parameterIndex, 1);
-    setCategories(updatedCategories);
-    notification.info({ message: "Parameter deleted." });
+  const confirmDeleteParameter = (categoryId, parameterId) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this parameter?",
+      content: "This action cannot be undone.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk: () => handleDeleteParameter(categoryId, parameterId),
+    });
   };
 
   const handleEditParameter = (categoryIndex, parameterIndex) => {
-    const parameter = categories[categoryIndex].parameters[parameterIndex];
-    setEditData({ ...parameter });
-    setEditCategoryIndex(categoryIndex);
-    setEditParameterIndex(parameterIndex);
-    setEditModalVisible(true);
+    // Use the Redux store to get the category and parameter
+    const category = categories[categoryIndex];
+    const parameter = category.parameters[parameterIndex];
+
+    setEditData({
+      ...parameter, // Pre-fill form with parameter data
+    });
+
+    setEditCategoryIndex(categoryIndex); // Track the category index
+    setEditParameterIndex(parameterIndex); // Track the parameter index
+    setEditModalVisible(true); // Show the edit modal
   };
 
-  const handleSaveEdit = () => {
-    const updatedCategories = [...categories];
-    updatedCategories[editCategoryIndex].parameters[editParameterIndex] =
-      editData;
-    setCategories(updatedCategories);
-    setEditModalVisible(false);
-    notification.success({ message: "Parameter updated successfully!" });
+
+  const handleSaveEdit = async () => {
+    const { _id: categoryId } = categories[editCategoryIndex];
+    const { _id: parameterId } = categories[editCategoryIndex].parameters[editParameterIndex];
+    const { name, description, weight } = editData;
+
+    // Log the data for debugging
+    console.log("Category and Parameter IDs:", categoryId, parameterId);
+    console.log("Data being sent to the server:", {
+      categoryId,
+      parameterId,
+      name,
+      description,
+      weight,
+    });
+
+    try {
+      // Send the update request to the server
+      const response = await axios.put(
+        `http://localhost:4400/api/kpiParameter/category/${categoryId}/parameter/${parameterId}`,
+        {
+          name,
+          description,
+          weight: parseFloat(weight), // Ensure weight is passed as a number
+        }
+      );
+
+      // Log the response for debugging
+      console.log("Response from server:", response.data);
+
+      if (response.data && response.data._id === parameterId) {
+        // Update the categories in the Redux store with the updated data
+        const updatedCategories = categories.map((category, catIndex) => {
+          if (catIndex === editCategoryIndex) {
+            return {
+              ...category,
+              parameters: category.parameters.map((parameter, paramIndex) => {
+                if (paramIndex === editParameterIndex) {
+                  return response.data; // Replace the updated parameter
+                }
+                return parameter; // Keep other parameters unchanged
+              }),
+            };
+          }
+          return category; // Keep other categories unchanged
+        });
+
+        // Dispatch the updated categories to Redux store
+        dispatch(setCategories(updatedCategories)); // Update categories in the Redux store
+
+        // Close the edit modal and show success notification
+        setEditModalVisible(false);
+        notification.success({ message: "Parameter updated successfully!" });
+      } else {
+        throw new Error("Failed to save the edited parameter.");
+      }
+    } catch (error) {
+      // Handle any errors that occur
+      console.error("Error saving parameter:", error);
+      notification.error({ message: "Failed to save the edited parameter." });
+    }
   };
 
   const handleSave = () => {
@@ -243,6 +233,7 @@ const Add_Parameter = () => {
     notification.success({ message: "All settings saved successfully!" });
   };
 
+  //UI 
   return (
     <motion.div
       style={styles.container}
@@ -276,16 +267,14 @@ const Add_Parameter = () => {
         >
           {categories.map((category, categoryIndex) => (
             <Panel
-              header={
-                <Text style={styles.panelHeader}>{category.name}</Text>
-              }
+              header={<Text style={styles.panelHeader}>{category.name}</Text>}
               key={categoryIndex}
               extra={
                 <Tooltip title="Delete Category">
                   <DeleteFilled
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDeleteCategory(categoryIndex);
+                      confirmDeleteCategory(category._id);
                     }}
                     style={styles.iconDelete}
                   />
@@ -301,17 +290,13 @@ const Add_Parameter = () => {
                     <Space>
                       <Tooltip title="Edit Parameter">
                         <EditFilled
-                          onClick={() =>
-                            handleEditParameter(categoryIndex, paramIndex)
-                          }
+                          onClick={() => handleEditParameter(categoryIndex, paramIndex)}
                           style={styles.iconEdit}
                         />
                       </Tooltip>
                       <Tooltip title="Delete Parameter">
                         <DeleteFilled
-                          onClick={() =>
-                            handleDeleteParameter(categoryIndex, paramIndex)
-                          }
+                          onClick={() => confirmDeleteParameter(category._id, param._id)}
                           style={styles.iconDelete}
                         />
                       </Tooltip>
@@ -347,7 +332,7 @@ const Add_Parameter = () => {
                 </Form.Item>
                 <Button
                   type="dashed"
-                  onClick={() => handleAddParameter(categoryIndex)}
+                  onClick={() => handleAddParameter(category._id)}
                   block
                 >
                   Add Parameter
@@ -377,24 +362,24 @@ const Add_Parameter = () => {
       <Modal
         title="Edit Parameter"
         visible={editModalVisible}
-        onOk={handleSaveEdit}
-        onCancel={() => setEditModalVisible(false)}
+        onOk={handleSaveEdit} // Calls handleSaveEdit on click
+        onCancel={() => setEditModalVisible(false)} // Closes modal on cancel
       >
         <Form layout="vertical">
           <Form.Item label="Parameter Name">
             <Input
               value={editData.name}
               onChange={(e) =>
-                setEditData({ ...editData, name: e.target.value })
+                setEditData((prev) => ({ ...prev, name: e.target.value })) // Update the name
               }
             />
           </Form.Item>
           <Form.Item label="Description">
             <Input.TextArea
-              rows={2}
+              rows={4}
               value={editData.description}
               onChange={(e) =>
-                setEditData({ ...editData, description: e.target.value })
+                setEditData((prev) => ({ ...prev, description: e.target.value })) // Update the description
               }
             />
           </Form.Item>
@@ -403,7 +388,10 @@ const Add_Parameter = () => {
               type="number"
               value={editData.weight}
               onChange={(e) =>
-                setEditData({ ...editData, weight: e.target.value })
+                setEditData((prev) => ({
+                  ...prev,
+                  weight: e.target.value ? parseFloat(e.target.value) : "" // Ensure weight is a number
+                }))
               }
             />
           </Form.Item>
@@ -415,55 +403,45 @@ const Add_Parameter = () => {
 
 const styles = {
   container: {
-    maxWidth: "1200px",
+    maxWidth: "900px",
     margin: "0 auto",
-    padding: "30px",
-    backgroundColor: "#fafbfc",
-    borderRadius: "8px",
-    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+    padding: "20px",
   },
   title: {
     textAlign: "center",
-    color: "#001529",
-    fontSize: "28px",
-    fontWeight: "bold",
-    marginBottom: "30px",
+    marginBottom: "20px",
   },
   addButtonContainer: {
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     marginBottom: "20px",
   },
-  collapse: {
-    marginTop: "20px",
-  },
-  parameterCard: {
-    marginBottom: "10px",
-    borderRadius: "8px",
-    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
-  },
-  form: {
-    marginTop: "10px",
-  },
   iconLarge: {
-    fontSize: "20px",
+    fontSize: "24px",
   },
-  iconDelete: {
-    color: "#ff4d4f",
-    cursor: "pointer",
-    fontSize: "18px",
-  },
-  iconEdit: {
-    color: "#1890ff",
-    cursor: "pointer",
-    fontSize: "18px",
+  collapse: {
+    backgroundColor: "transparent",
   },
   panelHeader: {
     fontSize: "18px",
   },
+  parameterCard: {
+    marginBottom: "20px",
+  },
+  iconEdit: {
+    color: "blue",
+    cursor: "pointer",
+  },
+  iconDelete: {
+    color: "red",
+    cursor: "pointer",
+  },
   weightText: {
-    marginTop: "10px",
     display: "block",
+    marginTop: "10px",
+  },
+  form: {
+    marginTop: "20px",
   },
 };
 

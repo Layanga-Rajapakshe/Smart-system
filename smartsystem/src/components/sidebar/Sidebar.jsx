@@ -78,7 +78,7 @@ const Sidebar = () => {
 
     const kpiMenuItems = [
         { title: 'KPI Home', href: '/KPIWelcom', icon: <FaMoneyCheck />, isActive: ['/KPIWelcom'].includes(location.pathname) },
-        { title: 'Meetings', href: '/meetings', icon: <FaMoneyCheck />, isActive: ['/meetings'].includes(location.pathname) },
+        { title: 'KPI Dashboard', href: '/KPIdashboard', icon: <FaMoneyCheck />, isActive: ['/KPIdashboard'].includes(location.pathname) },
     ];
 
     return (

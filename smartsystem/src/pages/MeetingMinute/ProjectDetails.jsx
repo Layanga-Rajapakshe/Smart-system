@@ -48,6 +48,22 @@ function ProjectDetails() {
 
     fetchProjectMeetings();
   }, [projectId]);
+  useEffect(() => {
+    const fetchProjectDetails = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/project/${projectId}` // Ensure this API returns projectManager
+        );
+        setProjectName(response.data.name); // Assuming you have a 'name' field
+        setProjectManager(response.data.projectManager); // Assuming the response includes 'projectManager'
+      } catch (error) {
+        console.error("Error fetching project details:", error);
+      }
+    };
+  
+    fetchProjectDetails();
+  }, [projectId]);
+  
 
   const pages = Math.ceil(meetings.length / rowsPerPage);
   const currentMeetings = meetings.slice(
@@ -84,17 +100,19 @@ function ProjectDetails() {
 
   const handleSubmit = async () => {
     try {
+      // Send the form data along with projectId and projectManager
       const response = await axios.post(`http://localhost:3000/api/meeting/`, {
         ...formData,
-        projectId,
+        projectId, // automatically included from URL params // automatically included from fetched project details
       });
       
       // Directly update the state with the new meeting
       setMeetings((prevMeetings) => [
         ...prevMeetings,
-        response.data, // Assuming the response contains the newly created meeting
+        response.data.meeting, // Assuming the response contains the newly created meeting
       ]);
   
+      // Clear the form and close the modal
       setFormData({
         topic: "",
         dateTime: "",
@@ -106,6 +124,7 @@ function ProjectDetails() {
       console.error("Error adding meeting:", error);
     }
   };
+  
   
   return (
     <div className="max-w-4xl mx-auto mt-8 text-center">

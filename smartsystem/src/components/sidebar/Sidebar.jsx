@@ -99,7 +99,7 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {superAdminMenuItems.map((item, index) => (
-                                    <li key={index} className={`p-2 rounded-md `}>
+                                    <li key={index} className={` rounded-md `}>
                                         <SidebarItem {...item} />
                                     </li>
                                 ))}
@@ -111,7 +111,7 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {adminMenuItems.map((item, index) => (
-                                    <li key={index} className={`p-2 rounded-md `}>
+                                    <li key={index} className={`rounded-md `}>
                                         <SidebarItem {...item} />
                                     </li>
                                 ))}
@@ -123,7 +123,7 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {supervisorMenuItems.map((item, index) => (
-                                    <li key={index} className={`p-2 rounded-md `}>
+                                    <li key={index} className={` rounded-md `}>
                                         <SidebarItem {...item} />
                                     </li>
                                 ))}
@@ -135,7 +135,7 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {ceoMenuItems.map((item, index) => (
-                                    <li key={index} className={`p-2 rounded-md `}>
+                                    <li key={index} className={` rounded-md `}>
                                         <SidebarItem {...item} />
                                     </li>
                                 ))}
@@ -147,7 +147,7 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {employeeMenuItems.map((item, index) => (
-                                    <li key={index} className={`p-2 rounded-md `}>
+                                    <li key={index} className={` rounded-md `}>
                                         <SidebarItem {...item} />
                                     </li>
                                 ))}
@@ -159,7 +159,7 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {seniorAccountantMenuItems.map((item, index) => (
-                                    <li key={index} className={`p-2 rounded-md `}>
+                                    <li key={index} className={` rounded-md `}>
                                         <SidebarItem {...item} />
                                     </li>
                                 ))}

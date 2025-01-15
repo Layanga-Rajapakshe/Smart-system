@@ -71,6 +71,16 @@ const Sidebar = () => {
         { title: 'Edit Salary', href: '/editsalary', icon: <FaEdit />, isActive: ['/editsalary'].includes(location.pathname) },
     ];
 
+    const meetingMinuteMenuItems = [
+        { title: 'Meeting Home', href: '/meetingHome', icon: <FaMoneyCheck />, isActive: ['/meetingHome'].includes(location.pathname) },
+        { title: 'Meetings', href: '/meetings', icon: <FaMoneyCheck />, isActive: ['/meetings'].includes(location.pathname) },
+    ];
+
+    const kpiMenuItems = [
+        { title: 'KPI Home', href: '/KPIWelcom', icon: <FaMoneyCheck />, isActive: ['/KPIWelcom'].includes(location.pathname) },
+        { title: 'Meetings', href: '/meetings', icon: <FaMoneyCheck />, isActive: ['/meetings'].includes(location.pathname) },
+    ];
+
     return (
         <>
             {/* Sidebar Toggle Button */}
@@ -159,6 +169,30 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {seniorAccountantMenuItems.map((item, index) => (
+                                    <li key={index} className={` rounded-md `}>
+                                        <SidebarItem {...item} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    </SidebarMenu>
+
+                    <SidebarMenu title="Meeting Minute Menu">
+                        <nav className="flex-grow">
+                            <ul>
+                                {meetingMinuteMenuItems.map((item, index) => (
+                                    <li key={index} className={` rounded-md `}>
+                                        <SidebarItem {...item} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    </SidebarMenu>
+
+                    <SidebarMenu title="KPI Menu">
+                        <nav className="flex-grow">
+                            <ul>
+                                {kpiMenuItems.map((item, index) => (
                                     <li key={index} className={` rounded-md `}>
                                         <SidebarItem {...item} />
                                     </li>

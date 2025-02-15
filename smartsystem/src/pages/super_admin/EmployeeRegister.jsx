@@ -1,209 +1,252 @@
-import React, { useState } from 'react';
-import { Input, Button, Image, Select, SelectItem } from '@nextui-org/react';
+import React, { useState } from "react";
+import { Input, Button, Image, Select, SelectItem } from "@nextui-org/react";
+import GeneralBreadCrumb from "../../components/GeneralBreadCrumb";
+import { useCreateEmployeeMutation, useGetEmployeesQuery } from "../../redux/api/employeeApiSlice";
+import { useGetRolesQuery } from "../../redux/api/roleApiSlice";
+import { useGetCompaniesQuery } from "../../redux/api/companyApiSlice";
+import { toast } from "react-hot-toast";
 import image1 from '../../assets/images/companyRegister.png';
-import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
-import { useCreateEmployeeMutation } from '../../redux/api/employeeApiSlice';
-import { useGetRolesQuery } from '../../redux/api/roleApiSlice';
-import { useGetCompaniesQuery } from '../../redux/api/companyApiSlice';
-import { useNavigate } from 'react-router-dom';
 
 const EmployeeRegister = () => {
-  const navigate = useNavigate();
-  const [createEmployee, { isLoading: isCreating }] = useCreateEmployeeMutation();
-  const { data: roles } = useGetRolesQuery();
-  const { data: companies } = useGetCompaniesQuery();
+  const [createEmployee, { isLoading }] = useCreateEmployeeMutation();
+  const { data: rolesData, isLoading: rolesLoading } = useGetRolesQuery();
+  const { data: companiesData, isLoading: companiesLoading } = useGetCompaniesQuery();
+  const { data: employeesData, isLoading: employeesLoading } = useGetEmployeesQuery();
 
-  const [employeeData, setEmployeeData] = useState({
-    name: '',
-    birthday: '',
-    userId: '',
-    hired_date: '',
-    post: '',
-    role: '',
-    status: 'active',
-    age: '',
-    email: '',
-    password: '',
-    company: '',
-    agreed_basic: 0,
-    re_allowance: 0,
-    single_ot: 0,
-    double_ot: 0,
-    meal_allowance: 0,
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEmployeeData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSelectChange = (name, value) => {
-    setEmployeeData((prev) => ({ ...prev, [name]: value }));
-  };
+  const [name, setName] = useState("");
+  const [birthday, setBirthday] = useState("");
+  const [userId, setUserId] = useState("");
+  const [hiredDate, setHiredDate] = useState("");
+  const [post, setPost] = useState("Clerk");
+  const [role, setRole] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [company, setCompany] = useState("");
+  const [age, setAge] = useState("");
+  const [status, setStatus] = useState("active");
+  const [avatar, setAvatar] = useState("");
+  const [supervisor, setSupervisor] = useState("");
+  const [agreedBasic, setAgreedBasic] = useState(0);
+  const [reAllowance, setReAllowance] = useState(0);
+  const [singleOt, setSingleOt] = useState(0);
+  const [doubleOt, setDoubleOt] = useState(0);
+  const [mealAllowance, setMealAllowance] = useState(0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Basic validation can be added here
-    if (!employeeData.name || !employeeData.email || !employeeData.password) {
-      alert("Please fill out all required fields.");
-      return;
-    }
+    const newEmployeeData = {
+      name,
+      birthday,
+      userId, 
+      hired_date: hiredDate,
+      post,
+      role,
+      email,
+      password,
+      company,
+      age: parseInt(age),
+      status,
+      avatar,
+      // supervisor,
+      agreed_basic: parseFloat(agreedBasic),
+      re_allowance: parseFloat(reAllowance),
+      single_ot: parseFloat(singleOt),
+      double_ot: parseFloat(doubleOt),
+      meal_allowance: parseFloat(mealAllowance),
+    };
 
     try {
-      const newEmployee = await createEmployee(employeeData).unwrap();
-      navigate(`/employee/${newEmployee._id}`);
+      console.log(newEmployeeData);
+      await createEmployee(newEmployeeData).unwrap();
+      toast.success("New Employee Registered Successfully");
+      // Clear form fields after successful submission
+      setName("");
+      setBirthday("");
+      setUserId("");
+      setHiredDate("");
+      setPost("Clerk");
+      setRole("");
+      setEmail("");
+      setPassword("");
+      setCompany("");
+      setAge("");
+      setStatus("active");
+      setAvatar("");
+      // setSupervisor("");
+      setAgreedBasic(0);
+      setReAllowance(0);
+      setSingleOt(0);
+      setDoubleOt(0);
+      setMealAllowance(0);
     } catch (err) {
-      console.error('Failed to create employee:', err);
+      toast.error(err?.data?.message || "Employee Registration Failed");
     }
   };
 
   const breadcrumbItems = [
-    { label: 'Employee Menu', href: '/employee' },
-    { label: 'Employee Register', href: '/employeeregister', isCurrentPage: true },
+    { label: "Employees Menu", href: "/employee" },
+    { label: "Employee Register", href: "/employeeregister", isCurrentPage: true },
   ];
 
   return (
     <div>
       <GeneralBreadCrumb items={breadcrumbItems} />
-      <div className='flex h-screen overflow-hidden'>
-        <div className='flex-1 flex-col flex items-center justify-center p-6 relative'>
+      <div className="flex h-screen overflow-hidden">
+        <div className="flex-1 flex-col flex items-center justify-center p-6 relative">
           <div className='md:hidden absolute inset-0 z-0'>
             <Image
               isBlurred
               className='w-full h-full object-cover'
               src="https://nextui.org/gradients/docs-right.png"
-              alt='Background image'
+              alt='Register page background'
             />
           </div>
-
-          <div className='text-center text-[25px] font-bold mb-6 z-10'>Employee Register</div>
-
-          <form onSubmit={handleSubmit} className='flex flex-col w-full max-w-md gap-4 mb-4 z-10 overflow-y-auto'>
+          <div className="text-center text-[25px] font-bold mb-6">Employee Register</div>
+          <form onSubmit={handleSubmit} className="flex flex-col w-full max-w-md gap-4 overflow-auto">
             <Input
+              variant="bordered"
               label="Name"
-              name="name"
-              value={employeeData.name}
-              onChange={handleChange}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required
             />
             <Input
+              variant="bordered"
               label="Birthday"
-              name="birthday"
               type="date"
-              value={employeeData.birthday}
-              onChange={handleChange}
+              value={birthday}
+              onChange={(e) => setBirthday(e.target.value)}
+              required
             />
             <Input
+              variant="bordered"
+              label="User ID"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+              required
+            />
+            <Input
+              variant="bordered"
               label="Hired Date"
-              name="hired_date"
               type="date"
-              value={employeeData.hired_date}
-              onChange={handleChange}
+              value={hiredDate}
+              onChange={(e) => setHiredDate(e.target.value)}
+              required
             />
             <Input
+              variant="bordered"
               label="Post"
-              name="post"
-              value={employeeData.post}
-              onChange={handleChange}
+              value={post}
+              onChange={(e) => setPost(e.target.value)}
             />
-            <Select
-              label="Role"
-              name="role"
-              value={employeeData.role}
-              onChange={(value) => handleSelectChange('role', value)}
+            <Select className="max-w-xs" 
+            label="Select Role"
+            onChange={(e) => setRole(e.target.value)}
             >
-              {roles?.map(role => (
-                <SelectItem key={role._id} value={role._id}>{role.name}</SelectItem>
+              {rolesData?.map((role) => (
+                <SelectItem key={role._id} textValue="string" value={role._id}>{role.name}</SelectItem>
               ))}
             </Select>
-            <Select
-              label="Status"
-              name="status"
-              value={employeeData.status}
-              onChange={(value) => handleSelectChange('status', value)}
-            >
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
-            </Select>
             <Input
-              label="Age"
-              name="age"
-              type="number"
-              value={employeeData.age}
-              onChange={handleChange}
-            />
-            <Input
+              variant="bordered"
               label="Email"
-              name="email"
               type="email"
-              value={employeeData.email}
-              onChange={handleChange}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
             <Input
+              variant="bordered"
               label="Password"
-              name="password"
               type="password"
-              value={employeeData.password}
-              onChange={handleChange}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <Select
-              label="Company"
-              name="company"
-              value={employeeData.company}
-              onChange={(value) => handleSelectChange('company', value)}
+            <Select className="max-w-xs" 
+            label="Select Company"
+            onChange={(e) => setCompany(e.target.value)}
+            required
             >
-              {companies?.map(company => (
-                <SelectItem key={company._id} value={company._id}>{company.c_name}</SelectItem>
+              {companiesData?.map((company) => (
+                <SelectItem key={company._id} textValue="string" value={company._id}>{company.c_name}</SelectItem>
               ))}
             </Select>
             <Input
+              variant="bordered"
+              label="Age"
+              type="number"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+              required
+            />
+            <Input
+              variant="bordered"
+              label="Avatar URL"
+              value={avatar}
+              onChange={(e) => setAvatar(e.target.value)}
+            />
+            <Select className="max-w-xs" 
+            label="Select Supervisor"
+            onChange={(e) => setSupervisor(e.target.value)}
+            required
+            >
+              {employeesData?.map((employee) => (
+                <SelectItem key={employee._id} textValue="string" value={employee._id}>{employee.name}</SelectItem>
+              ))}
+            </Select>
+            <Input
+              variant="bordered"
               label="Agreed Basic"
-              name="agreed_basic"
               type="number"
-              value={employeeData.agreed_basic}
-              onChange={handleChange}
+              step="0.01"
+              value={agreedBasic}
+              onChange={(e) => setAgreedBasic(e.target.value)}
+              required
             />
             <Input
-              label="RE Allowance"
-              name="re_allowance"
+              variant="bordered"
+              label="Re Allowance"
               type="number"
-              value={employeeData.re_allowance}
-              onChange={handleChange}
+              step="0.01"
+              value={reAllowance}
+              onChange={(e) => setReAllowance(e.target.value)}
+              required
             />
             <Input
+              variant="bordered"
               label="Single OT"
-              name="single_ot"
               type="number"
-              value={employeeData.single_ot}
-              onChange={handleChange}
+              step="0.01"
+              value={singleOt}
+              onChange={(e) => setSingleOt(e.target.value)}
+              required
             />
             <Input
+              variant="bordered"
               label="Double OT"
-              name="double_ot"
               type="number"
-              value={employeeData.double_ot}
-              onChange={handleChange}
+              step="0.01"
+              value={doubleOt}
+              onChange={(e) => setDoubleOt(e.target.value)}
+              required
             />
             <Input
+              variant="bordered"
               label="Meal Allowance"
-              name="meal_allowance"
               type="number"
-              value={employeeData.meal_allowance}
-              onChange={handleChange}
+              step="0.01"
+              value={mealAllowance}
+              onChange={(e) => setMealAllowance(e.target.value)}
+              required
             />
-
-            {/* Ensure the button is placed outside the form's overflow handling */}
-            <div className='mt-4'>
-              <Button type='submit' color='primary' disabled={isCreating}>
-                {isCreating ? 'Registering...' : 'Register Employee'}
-              </Button>
+            <div>
+            <Button type="submit" color="primary" disabled={isLoading}>
+              {isLoading ? "Registering..." : "Register"}
+            </Button>
             </div>
           </form>
         </div>
-
         <div className='hidden md:flex flex-1 items-center justify-center p-6'>
           <div className='w-full h-full flex items-center justify-center'>
             <Image

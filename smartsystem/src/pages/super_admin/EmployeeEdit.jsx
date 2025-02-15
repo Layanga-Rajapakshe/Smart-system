@@ -1,19 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Button, Image, Select, Checkbox } from '@nextui-org/react';
-import image1 from '../../assets/images/companyRegister.png';
-import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
-import { useGetEmployeeQuery, useUpdateEmployeeMutation } from '../../redux/api/employeeApiSlice';
+import {
+  useGetEmployeeQuery,
+  useUpdateEmployeeMutation,
+  useGetEmployeesQuery,
+} from '../../redux/api/employeeApiSlice';
 import { useGetRolesQuery } from '../../redux/api/roleApiSlice';
 import { useGetCompaniesQuery } from '../../redux/api/companyApiSlice';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Input, Button, CircularProgress, Image, Select, SelectItem } from '@nextui-org/react';
+import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
+import image1 from '../../assets/images/companyRegister.png';
+import { toast } from 'react-hot-toast';
 
 const EmployeeEdit = () => {
   const { id: employeeId } = useParams();
   const navigate = useNavigate();
+
   const { data: employee, isLoading, isError } = useGetEmployeeQuery(employeeId);
   const [updateEmployee, { isLoading: isUpdating }] = useUpdateEmployeeMutation();
-  const { data: roles } = useGetRolesQuery();
-  const { data: companies } = useGetCompaniesQuery();
+  const { data: rolesData, isLoading: rolesLoading } = useGetRolesQuery();
+  const { data: companiesData, isLoading: companiesLoading } = useGetCompaniesQuery();
+  const { data: employeesData, isLoading: employeesLoading } = useGetEmployeesQuery();
 
   const [employeeData, setEmployeeData] = useState({
     name: '',
@@ -22,10 +29,13 @@ const EmployeeEdit = () => {
     hired_date: '',
     post: '',
     role: '',
-    status: 'active',
+    status: '',
     age: '',
+    avatar: '',
     email: '',
     company: '',
+    supervisor: '',
+    supervisees: [],
     agreed_basic: 0,
     re_allowance: 0,
     single_ot: 0,
@@ -33,130 +43,131 @@ const EmployeeEdit = () => {
     meal_allowance: 0,
   });
 
+  const breadcrumbItems = [
+    { label: 'Employees Menu', href: '/employee' },
+    { label: 'Employee Edit', href: `/employee/edit/${employeeId}`, isCurrentPage: true },
+  ];
+
   useEffect(() => {
     if (employee) {
-      setEmployeeData({
-        name: employee.name,
-        birthday: new Date(employee.birthday).toISOString().split('T')[0],
-        userId: employee.userId,
-        hired_date: new Date(employee.hired_date).toISOString().split('T')[0],
-        post: employee.post,
-        role: employee.role,
-        status: employee.status,
-        age: employee.age,
-        email: employee.email,
-        company: employee.company,
-        agreed_basic: employee.agreed_basic,
-        re_allowance: employee.re_allowance,
-        single_ot: employee.single_ot,
-        double_ot: employee.double_ot,
-        meal_allowance: employee.meal_allowance,
-      });
+      setEmployeeData(employee);
     }
   }, [employee]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEmployeeData(prev => ({ ...prev, [name]: value }));
+    setEmployeeData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log(employeeData);
       await updateEmployee({ id: employeeId, ...employeeData }).unwrap();
-      navigate(`/employee/${employeeId}`);
-    } catch (err) {
-      console.error('Failed to update employee:', err);
+      toast.success('Employee updated successfully!');
+      navigate(`/employeeview/${employeeId}`); // Redirect to Employee View page
+    } catch (error) {
+      toast.error('Failed to update employee. Please try again.');
+      console.error('Error updating employee:', error);
     }
   };
 
-  const breadcrumbItems = [
-    { label: 'Employee Menu', href: '/employee' },
-    { label: 'Employee Edit', href: `/employee/edit/${employeeId}`, isCurrentPage: true }
-  ];
-
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <CircularProgress aria-label="Loading" />;
   if (isError) return <div>Error fetching employee data</div>;
 
   return (
     <div>
       <GeneralBreadCrumb items={breadcrumbItems} />
-      <div className='flex h-screen overflow-hidden'>
-        <div className='flex-1 flex-col flex items-center justify-center p-6 relative'>
-          <div className='md:hidden absolute inset-0 z-0'>
+      <div className="flex h-screen overflow-hidden">
+        <div className="flex-1 flex-col flex items-center justify-center p-6 relative">
+          <div className="md:hidden absolute inset-0 z-0">
             <Image
               isBlurred
-              className='w-full h-full object-cover'
+              className="w-full h-full object-cover"
               src="https://nextui.org/gradients/docs-right.png"
-              alt='Background image'
+              alt="Background image"
             />
           </div>
 
-          <div className='text-center text-[25px] font-bold mb-6 z-10'>Employee Edit</div>
+          <div className="text-center text-[25px] font-bold mb-6 z-10">Employee Edit</div>
 
-          <form onSubmit={handleSubmit} className='flex flex-col w-full max-w-md gap-4 mb-4 z-10'>
+          <form
+            className="flex flex-col w-full max-w-md gap-4 mb-4 z-10 overflow-auto"
+            onSubmit={handleSubmit}
+          >
             <Input
+              variant="bordered"
               label="Name"
+              type="text"
               name="name"
               value={employeeData.name}
               onChange={handleChange}
             />
             <Input
+              variant="bordered"
               label="Birthday"
+              type="text"
               name="birthday"
-              type="date"
               value={employeeData.birthday}
               onChange={handleChange}
             />
             <Input
+              variant="bordered"
               label="User ID"
+              type="text"
               name="userId"
               value={employeeData.userId}
               onChange={handleChange}
+              readOnly
             />
             <Input
+              variant="bordered"
               label="Hired Date"
+              type="text"
               name="hired_date"
-              type="date"
               value={employeeData.hired_date}
               onChange={handleChange}
             />
             <Input
+              variant="bordered"
               label="Post"
+              type="text"
               name="post"
               value={employeeData.post}
               onChange={handleChange}
             />
-            <Select
-              label="Role"
-              name="role"
-              value={employeeData.role}
-              onChange={handleChange}
-            >
-              {roles?.map(role => (
-                <Select.Option key={role._id} value={role._id}>{role.name}</Select.Option>
-              ))}
+            <Select label="Role" name="role" value={employeeData.role} defaultSelectedKeys={employeeData.role} onChange={handleChange}>
+              {rolesData &&
+                rolesData.map((role) => (
+                  <SelectItem key={role._id} value={role._id} textValue="string">
+                    {role.name}
+                  </SelectItem>
+                ))}
             </Select>
-            <Select
+            <Input
+              variant="bordered"
               label="Status"
+              type="text"
               name="status"
               value={employeeData.status}
               onChange={handleChange}
-            >
-              <Select.Option value="active">Active</Select.Option>
-              <Select.Option value="inactive">Inactive</Select.Option>
-            </Select>
+            />
             <Input
+              variant="bordered"
               label="Age"
+              type="text"
               name="age"
-              type="number"
               value={employeeData.age}
               onChange={handleChange}
             />
             <Input
+              variant="bordered"
               label="Email"
+              type="text"
               name="email"
-              type="email"
               value={employeeData.email}
               onChange={handleChange}
             />
@@ -166,59 +177,81 @@ const EmployeeEdit = () => {
               value={employeeData.company}
               onChange={handleChange}
             >
-              {companies?.map(company => (
-                <Select.Option key={company._id} value={company._id}>{company.name}</Select.Option>
-              ))}
+              {companiesData &&
+                companiesData.map((company) => (
+                  <SelectItem key={company._id} value={company._id} textValue="string">
+                    {company.c_name}
+                  </SelectItem>
+                ))}
+            </Select>
+            <Select
+              label="Supervisor"
+              name="supervisor"
+              value={employeeData.supervisor}
+              onChange={handleChange}
+            >
+              {employeesData &&
+                employeesData.map((employee) => (
+                  <SelectItem key={employee._id} value={employee._id} textValue='string' >
+                    {employee.name}
+                  </SelectItem>
+                ))}
             </Select>
             <Input
+              variant="bordered"
               label="Agreed Basic"
-              name="agreed_basic"
               type="number"
+              name="agreed_basic"
               value={employeeData.agreed_basic}
               onChange={handleChange}
             />
             <Input
-              label="RE Allowance"
-              name="re_allowance"
+              variant="bordered"
+              label="Re-allowance"
               type="number"
+              name="re_allowance"
               value={employeeData.re_allowance}
               onChange={handleChange}
             />
             <Input
+              variant="bordered"
               label="Single OT"
-              name="single_ot"
               type="number"
+              name="single_ot"
               value={employeeData.single_ot}
               onChange={handleChange}
             />
             <Input
+              variant="bordered"
               label="Double OT"
-              name="double_ot"
               type="number"
+              name="double_ot"
               value={employeeData.double_ot}
               onChange={handleChange}
             />
             <Input
+              variant="bordered"
               label="Meal Allowance"
-              name="meal_allowance"
               type="number"
+              name="meal_allowance"
               value={employeeData.meal_allowance}
               onChange={handleChange}
             />
-
-            <Button type='submit' color='primary' disabled={isUpdating}>
-              {isUpdating ? 'Updating...' : 'Update Employee'}
-            </Button>
+            <div>
+              <Button type="submit" color="primary" isDisabled={isUpdating}>
+                {isUpdating ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </div>
           </form>
         </div>
 
-        <div className='hidden md:flex flex-1 items-center justify-center p-6'>
-          <div className='w-full h-full flex items-center justify-center'>
+        <div className="hidden md:flex flex-1 items-center justify-center p-6">
+          <div className="w-full h-full flex items-center justify-center">
             <Image
               isBlurred
-              className='w-full h-full object-cover'
+              className="w-full h-full object-cover"
               src={image1}
-              alt='Edit page image'
+              alt="Employee Avatar"
             />
           </div>
         </div>

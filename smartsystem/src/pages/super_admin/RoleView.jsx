@@ -1,5 +1,5 @@
 import React from "react";
-import { Input, CircularProgress, Image } from "@nextui-org/react";
+import { Input, CircularProgress, Image } from "@heroui/react";
 import { useParams } from "react-router-dom";
 import { useGetRolesQuery } from "../../redux/api/roleApiSlice";
 import GeneralBreadCrumb from "../../components/GeneralBreadCrumb";
@@ -40,7 +40,7 @@ const RoleView = () => {
   }
 
   return (
-    <div>
+    (<div>
       <GeneralBreadCrumb items={breadcrumbItems} />
       <div className="flex flex-col items-center justify-center p-6">
         <div className="text-center text-[25px] font-bold mb-6">Role Details</div>
@@ -80,7 +80,6 @@ const RoleView = () => {
           </div>
         </form>
       </div>
-
       <div className="hidden md:flex flex-1 items-center justify-center p-6">
         <Image
           isBlurred
@@ -89,7 +88,7 @@ const RoleView = () => {
           alt="Role view background image"
         />
       </div>
-    </div>
+    </div>)
   );
 };
 

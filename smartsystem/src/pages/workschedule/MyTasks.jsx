@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Tabs, Tab, Card, CardBody, } from "@nextui-org/react";
+import { Tabs, Tab, Card, CardBody, } from "@heroui/react";
 import DailyTask from "./DailyTask";
 import WeeklyTask from "./WeeklyTask";
 import MonthlyTask from "./MonthlyTask";
 import { useNavigate } from 'react-router-dom';
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import { IoAdd } from "react-icons/io5";
 import GeneralBreadCrumb from "../../components/GeneralBreadCrumb";
 import OneTimeTask from "./OneTimeTask";

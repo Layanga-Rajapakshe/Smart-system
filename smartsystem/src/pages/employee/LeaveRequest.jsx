@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Button, Textarea, DatePicker, Image } from '@nextui-org/react';
+import { Input, Button, Textarea, DatePicker, Image } from "@heroui/react";
 import image1 from '../../assets/images/companyRegister.png';
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 // import { useCreateLeaveRequestMutation } from '../../redux/api/leaveApiSlice'; 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGetRecurringTasksQuery } from '../../redux/api/taskApiSlice';
 import TaskTable from './TaskTable';
-import { Card, CardBody, Spinner } from "@nextui-org/react";
+import { Card, CardBody, Spinner } from "@heroui/react";
 import { useSelector } from 'react-redux';
 
 const WeeklyTask = () => {

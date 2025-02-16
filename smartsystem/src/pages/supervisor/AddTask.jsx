@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Button, Image, Select, SelectItem } from '@nextui-org/react';
+import { Input, Button, Image, Select, SelectItem } from "@heroui/react";
 import image1 from '../../assets/images/companyRegister.png';
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 

@@ -6,7 +6,7 @@ import {
   DropdownSection,
   DropdownTrigger,
   Avatar,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { SlArrowDown } from "react-icons/sl";
 
 const companies = [

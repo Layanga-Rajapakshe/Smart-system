@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardBody, Progress } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, Progress } from "@heroui/react";
 import React from "react";
 import { 
   FiCheckSquare, 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 import AttendanceDropzone from './AttendanceDropzone';
 import HolidayDropzone from './HolidayDropzone';  // Assuming this component exists
-import { Button, Select, SelectItem } from '@nextui-org/react';
+import { Button, Select, SelectItem } from "@heroui/react";
 import { useNavigate } from 'react-router-dom';
 
 const Attendance = () => {

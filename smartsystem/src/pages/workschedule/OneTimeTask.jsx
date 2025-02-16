@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Tabs, Tab, Card, CardBody, Spinner } from "@nextui-org/react";
+import { Tabs, Tab, Card, CardBody, Spinner } from "@heroui/react";
 import { useSelector } from 'react-redux';
 import { 
   useGetThisWeekTasksQuery,

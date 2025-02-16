@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Textarea, Select, SelectItem, Button } from '@nextui-org/react';
+import { Input, Textarea, Select, SelectItem, Button } from "@heroui/react";
 import { toast } from 'react-hot-toast';
 import { useCreateTaskMutation } from '../../redux/api/taskApiSlice';
 import { useSelector } from 'react-redux';

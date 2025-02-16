@@ -6,8 +6,8 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-} from "@nextui-org/react";
-import { DatePicker } from "@nextui-org/react";
+} from "@heroui/react";
+import { DatePicker } from "@heroui/react";
 import { parseDate } from "@internationalized/date";
 
 function AddSalaryMonthCard({ isModalOpen, setIsModalOpen, onSubmit }) {

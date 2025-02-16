@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardBody, CardFooter, Divider, Link } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter, Divider, Link } from "@heroui/react";
 import React from "react";
 import { FiCalendar } from "react-icons/fi";
 import { Doughnut } from "react-chartjs-2";

@@ -1,6 +1,6 @@
 import React from 'react';
 import { LuSunMedium, LuMoon } from 'react-icons/lu';
-import { Switch } from '@nextui-org/react';
+import { Switch } from "@heroui/react";
 import { useTheme } from './ThemeContext'; // Import the custom hook
 
 const ModeToggle = () => {

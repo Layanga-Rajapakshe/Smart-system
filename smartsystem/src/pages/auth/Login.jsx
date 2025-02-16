@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Image, Link, Checkbox, Card, CardBody } from '@nextui-org/react';
+import { Button, Input, Image, Link, Checkbox, Card, CardBody } from "@heroui/react";
 import { useLoginMutation } from '../../redux/api/authApiSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCredentials } from '../../redux/features/auth/authSlice';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, TableHeader, TableBody, TableRow, TableCell, Chip } from '@nextui-org/react';
+import { Table, TableHeader, TableBody, TableRow, TableCell, Chip } from "@heroui/react";
 
 const leaveStatusColorMap = {
   approved: 'success',

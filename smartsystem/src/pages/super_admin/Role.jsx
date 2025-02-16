@@ -1,5 +1,5 @@
 import React from 'react'
-import {Button} from "@nextui-org/react";
+import {Button} from "@heroui/react";
 import { IoAdd } from "react-icons/io5";
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 import RoleList from './RoleList';

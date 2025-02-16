@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Image } from '@nextui-org/react';
+import { Table, Image } from "@heroui/react";
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 import image1 from '../../assets/images/companyRegister.png';
 

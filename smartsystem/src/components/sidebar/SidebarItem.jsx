@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 
 const SidebarItem = ({ icon, title, isActive, href }) => {
     const navigate = useNavigate();

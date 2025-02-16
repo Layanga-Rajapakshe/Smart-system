@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardHeader, CardBody, CardFooter, Divider, Link } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter, Divider, Link } from "@heroui/react";
 import { CgPerformance } from "react-icons/cg";
 
 export default function KPISummaryCard() {

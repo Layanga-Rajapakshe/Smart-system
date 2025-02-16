@@ -14,7 +14,7 @@ import {
     DropdownItem,
     Chip,
     User,
-  } from "@nextui-org/react";
+  } from "@heroui/react";
   import { BsThreeDotsVertical } from "react-icons/bs";
   import { CiSearch } from "react-icons/ci";
   import { FaChevronDown } from "react-icons/fa6";

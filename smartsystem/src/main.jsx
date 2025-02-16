@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { NextUIProvider } from '@nextui-org/react'
+import { HeroUIProvider } from "@heroui/react"
 import { Provider } from 'react-redux'
 
 import App from './App.jsx'
@@ -12,7 +12,7 @@ import { ThemeProvider } from './components/modetoggle/ThemeContext.jsx'
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <NextUIProvider>
+    <HeroUIProvider>
       <ThemeProvider>
         <Provider store={store}>
           <BrowserRouter>
@@ -20,6 +20,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           </BrowserRouter>
         </Provider>
       </ThemeProvider>
-    </NextUIProvider> 
+    </HeroUIProvider> 
   </React.StrictMode>
 );

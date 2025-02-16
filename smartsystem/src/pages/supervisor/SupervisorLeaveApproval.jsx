@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, TableHeader, TableBody, TableRow, TableCell, Button, Chip } from '@nextui-org/react';
+import { Table, TableHeader, TableBody, TableRow, TableCell, Button, Chip } from "@heroui/react";
 
 const SupervisorLeaveApproval = ({ leaveRequests, handleApprove, handleReject }) => {
   return (

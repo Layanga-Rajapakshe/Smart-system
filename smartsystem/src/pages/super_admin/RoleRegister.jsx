@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input, Button, Image, Checkbox, Spacer } from "@nextui-org/react";
+import { Input, Button, Image, Checkbox, Spacer } from "@heroui/react";
 import { useCreateRoleMutation } from "../../redux/api/roleApiSlice";
 import image1 from "../../assets/images/companyRegister.png";
 import GeneralBreadCrumb from "../../components/GeneralBreadCrumb";
@@ -53,7 +53,7 @@ const RoleRegister = () => {
   ];
 
   return (
-    <div>
+    (<div>
       <GeneralBreadCrumb items={breadcrumbItems} />
       <div className="flex h-screen overflow-hidden">
         <div className="flex-1 flex-col flex items-center justify-center p-6">
@@ -116,7 +116,7 @@ const RoleRegister = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div>)
   );
 };
 

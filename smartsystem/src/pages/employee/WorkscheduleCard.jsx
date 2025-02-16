@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Button } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Button } from "@heroui/react";
 import React from "react";
 import { FiClock } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";

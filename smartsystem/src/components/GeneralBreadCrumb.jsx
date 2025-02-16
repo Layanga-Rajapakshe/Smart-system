@@ -1,5 +1,5 @@
 import React from 'react';
-import { Breadcrumbs, BreadcrumbItem, Link } from '@nextui-org/react';
+import { Breadcrumbs, BreadcrumbItem, Link } from "@heroui/react";
 
 const GeneralBreadcrumb = ({ items }) => {
   return (

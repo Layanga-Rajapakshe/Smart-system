@@ -1,4 +1,4 @@
-// import { Card, CardHeader, CardFooter, Image, Progress, Text, Row, Col } from "@nextui-org/react";
+// import { Card, CardHeader, CardFooter, Image, Progress, Text, Row, Col } from "@heroui/react";
 
 // export default function LeaveBalanceCard({ totalLeaves, leavesTaken }) {
 //   const remainingLeaves = totalLeaves - leavesTaken;
@@ -15,7 +15,7 @@
 //         removeWrapper
 //         alt="Leave Balance Image"
 //         className="z-0 w-full h-full object-cover"
-//         src="https://nextui.org/images/card-example-5.jpeg" // Use a relevant image URL
+//         src="https://heroui.org/images/card-example-5.jpeg" // Use a relevant image URL
 //       />
 //       <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100">
 //         <Row>

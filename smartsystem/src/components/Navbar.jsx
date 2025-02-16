@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navbar, NavbarBrand, NavbarContent, User, Input, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Badge } from '@nextui-org/react';
+import { Navbar, NavbarBrand, NavbarContent, User, Input, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Badge } from "@heroui/react";
 import { CiSearch } from "react-icons/ci";
 import { IoNotifications } from "react-icons/io5";
 import { FaRegMessage } from "react-icons/fa6";

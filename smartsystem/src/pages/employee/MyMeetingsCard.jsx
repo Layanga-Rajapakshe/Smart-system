@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, useNavbarContext } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, useNavbarContext } from "@heroui/react";
 import React from "react";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { Navigate, useNavigate} from "react-router-dom";

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import image1 from '../../assets/images/companyEdit.jpeg';
-import { Input, Button, Image, Checkbox, Spacer } from '@nextui-org/react';
+import { Input, Button, Image, Checkbox, Spacer } from "@heroui/react";
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 
 const RoleEdit = () => {

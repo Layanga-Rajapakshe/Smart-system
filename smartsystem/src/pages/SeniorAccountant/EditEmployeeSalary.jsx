@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Button, Image } from '@nextui-org/react';
+import { Input, Button, Image } from "@heroui/react";
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 import { useGetEmployeeQuery, useUpdateEmployeeMutation } from '../../redux/api/employeeApiSlice';
 import { useParams, useNavigate } from 'react-router-dom';

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Pagination } from "@nextui-org/react";
+import { Button, Pagination } from "@heroui/react";
 
 const PaginationComponent = ({
   page,

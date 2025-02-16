@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardBody, Image } from '@nextui-org/react';
+import { Card, CardBody, Image } from "@heroui/react";
 import GreetingCard from './GreetingCard';
 import TimeDateCard from './TimeDateCard';
 import KPICard from './KPICard';

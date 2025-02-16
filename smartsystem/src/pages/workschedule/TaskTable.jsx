@@ -8,7 +8,7 @@ import {
   TableCell,
   Chip,
   Tooltip,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { GrView } from "react-icons/gr";

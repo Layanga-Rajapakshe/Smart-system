@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input, Button, Image, Select, SelectItem } from "@nextui-org/react";
+import { Input, Button, Image, Select, SelectItem } from "@heroui/react";
 import GeneralBreadCrumb from "../../components/GeneralBreadCrumb";
 import { useCreateEmployeeMutation, useGetEmployeesQuery } from "../../redux/api/employeeApiSlice";
 import { useGetRolesQuery } from "../../redux/api/roleApiSlice";

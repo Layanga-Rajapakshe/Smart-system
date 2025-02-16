@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGetCompanyQuery, useUpdateCompanyMutation } from '../../redux/api/companyApiSlice';
 import image1 from '../../assets/images/companyEdit.jpeg';
-import { Input, Button, Image, CircularProgress } from '@nextui-org/react';
+import { Input, Button, Image, CircularProgress } from "@heroui/react";
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 import { useParams, useNavigate } from 'react-router-dom';
 

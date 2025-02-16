@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { format } from 'date-fns';
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Card, Badge, Select, SelectItem } from "@nextui-org/react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Card, Badge, Select, SelectItem } from "@heroui/react";
 import { useAttendance } from './useAttendance';
 import AttendanceDropzone from './AttendanceDropzone';
 import HolidayDropzone from './HolidayDropzone';

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Tabs, Tab, Card } from "@nextui-org/react";
+import { Tabs, Tab, Card } from "@heroui/react";
 import { TbRepeat, TbRepeatOff } from "react-icons/tb";
 import NonRepeatTask from './NonRepeatTask';
 import RepeatTask from './RepeatTask';  

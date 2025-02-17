@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 import NavBar from './components/Navbar';
@@ -54,6 +55,7 @@ import NotificationList from './pages/MeetingMinute/NotificationList'
 
 export default function App() {
   const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
 
   const shouldHideSidebarAndNavbar = ['/login', '/', '/NotFound'].includes(location.pathname);
 
@@ -61,8 +63,13 @@ export default function App() {
     <div>
       {!shouldHideSidebarAndNavbar ? (
         <div className="flex h-screen">
-          <Sidebar />
-          <div className="flex flex-1 flex-col">
+          <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
+          <div className="flex flex-1 flex-col"
+          style={{ 
+                 marginLeft: isOpen ? '14rem' : '0', // Adjust this value based on your sidebar width
+                 width: isOpen ? 'calc(100% - 14rem)' : '100%' 
+               }}
+            >
             <NavBar />
             <div className="p-4 overflow-auto flex-1">
               <Routes>

@@ -16,9 +16,8 @@ import { TbLayoutDashboard } from "react-icons/tb";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
 import SidebarMenu from './SidebarMenu';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, setIsOpen }) => {
     const location = useLocation();
-    const [isOpen, setIsOpen] = useState(false);
     const sidebarRef = useRef(null);
 
     const toggleSidebar = () => {
@@ -85,7 +84,9 @@ const Sidebar = () => {
         <>
             {/* Sidebar Toggle Button */}
             <button
-                className={`fixed top-4 z-50 p-2 bg-gray-800 text-white rounded-md ${isOpen ? 'left-60' : 'left-4'}`}
+                className={`fixed top-4 z-50 p-2 bg-gray-800 text-white rounded-md transition-all duration-300 ease-in-out ${
+                    isOpen ? 'left-56' : 'left-4'
+                }`}
                 onClick={toggleSidebar}
             >
                 {isOpen ? "×" : "☰"}
@@ -94,8 +95,16 @@ const Sidebar = () => {
             {/* Sidebar Component */}
             <div
                 ref={sidebarRef}
-                className={`fixed top-0 left-0 h-full w-56 z-50 bg-background text-black transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out`}
+                className={`fixed top-0 left-0 h-full w-56 z-40 bg-background text-black transform transition-transform duration-300 ease-in-out ${
+                    isOpen ? 'translate-x-0' : '-translate-x-full'
+                }`}
             >
+                {isOpen && (
+                <div 
+                    className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
 
 
                 <div className="flex flex-col h-full overflow-y-scroll">

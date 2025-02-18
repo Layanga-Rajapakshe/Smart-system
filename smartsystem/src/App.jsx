@@ -39,6 +39,7 @@ import MedicalClaimProfile from './pages/MedicalClaim/MedicalClaimProfile';
 import EmployeeSalaryList from './pages/SeniorAccountant/EmployeeSalaryList';
 import ViewEmployeeSalary from './pages/SeniorAccountant/ViewEmployeeSalary';
 import EditEmployeeSalary from './pages/SeniorAccountant/EditEmployeeSalary';
+import EmployeeSalaryHistory from './pages/Salary/EmployeeSalaryHistory';
 import RoleView from './pages/super_admin/RoleView';
 
 import KPIWelcom from "./pages/KPI/KPIWelcom";
@@ -52,6 +53,9 @@ import MeetingHome from "./pages/MeetingMinute/MeetingHome";
 import Meetings from "./pages/MeetingMinute/Meetings";
 import Notifications from './pages/MeetingMinute/Notifications'
 import NotificationList from './pages/MeetingMinute/NotificationList'
+import SalaryComplaintForm from './pages/Salary/SalaryComplaintForm';
+import PayrollSummaryPage from './pages/SeniorAccountant/PayrollSummaryPage';
+import EmployeeDetailsView from './pages/SeniorAccountant/EmployeeDetailsView';
 
 export default function App() {
   const location = useLocation();
@@ -100,8 +104,12 @@ export default function App() {
                 <Route path="/schedule" element={<WorkSchedule />} />
                 <Route path="/medicalclaimprofile" element={<MedicalClaimProfile />} />
                 <Route path='/employeesalarylist' element={<EmployeeSalaryList />} />
-                <Route path='/viewsalary' element={<ViewEmployeeSalary />} />
-                <Route path="/editsalary" element={<EditEmployeeSalary />} />
+                <Route path='/viewsalary/:id' element={<ViewEmployeeSalary />} />
+                <Route path="/editsalary/:id" element={<EditEmployeeSalary />} />
+                <Route path="/salary-history/:id" element={<EmployeeSalaryHistory />} />
+                <Route path='/salarycomplaint' element={<SalaryComplaintForm />} />
+                <Route path='/payrollsummary' element={<PayrollSummaryPage />} />
+                <Route path='/payrolldetails/:id' element={<EmployeeDetailsView />} />
 
                 <Route path='/leaverequest' element={<LeaveRequest />} />
                 <Route path='/leavestatus' element={<LeaveStatus />} />

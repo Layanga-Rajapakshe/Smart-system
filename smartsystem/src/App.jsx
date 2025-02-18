@@ -80,6 +80,8 @@ import MeetingHome from "./pages/MeetingMinute/MeetingHome";
 import Meetings from "./pages/MeetingMinute/Meetings";
 import Notifications from './pages/MeetingMinute/Notifications';
 import NotificationList from './pages/MeetingMinute/NotificationList';
+import ProtectedRoute from './components/ProtectedRoute';
+import PrivateRoute from './components/ProtectedRoute';
 
 export default function App() {
   const location = useLocation();
@@ -102,9 +104,10 @@ export default function App() {
             <NavBar />
             <div className="p-4 overflow-auto flex-1">
               <Routes>
+                <Route element={<PrivateRoute />} >
                 {/* Common Routes */}
                 <Route path="/" element={<Home />} />
-                
+
                 {/* Super Admin Routes */}
                 <Route path="/company" element={<Company />} />
                 <Route path="/companyregister" element={<CompanyRegister />} />
@@ -166,6 +169,7 @@ export default function App() {
                 <Route path="/meetings" element={<Meetings />} />
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/notificationsList" element={<NotificationList />} />
+                </ Route>
                 
                 {/* Fallback Route */}
                 <Route path="*" element={<Navigate to="/NotFound" />} />

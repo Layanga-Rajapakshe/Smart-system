@@ -15,7 +15,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Chip
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { useParams } from 'react-router-dom';
 import { FaFileDownload, FaEye } from 'react-icons/fa';
 import { IoFilterSharp } from 'react-icons/io5';

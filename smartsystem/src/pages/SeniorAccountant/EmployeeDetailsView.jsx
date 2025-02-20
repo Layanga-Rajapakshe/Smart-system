@@ -17,7 +17,7 @@ import {
   Progress,
   Breadcrumbs,
   BreadcrumbItem
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { 
   BsDownload, 
   BsPrinter, 

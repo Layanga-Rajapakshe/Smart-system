@@ -8,7 +8,7 @@ import {
   Textarea,
   Select,
   SelectItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { IoArrowBack } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 

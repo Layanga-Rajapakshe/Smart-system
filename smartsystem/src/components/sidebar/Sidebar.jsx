@@ -62,12 +62,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     const employeeMenuItems = [
         { title: 'My Dashboard', href: '/dashboard', icon: <TbLayoutDashboard />, isActive: ['/dashboard'].includes(location.pathname) },
         { title: 'Smart Weekly Plan', href: '/mytasks', icon: <GrTask />, isActive: ['/mytasks'].includes(location.pathname) },
+        { title: 'My Salary History', href: '/salary-history/1', icon: <GrTask />, isActive: ['/salary-history/1'].includes(location.pathname) },
     ];
 
     const seniorAccountantMenuItems = [
-        { title: 'Salary Details', href: '/employeesalarylist', icon: <FaMoneyCheck />, isActive: ['/employeesalarylist'].includes(location.pathname) },
-        { title: 'View Salary', href: '/viewsalary', icon: <GiTakeMyMoney />, isActive: ['/viewsalary'].includes(location.pathname) },
-        { title: 'Edit Salary', href: '/editsalary', icon: <FaEdit />, isActive: ['/editsalary'].includes(location.pathname) },
+        { title: 'Employee Salary Details', href: '/employeesalarylist', icon: <FaMoneyCheck />, isActive: ['/employeesalarylist'].includes(location.pathname) },
+        { title: 'Payroll Summary', href: '/payrollsummary', icon: <GiTakeMyMoney />, isActive: ['/payrollsummary'].includes(location.pathname) },
+        { title: 'Monthly Summary', href: '/monthlysalarysummary', icon: <FaEdit />, isActive: ['/monthlysalarysummary'].includes(location.pathname) },
     ];
 
     const meetingMinuteMenuItems = [

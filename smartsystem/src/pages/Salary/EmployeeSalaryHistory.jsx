@@ -16,22 +16,73 @@ import {
   DropdownItem,
   Chip
 } from "@heroui/react";
-import { useParams } from 'react-router-dom';
-import { FaFileDownload, FaEye } from 'react-icons/fa';
+import { useParams, Link } from 'react-router-dom';
+import { FaFileDownload, FaEye, FaExclamationTriangle } from 'react-icons/fa';
 import { IoFilterSharp } from 'react-icons/io5';
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
-import { useGetEmployeeSalaryHistoryQuery } from '../../redux/api/employeeSalaryApiSlice';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
 
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
 
+// Dummy data for employee ID 1
+const dummySalaryHistory = [
+  {
+    month: 1,
+    year: 2024,
+    employeeId: "1",
+    employeeName: "John Doe",
+    department: "Engineering",
+    basicSalary: 5000.00,
+    reAllowance: 500.00,
+    singleOT: 200.00,
+    doubleOT: 300.00,
+    mealAllowance: 150.00,
+    incomeTax: 600.00,
+    insurance: 200.00,
+    netPay: 5350.00,
+    status: "Paid",
+    paymentDate: "2024-01-25"
+  },
+  {
+    month: 2,
+    year: 2024,
+    employeeId: "1",
+    employeeName: "John Doe",
+    department: "Engineering",
+    basicSalary: 5000.00,
+    reAllowance: 500.00,
+    singleOT: 250.00,
+    doubleOT: 400.00,
+    mealAllowance: 150.00,
+    incomeTax: 600.00,
+    insurance: 200.00,
+    netPay: 5500.00,
+    status: "Processing",
+    paymentDate: null
+  },
+  {
+    month: 12,
+    year: 2023,
+    employeeId: "1",
+    employeeName: "John Doe",
+    department: "Engineering",
+    basicSalary: 4800.00,
+    reAllowance: 500.00,
+    singleOT: 180.00,
+    doubleOT: 250.00,
+    mealAllowance: 150.00,
+    incomeTax: 580.00,
+    insurance: 200.00,
+    netPay: 5100.00,
+    status: "Paid",
+    paymentDate: "2023-12-25"
+  }
+];
+
 const EmployeeSalaryHistory = () => {
   const { id: employeeId } = useParams();
-  const { data: salaryHistory, isLoading } = useGetEmployeeSalaryHistoryQuery(employeeId);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   const breadcrumbItems = [
@@ -104,12 +155,12 @@ const EmployeeSalaryHistory = () => {
   };
 
   const years = Array.from(
-    new Set(salaryHistory?.map(item => item.year) || [new Date().getFullYear()])
+    new Set(dummySalaryHistory.map(item => item.year))
   ).sort((a, b) => b - a);
 
-  const filteredSalaryHistory = salaryHistory?.filter(
+  const filteredSalaryHistory = dummySalaryHistory.filter(
     item => item.year === selectedYear
-  ) || [];
+  );
 
   return (
     <div className="p-6 space-y-6">
@@ -117,7 +168,18 @@ const EmployeeSalaryHistory = () => {
       
       <Card>
         <CardHeader className="flex justify-between items-center px-6 py-4">
-          <h2 className="text-xl font-bold">Salary History</h2>
+          <div className="flex items-center gap-4">
+            <h2 className="text-xl font-bold">Salary History</h2>
+            <Link to="/salarycomplaint">
+              <Button
+                color="warning"
+                variant="flat"
+                startContent={<FaExclamationTriangle />}
+              >
+                Submit Complaint
+              </Button>
+            </Link>
+          </div>
           <Dropdown>
             <DropdownTrigger>
               <Button 

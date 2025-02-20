@@ -137,7 +137,6 @@ export default function App() {
                 <Route path="/leavestatus" element={<LeaveStatus />} />
                 <Route path="/schedule" element={<WorkSchedule />} />
                 <Route path="/medicalclaimprofile" element={<MedicalClaimProfile />} />
-                <Route path='/salarycomplaint' element={<SalaryComplaintForm />} />
                 
                 {/* Work Schedule Routes */}
                 <Route path="/newtask" element={<CreateTask />} />
@@ -154,6 +153,7 @@ export default function App() {
                 <Route path='/payrollsummary' element={<PayrollSummaryPage />} />
                 <Route path='/payrolldetails/:id' element={<EmployeeDetailsView />} />
                 <Route path='/monthlysalarysummary' element={<MonthlySalarySummaryPage />} />
+                <Route path='/salarycomplaint' element={<SalaryComplaintForm />} />
                 
                 {/* KPI Routes */}
                 <Route path="/KPIWelcom" element={<KPIWelcom />} />

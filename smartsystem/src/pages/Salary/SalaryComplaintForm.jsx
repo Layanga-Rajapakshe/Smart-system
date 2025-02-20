@@ -52,7 +52,7 @@ const SalaryComplaintForm = () => {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    navigate('/salary-history/1');
   };
 
   const issueCategories = [
@@ -69,7 +69,7 @@ const SalaryComplaintForm = () => {
         <Button
           color="primary"
           variant="light"
-          onClick={handleBack}
+          onPress={handleBack}
           startContent={<IoArrowBack />}
         >
           Back

@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../redux/features/auth/authSlice';
 import { useLogoutMutation } from '../redux/api/authApiSlice';
-import { useGetEmployeeQuery } from '../redux/api/employeeApiSlice';
 import ModeToggle from './modetoggle/ModeToggle';
 
 const NavBar = () => {
@@ -17,7 +16,7 @@ const NavBar = () => {
   const navigate = useNavigate();
   const [logoutApiCall] = useLogoutMutation();
 
-  const { userInfo } = useSelector((state) => state.auth);
+  const { userInfo } = useSelector((state) => state.auth) || {};
 
   const handleLogout = async () => {
     try {
@@ -26,15 +25,15 @@ const NavBar = () => {
       navigate('/login');
       toast.success('Logout Success');
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error?.message || 'Logout failed');
     }
   };
 
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
 
-  const userName = userInfo.name || "Guest User";
-  const userRole = userInfo.role || "N/A";
-  const userAvatar = userInfo.avatar || "https://i.pravatar.cc/150";
+  const userName = userInfo?.name || "Guest User";
+  const userRole = userInfo?.role || "N/A";
+  const userAvatar = userInfo?.avatar || "https://i.pravatar.cc/150";
 
   return (
     <Navbar isBordered>

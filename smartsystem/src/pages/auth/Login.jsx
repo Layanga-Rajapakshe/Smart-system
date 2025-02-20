@@ -49,7 +49,6 @@ const Login = () => {
         api.photos.getRandom({ query: "cinematic", orientation: "landscape" })
         .then(result => {
           setBackgroundImage(result.response.urls.regular);
-          console.log(result);
         });
       } catch (error) {
         // Fallback image if API fails

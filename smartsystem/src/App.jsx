@@ -179,7 +179,9 @@ export default function App() {
         </div>
       ) : (
         <Routes>
+          <Route element={<PrivateRoute/>}>
           <Route path="/" element={<Home />} />
+          </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/NotFound" element={<NotFound />} />
           <Route path="*" element={<Navigate to="/NotFound" />} />

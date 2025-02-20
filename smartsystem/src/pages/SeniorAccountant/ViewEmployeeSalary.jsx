@@ -1,9 +1,3 @@
-<<<<<<< Updated upstream
-import React from 'react';
-import { Table, Image } from "@heroui/react";
-import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
-import image1 from '../../assets/images/companyRegister.png';
-=======
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -13,7 +7,6 @@ import {
   Button,
 } from "@heroui/react";
 import { IoArrowBack } from "react-icons/io5";
->>>>>>> Stashed changes
 
 const EmployeeSalaryDetails = () => {
   const { employeeId } = useParams();

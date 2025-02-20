@@ -16,9 +16,8 @@ import { TbLayoutDashboard } from "react-icons/tb";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
 import SidebarMenu from './SidebarMenu';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, setIsOpen }) => {
     const location = useLocation();
-    const [isOpen, setIsOpen] = useState(false);
     const sidebarRef = useRef(null);
 
     const toggleSidebar = () => {
@@ -71,11 +70,23 @@ const Sidebar = () => {
         { title: 'Edit Salary', href: '/editsalary', icon: <FaEdit />, isActive: ['/editsalary'].includes(location.pathname) },
     ];
 
+    const meetingMinuteMenuItems = [
+        { title: 'Meeting Home', href: '/meetingHome', icon: <FaMoneyCheck />, isActive: ['/meetingHome'].includes(location.pathname) },
+        { title: 'Meetings', href: '/meetings', icon: <FaMoneyCheck />, isActive: ['/meetings'].includes(location.pathname) },
+    ];
+
+    const kpiMenuItems = [
+        { title: 'KPI Home', href: '/KPIWelcom', icon: <FaMoneyCheck />, isActive: ['/KPIWelcom'].includes(location.pathname) },
+        { title: 'KPI Dashboard', href: '/KPIdashboard', icon: <FaMoneyCheck />, isActive: ['/KPIdashboard'].includes(location.pathname) },
+    ];
+
     return (
         <>
             {/* Sidebar Toggle Button */}
             <button
-                className={`fixed top-4 z-50 p-2 bg-gray-800 text-white rounded-md ${isOpen ? 'left-60' : 'left-4'}`}
+                className={`fixed top-4 z-50 p-2 bg-gray-800 text-white rounded-md transition-all duration-300 ease-in-out ${
+                    isOpen ? 'left-56' : 'left-4'
+                }`}
                 onClick={toggleSidebar}
             >
                 {isOpen ? "×" : "☰"}
@@ -84,8 +95,16 @@ const Sidebar = () => {
             {/* Sidebar Component */}
             <div
                 ref={sidebarRef}
-                className={`fixed top-0 left-0 h-full w-56 z-50 bg-background text-black transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out`}
+                className={`fixed top-0 left-0 h-full w-56 z-40 bg-background text-black transform transition-transform duration-300 ease-in-out ${
+                    isOpen ? 'translate-x-0' : '-translate-x-full'
+                }`}
             >
+                {isOpen && (
+                <div 
+                    className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
 
 
                 <div className="flex flex-col h-full overflow-y-scroll">
@@ -99,7 +118,7 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {superAdminMenuItems.map((item, index) => (
-                                    <li key={index} className={`p-2 rounded-md `}>
+                                    <li key={index} className={` rounded-md `}>
                                         <SidebarItem {...item} />
                                     </li>
                                 ))}
@@ -111,7 +130,7 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {adminMenuItems.map((item, index) => (
-                                    <li key={index} className={`p-2 rounded-md `}>
+                                    <li key={index} className={`rounded-md `}>
                                         <SidebarItem {...item} />
                                     </li>
                                 ))}
@@ -123,7 +142,7 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {supervisorMenuItems.map((item, index) => (
-                                    <li key={index} className={`p-2 rounded-md `}>
+                                    <li key={index} className={` rounded-md `}>
                                         <SidebarItem {...item} />
                                     </li>
                                 ))}
@@ -135,7 +154,7 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {ceoMenuItems.map((item, index) => (
-                                    <li key={index} className={`p-2 rounded-md `}>
+                                    <li key={index} className={` rounded-md `}>
                                         <SidebarItem {...item} />
                                     </li>
                                 ))}
@@ -147,7 +166,7 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {employeeMenuItems.map((item, index) => (
-                                    <li key={index} className={`p-2 rounded-md `}>
+                                    <li key={index} className={` rounded-md `}>
                                         <SidebarItem {...item} />
                                     </li>
                                 ))}
@@ -159,7 +178,31 @@ const Sidebar = () => {
                         <nav className="flex-grow">
                             <ul>
                                 {seniorAccountantMenuItems.map((item, index) => (
-                                    <li key={index} className={`p-2 rounded-md `}>
+                                    <li key={index} className={` rounded-md `}>
+                                        <SidebarItem {...item} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    </SidebarMenu>
+
+                    <SidebarMenu title="Meeting Minute Menu">
+                        <nav className="flex-grow">
+                            <ul>
+                                {meetingMinuteMenuItems.map((item, index) => (
+                                    <li key={index} className={` rounded-md `}>
+                                        <SidebarItem {...item} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
+                    </SidebarMenu>
+
+                    <SidebarMenu title="KPI Menu">
+                        <nav className="flex-grow">
+                            <ul>
+                                {kpiMenuItems.map((item, index) => (
+                                    <li key={index} className={` rounded-md `}>
                                         <SidebarItem {...item} />
                                     </li>
                                 ))}

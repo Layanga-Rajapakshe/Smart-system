@@ -1,15 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
 import {
   Card,
   CardHeader,
   CardBody,
   Button,
+  Spinner
 } from "@heroui/react";
 import { IoArrowBack } from "react-icons/io5";
+import {useNavigate} from "react-router-dom";
+
+const mockEmployeeData = {
+  employeeId: "EMP001",
+  name: "John Doe",
+  email: "john.doe@company.com",
+  avatar: "/api/placeholder/150/150",
+  basicSalary: 75000,
+  reAllowance: 1200,
+  singleOt: 45,
+  doubleOt: 90,
+  mealAllowance: 25
+};
 
 const EmployeeSalaryDetails = () => {
-  const { employeeId } = useParams();
   const navigate = useNavigate();
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,13 +31,11 @@ const EmployeeSalaryDetails = () => {
     const fetchEmployeeData = async () => {
       try {
         setLoading(true);
-        // Replace this with your actual API call
-        const response = await fetch(`/api/employees/${employeeId}`);
-        if (!response.ok) {
-          throw new Error('Employee not found');
-        }
-        const data = await response.json();
-        setEmployee(data);
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Use mock data for employee ID 1
+        setEmployee(mockEmployeeData);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -34,7 +44,7 @@ const EmployeeSalaryDetails = () => {
     };
 
     fetchEmployeeData();
-  }, [employeeId]);
+  }, []);
 
   const handleBack = () => {
     navigate(-1);
@@ -43,7 +53,7 @@ const EmployeeSalaryDetails = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <div className="text-lg">Loading...</div>
+        <Spinner size="lg" />
       </div>
     );
   }
@@ -69,7 +79,7 @@ const EmployeeSalaryDetails = () => {
         <Button 
           color="primary" 
           variant="light" 
-          onClick={handleBack}
+          onPress={handleBack}
           startContent={<IoArrowBack />}
         >
           Back to List

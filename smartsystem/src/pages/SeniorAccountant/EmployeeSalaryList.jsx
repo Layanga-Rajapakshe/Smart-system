@@ -133,8 +133,8 @@ const EmployeeSalaryList = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem startContent={<GrView/>} href="/viewsalary">View</DropdownItem>
-                <DropdownItem startContent={<CiEdit/>} href="/editsalary">Edit</DropdownItem>
+                <DropdownItem startContent={<GrView/>} href="/viewsalary/1">View</DropdownItem>
+                <DropdownItem startContent={<CiEdit/>} href="/editsalary/1">Edit</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>

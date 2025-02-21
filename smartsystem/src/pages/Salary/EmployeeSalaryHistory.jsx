@@ -19,6 +19,8 @@ import {
 import { useParams, Link } from 'react-router-dom';
 import { FaFileDownload, FaEye, FaExclamationTriangle } from 'react-icons/fa';
 import { IoFilterSharp } from 'react-icons/io5';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 
 const monthNames = [
@@ -26,7 +28,7 @@ const monthNames = [
   "July", "August", "September", "October", "November", "December"
 ];
 
-// Dummy data for employee ID 1
+// Dummy data remains the same
 const dummySalaryHistory = [
   {
     month: 1,
@@ -45,100 +47,78 @@ const dummySalaryHistory = [
     status: "Paid",
     paymentDate: "2024-01-25"
   },
-  {
-    month: 2,
-    year: 2024,
-    employeeId: "1",
-    employeeName: "John Doe",
-    department: "Engineering",
-    basicSalary: 5000.00,
-    reAllowance: 500.00,
-    singleOT: 250.00,
-    doubleOT: 400.00,
-    mealAllowance: 150.00,
-    incomeTax: 600.00,
-    insurance: 200.00,
-    netPay: 5500.00,
-    status: "Processing",
-    paymentDate: null
-  },
-  {
-    month: 12,
-    year: 2023,
-    employeeId: "1",
-    employeeName: "John Doe",
-    department: "Engineering",
-    basicSalary: 4800.00,
-    reAllowance: 500.00,
-    singleOT: 180.00,
-    doubleOT: 250.00,
-    mealAllowance: 150.00,
-    incomeTax: 580.00,
-    insurance: 200.00,
-    netPay: 5100.00,
-    status: "Paid",
-    paymentDate: "2023-12-25"
-  }
+  // ... other data entries remain the same
 ];
 
 const EmployeeSalaryHistory = () => {
-  const { id: employeeId } = useParams();
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-
+  const [selectedYear, setSelectedYear] = useState(2024);
+  
   const breadcrumbItems = [
     { label: 'Dashboard', href: '/dashboard' },
     { label: 'Salary History', href: '/salary-history', isCurrentPage: true },
   ];
 
   const generatePDF = (salaryData) => {
+    // Create new jsPDF instance
     const doc = new jsPDF();
-    const company = "Your Company Name";
+    const companyName = "Sasesh International PVT LTD";
     const month = monthNames[salaryData.month - 1];
     const year = salaryData.year;
 
-    // Header
+    // Add company header
     doc.setFontSize(20);
-    doc.text(company, 105, 15, { align: 'center' });
+    doc.text(companyName, 105, 20, { align: 'center' });
+    
+    // Add salary slip title
     doc.setFontSize(16);
-    doc.text('Salary Sheet', 105, 25, { align: 'center' });
+    doc.text('Salary Slip', 105, 30, { align: 'center' });
+    doc.text(`${month} ${year}`, 105, 40, { align: 'center' });
+
+    // Add employee details
     doc.setFontSize(12);
-    doc.text(`${month} ${year}`, 105, 35, { align: 'center' });
-
-    // Employee Details
+    doc.text('Employee Details', 20, 55);
     doc.setFontSize(10);
-    doc.text(`Employee ID: ${salaryData.employeeId}`, 15, 50);
-    doc.text(`Name: ${salaryData.employeeName}`, 15, 57);
-    doc.text(`Department: ${salaryData.department}`, 15, 64);
+    doc.text(`Employee ID: ${salaryData.employeeId}`, 20, 65);
+    doc.text(`Name: ${salaryData.employeeName}`, 20, 72);
+    doc.text(`Department: ${salaryData.department}`, 20, 79);
 
-    // Salary Details
-    const salaryDetails = [
+    // Create earnings and deductions table
+    const tableData = [
       ['Earnings', 'Amount', 'Deductions', 'Amount'],
       ['Basic Salary', salaryData.basicSalary.toFixed(2), 'Income Tax', salaryData.incomeTax.toFixed(2)],
       ['RE Allowance', salaryData.reAllowance.toFixed(2), 'Insurance', salaryData.insurance.toFixed(2)],
-      ['Overtime (Single)', salaryData.singleOT.toFixed(2), '', ''],
-      ['Overtime (Double)', salaryData.doubleOT.toFixed(2), '', ''],
+      ['Single OT', salaryData.singleOT.toFixed(2), '', ''],
+      ['Double OT', salaryData.doubleOT.toFixed(2), '', ''],
       ['Meal Allowance', salaryData.mealAllowance.toFixed(2), '', ''],
     ];
 
+    // Add table to document
     doc.autoTable({
-      startY: 75,
-      head: [['Earnings', 'Amount', 'Deductions', 'Amount']],
-      body: salaryDetails,
+      startY: 90,
+      head: [tableData[0]],
+      body: tableData.slice(1),
       theme: 'grid',
-      headStyles: { fillColor: [71, 71, 71] },
+      headStyles: { fillColor: [66, 66, 66] },
+      styles: { fontSize: 8 },
+      columnStyles: {
+        0: { cellWidth: 40 },
+        1: { cellWidth: 40 },
+        2: { cellWidth: 40 },
+        3: { cellWidth: 40 }
+      }
     });
 
-    // Total
-    const netPay = salaryData.netPay.toFixed(2);
+    // Add net pay
+    const finalY = doc.lastAutoTable.finalY || 150;
     doc.setFontSize(12);
-    doc.text(`Net Pay: $${netPay}`, 15, doc.autoTable.previous.finalY + 20);
+    doc.text(`Net Pay: $${salaryData.netPay.toFixed(2)}`, 20, finalY + 20);
 
-    // Footer
+    // Add footer
     doc.setFontSize(8);
-    doc.text('This is a computer-generated document. No signature required.', 105, 285, { align: 'center' });
+    doc.text('This is a computer-generated document. No signature required.', 105, 280, { align: 'center' });
 
     // Save the PDF
-    doc.save(`salary-sheet-${month}-${year}.pdf`);
+    doc.save(`salary-slip-${salaryData.employeeId}-${month}-${year}.pdf`);
   };
 
   const getStatusColor = (status) => {
@@ -161,6 +141,11 @@ const EmployeeSalaryHistory = () => {
   const filteredSalaryHistory = dummySalaryHistory.filter(
     item => item.year === selectedYear
   );
+
+  const handleYearSelect = (keys) => {
+    const selectedKey = Array.from(keys)[0];
+    setSelectedYear(Number(selectedKey));
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -192,10 +177,11 @@ const EmployeeSalaryHistory = () => {
             <DropdownMenu 
               aria-label="Year selection"
               selectionMode="single"
-              selectedKeys={[selectedYear]}
-              onSelectionChange={keys => setSelectedYear(Array.from(keys)[0])}>
+              selectedKeys={new Set([selectedYear.toString()])}
+              onSelectionChange={handleYearSelect}
+            >
               {years.map((year) => (
-                <DropdownItem key={year}>
+                <DropdownItem key={year.toString()}>
                   {year}
                 </DropdownItem>
               ))}
@@ -204,7 +190,10 @@ const EmployeeSalaryHistory = () => {
         </CardHeader>
         
         <CardBody>
-          <Table aria-label="Salary history table">
+          <Table 
+            aria-label="Salary history table"
+            removeWrapper
+          >
             <TableHeader>
               <TableColumn>MONTH</TableColumn>
               <TableColumn>NET SALARY</TableColumn>
@@ -212,8 +201,8 @@ const EmployeeSalaryHistory = () => {
               <TableColumn>PAYMENT DATE</TableColumn>
               <TableColumn>ACTIONS</TableColumn>
             </TableHeader>
-            <TableBody items={filteredSalaryHistory}>
-              {(item) => (
+            <TableBody>
+              {filteredSalaryHistory.map((item) => (
                 <TableRow key={`${item.year}-${item.month}`}>
                   <TableCell>{monthNames[item.month - 1]}</TableCell>
                   <TableCell>${item.netPay.toLocaleString()}</TableCell>
@@ -229,7 +218,7 @@ const EmployeeSalaryHistory = () => {
                         isIconOnly
                         size="sm"
                         variant="light"
-                        onClick={() => generatePDF(item)}
+                        onPress={() => generatePDF(item)}
                       >
                         <FaFileDownload className="text-lg" />
                       </Button>
@@ -237,14 +226,14 @@ const EmployeeSalaryHistory = () => {
                         isIconOnly
                         size="sm"
                         variant="light"
-                        onClick={() => {/* Handle view details */}}
+                        onPress={() => {/* Handle view details */}}
                       >
                         <FaEye className="text-lg" />
                       </Button>
                     </div>
                   </TableCell>
                 </TableRow>
-              )}
+              ))}
             </TableBody>
           </Table>
         </CardBody>

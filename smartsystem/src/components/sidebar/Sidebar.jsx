@@ -85,8 +85,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         <>
             {/* Sidebar Toggle Button */}
             <button
-                className={`fixed top-4 z-50 p-2 bg-gray-800 text-white rounded-md transition-all duration-300 ease-in-out ${
-                    isOpen ? 'left-56' : 'left-4'
+                className={`fixed top-4 z-50 p-2 bg-indigo-800 text-white rounded-md shadow-lg transition-all duration-300 ease-in-out hover:bg-indigo-700 ${
+                    isOpen ? 'left-64' : 'left-4'
                 }`}
                 onClick={toggleSidebar}
             >
@@ -96,121 +96,148 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             {/* Sidebar Component */}
             <div
                 ref={sidebarRef}
-                className={`fixed top-0 left-0 h-full w-56 z-40 bg-background text-black transform transition-transform duration-300 ease-in-out ${
+                className={`fixed top-0 left-0 h-full w-64 z-40 bg-gradient-to-b from-blue-900 to-indigo-900 text-white transform transition-transform duration-300 ease-in-out shadow-xl ${
                     isOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}
             >
                 {isOpen && (
-                <div 
-                    className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
-                    onClick={() => setIsOpen(false)}
-                />
-            )}
+                    <div 
+                        className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+                        onClick={() => setIsOpen(false)}
+                    />
+                )}
 
+                <div className="flex flex-col h-full overflow-y-auto">
+                    {/* Header with logo */}
+                    <div className="p-6 border-b border-indigo-800">
+                        <div className="font-bold text-2xl text-white">SMART SYSTEM</div>
+                        <p className="text-gray-300 text-sm mt-2">
+                            Business management solutions
+                        </p>
+                    </div>
 
-                <div className="flex flex-col h-full overflow-y-scroll">
-                    {/* Companies Dropdown */}
-                  { /* <div className="flex gap-8 justify-center py-6 px-4">
-                        <CompaniesDropdown />
-                    </div>*/}
+                    {/* Collapsible Menus */}
+                    <div className="py-4 px-4">
+                        <SidebarMenu title="Super Admin Menu">
+                            <nav className="flex-grow">
+                                <ul className="space-y-1">
+                                    {superAdminMenuItems.map((item, index) => (
+                                        <li key={index} className={`rounded-md overflow-hidden`}>
+                                            <SidebarItem {...item} />
+                                        </li>
+                                    ))}
+                                </ul>
+                            </nav>
+                        </SidebarMenu>
 
-                    {/* Conditional Rendering of Menus */}
-                    <SidebarMenu title="Super Admin Menu">
-                        <nav className="flex-grow">
-                            <ul>
-                                {superAdminMenuItems.map((item, index) => (
-                                    <li key={index} className={` rounded-md `}>
-                                        <SidebarItem {...item} />
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
-                    </SidebarMenu>
+                        <SidebarMenu title="Company Admin Menu">
+                            <nav className="flex-grow">
+                                <ul className="space-y-1">
+                                    {adminMenuItems.map((item, index) => (
+                                        <li key={index} className={`rounded-md overflow-hidden`}>
+                                            <SidebarItem {...item} />
+                                        </li>
+                                    ))}
+                                </ul>
+                            </nav>
+                        </SidebarMenu>
 
-                    <SidebarMenu title={"Company Admin Menu"}>
-                        <nav className="flex-grow">
-                            <ul>
-                                {adminMenuItems.map((item, index) => (
-                                    <li key={index} className={`rounded-md `}>
-                                        <SidebarItem {...item} />
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
-                    </SidebarMenu>
+                        <SidebarMenu title="Supervisor Menu">
+                            <nav className="flex-grow">
+                                <ul className="space-y-1">
+                                    {supervisorMenuItems.map((item, index) => (
+                                        <li key={index} className={`rounded-md overflow-hidden`}>
+                                            <SidebarItem {...item} />
+                                        </li>
+                                    ))}
+                                </ul>
+                            </nav>
+                        </SidebarMenu>
 
-                    <SidebarMenu title="Supervisor Menu">
-                        <nav className="flex-grow">
-                            <ul>
-                                {supervisorMenuItems.map((item, index) => (
-                                    <li key={index} className={` rounded-md `}>
-                                        <SidebarItem {...item} />
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
-                    </SidebarMenu>
+                        <SidebarMenu title="CEO Menu">
+                            <nav className="flex-grow">
+                                <ul className="space-y-1">
+                                    {ceoMenuItems.map((item, index) => (
+                                        <li key={index} className={`rounded-md overflow-hidden`}>
+                                            <SidebarItem {...item} />
+                                        </li>
+                                    ))}
+                                </ul>
+                            </nav>
+                        </SidebarMenu>
 
-                    <SidebarMenu title="CEO Menu">
-                        <nav className="flex-grow">
-                            <ul>
-                                {ceoMenuItems.map((item, index) => (
-                                    <li key={index} className={` rounded-md `}>
-                                        <SidebarItem {...item} />
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
-                    </SidebarMenu>
+                        <SidebarMenu title="Employee Menu">
+                            <nav className="flex-grow">
+                                <ul className="space-y-1">
+                                    {employeeMenuItems.map((item, index) => (
+                                        <li key={index} className={`rounded-md overflow-hidden`}>
+                                            <SidebarItem {...item} />
+                                        </li>
+                                    ))}
+                                </ul>
+                            </nav>
+                        </SidebarMenu>
 
-                    <SidebarMenu title="Employee Menu">
-                        <nav className="flex-grow">
-                            <ul>
-                                {employeeMenuItems.map((item, index) => (
-                                    <li key={index} className={` rounded-md `}>
-                                        <SidebarItem {...item} />
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
-                    </SidebarMenu>
+                        <SidebarMenu title="Senior Accountant Menu">
+                            <nav className="flex-grow">
+                                <ul className="space-y-1">
+                                    {seniorAccountantMenuItems.map((item, index) => (
+                                        <li key={index} className={`rounded-md overflow-hidden`}>
+                                            <SidebarItem {...item} />
+                                        </li>
+                                    ))}
+                                </ul>
+                            </nav>
+                        </SidebarMenu>
 
-                    <SidebarMenu title="Senior Accountant Menu">
-                        <nav className="flex-grow">
-                            <ul>
-                                {seniorAccountantMenuItems.map((item, index) => (
-                                    <li key={index} className={` rounded-md `}>
-                                        <SidebarItem {...item} />
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
-                    </SidebarMenu>
+                        <SidebarMenu title="Meeting Minute Menu">
+                            <nav className="flex-grow">
+                                <ul className="space-y-1">
+                                    {meetingMinuteMenuItems.map((item, index) => (
+                                        <li key={index} className={`rounded-md overflow-hidden`}>
+                                            <SidebarItem {...item} />
+                                        </li>
+                                    ))}
+                                </ul>
+                            </nav>
+                        </SidebarMenu>
 
-                    <SidebarMenu title="Meeting Minute Menu">
-                        <nav className="flex-grow">
-                            <ul>
-                                {meetingMinuteMenuItems.map((item, index) => (
-                                    <li key={index} className={` rounded-md `}>
-                                        <SidebarItem {...item} />
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
-                    </SidebarMenu>
+                        <SidebarMenu title="KPI Menu">
+                            <nav className="flex-grow">
+                                <ul className="space-y-1">
+                                    {kpiMenuItems.map((item, index) => (
+                                        <li key={index} className={`rounded-md overflow-hidden`}>
+                                            <SidebarItem {...item} />
+                                        </li>
+                                    ))}
+                                </ul>
+                            </nav>
+                        </SidebarMenu>
+                    </div>
 
-                    <SidebarMenu title="KPI Menu">
-                        <nav className="flex-grow">
-                            <ul>
-                                {kpiMenuItems.map((item, index) => (
-                                    <li key={index} className={` rounded-md `}>
-                                        <SidebarItem {...item} />
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
-                    </SidebarMenu>
-                    
+                    {/* Footer area */}
+                    <div className="mt-auto border-t border-indigo-800 p-4">
+                        <div className="flex space-x-4 justify-center mb-4">
+                            <a href="https://twitter.com" className="text-gray-300 hover:text-white transition">
+                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                                </svg>
+                            </a>
+                            <a href="https://linkedin.com" className="text-gray-300 hover:text-white transition">
+                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                                </svg>
+                            </a>
+                            <a href="https://facebook.com" className="text-gray-300 hover:text-white transition">
+                                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
+                                </svg>
+                            </a>
+                        </div>
+                        <div className="text-center text-gray-400 text-xs">
+                            &copy; {new Date().getFullYear()} Smart System
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

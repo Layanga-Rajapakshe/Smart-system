@@ -24,7 +24,6 @@ import EmployeeEdit from './pages/super_admin/EmployeeEdit';
 import Role from './pages/super_admin/Role';
 import RoleRegister from './pages/super_admin/RoleRegister';
 import RoleEdit from './pages/super_admin/RoleEdit';
-import RoleView from './pages/super_admin/RoleView';
 
 // Employee Pages
 import MyDashboard from './pages/employee/MyDashboard';
@@ -39,20 +38,7 @@ import AttendanceView from './pages/admin/ViewAttendance';
 // Supervisor Pages
 import Supervisees from './pages/supervisor/Supervisees';
 import Tasks from './pages/supervisor/Tasks';
-import AddTask from './pages/supervisor/AddTask';
 import SuperviseeDetails from './pages/supervisor/SuperviseeDetails';
-
-// Work Schedule Pages
-import CreateTask from './pages/workschedule/CreateTask';
-import RepeatTask from './pages/workschedule/RepeatTask';
-import NonRepeatTask from './pages/workschedule/NonRepeatTask';
-import MyTasks from './pages/workschedule/MyTasks';
-
-// CEO Pages
-import Dashboard from './pages/ceo/Dashboard';
-
-// Medical Claim Pages
-import MedicalClaimProfile from './pages/MedicalClaim/MedicalClaimProfile';
 
 // Accountant Pages
 import EmployeeSalaryList from './pages/SeniorAccountant/EmployeeSalaryList';
@@ -67,21 +53,18 @@ import EmployeeSalaryHistory from './pages/Salary/EmployeeSalaryHistory';
 import SalaryComplaintForm from './pages/Salary/SalaryComplaintForm';
 
 // KPI Pages
-import KPIWelcom from "./pages/KPI/KPIWelcom";
 import KPIDashboard from './pages/KPI/KPIDashboard';
-import KPIOverallDetails from "./pages/KPI/KPIOverallDetails";
-import EmployeePerformance from "./pages/KPI/EmployeePerformance";
-import CEOKpiSettingPage from "./pages/KPI/CEOKpiSettingPage";
-import AddParameter from "./pages/KPI/Add_Parameter";
-import DetailsParameter from "./pages/KPI/ParameterDetails";
+import EmployeePerformance from './pages/KPI/EmployeePerformance';
+import CEOKpiSettingPage from './pages/KPI/CEOKpiSettingPage';
 
 // Meeting Pages
 import MeetingHome from "./pages/MeetingMinute/MeetingHome";
 import Meetings from "./pages/MeetingMinute/Meetings";
 import Notifications from './pages/MeetingMinute/Notifications';
 import NotificationList from './pages/MeetingMinute/NotificationList';
+
+// Protected Routes
 import ProtectedRoute from './components/ProtectedRoute';
-import PrivateRoute from './components/ProtectedRoute';
 
 export default function App() {
   const location = useLocation();
@@ -90,103 +73,76 @@ export default function App() {
   const shouldHideSidebarAndNavbar = ['/login', '/', '/NotFound'].includes(location.pathname);
 
   return (
-    <div>
-      {!shouldHideSidebarAndNavbar ? (
-        <div className="flex h-screen">
-          <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
-          <div 
-            className="flex flex-1 flex-col"
-            style={{ 
-              marginLeft: isOpen ? '14rem' : '0',
-              width: isOpen ? 'calc(100% - 14rem)' : '100%' 
-            }}
-          >
-            <NavBar />
-            <div className="p-4 overflow-auto flex-1">
-              <Routes>
-                <Route element={<PrivateRoute />} >
-                {/* Common Routes */}
-                <Route path="/" element={<Home />} />
+    <div className="h-screen flex-col">
+      {!shouldHideSidebarAndNavbar && <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />}
+      
+      <div className="flex flex-col" style={{ marginLeft: isOpen ? '14rem' : '0', width: isOpen ? 'calc(100% - 14rem)' : '100%' }}>
+        {!shouldHideSidebarAndNavbar && <NavBar />}
+        
+        <div className="p-4 overflow-auto flex-1">
+          <Routes>
+            <Route element={<ProtectedRoute />}>
+              {/* Common Routes */}
+              <Route path="/" element={<Home />} />
+              
+              {/* Super Admin Routes */}
+              <Route path="/company" element={<Company />} />
+              <Route path="/companyregister" element={<CompanyRegister />} />
+              <Route path="/companyedit/:id" element={<CompanyEdit />} />
+              <Route path="/companyview/:id" element={<CompanyView />} />
+              <Route path="/employee" element={<Employee />} />
+              <Route path="/employeeregister" element={<EmployeeRegister />} />
+              <Route path="/employeeedit/:id" element={<EmployeeEdit />} />
+              <Route path="/employeeview/:id" element={<EmployeeView />} />
+              <Route path="/role" element={<Role />} />
+              <Route path="/roleregister" element={<RoleRegister />} />
+              <Route path="/roleedit/:id" element={<RoleEdit />} />
+              
+              {/* Admin Routes */}
+              <Route path="/attendance" element={<Attendance />} />
+              <Route path="/viewattendance/:userId/:month" element={<AttendanceView />} />
+              
+              {/* Supervisor Routes */}
+              <Route path="/superviseelist" element={<Supervisees />} />
+              <Route path="/superviseetasks" element={<Tasks />} />
+              <Route path="/superviseedetails" element={<SuperviseeDetails />} />
+              
+              {/* Employee Routes */}
+              <Route path="/dashboard" element={<MyDashboard />} />
+              <Route path="/leaverequest" element={<LeaveRequest />} />
+              <Route path="/leavestatus" element={<LeaveStatus />} />
+              <Route path="/schedule" element={<WorkSchedule />} />
+              
+              {/* Accountant Routes */}
+              <Route path="/employeesalarylist" element={<EmployeeSalaryList />} />
+              <Route path="/viewsalary/:id" element={<ViewEmployeeSalary />} />
+              <Route path="/editsalary/:id" element={<EditEmployeeSalary />} />
+              <Route path="/salary-history/:id" element={<EmployeeSalaryHistory />} />
+              <Route path="/payrollsummary" element={<PayrollSummaryPage />} />
+              <Route path="/payrolldetails/:id" element={<EmployeeDetailsView />} />
+              <Route path="/monthlysalarysummary" element={<MonthlySalarySummaryPage />} />
+              <Route path="/salarycomplaint" element={<SalaryComplaintForm />} />
+              
+              {/* KPI Routes */}
+              <Route path="/KPIdashboard" element={<KPIDashboard />} />
+              <Route path="/employee-performance" element={<EmployeePerformance />} />
+              <Route path="/KpiSetting" element={<CEOKpiSettingPage />} />
+              
+              {/* Meeting Routes */}
+              <Route path="/meetingHome" element={<MeetingHome />} />
+              <Route path="/meetings" element={<Meetings />} />
+              <Route path="/notifications" element={<Notifications />} />
+              <Route path="/notificationsList" element={<NotificationList />} />
+            </Route>
 
-                {/* Super Admin Routes */}
-                <Route path="/company" element={<Company />} />
-                <Route path="/companyregister" element={<CompanyRegister />} />
-                <Route path="/companyedit/:id" element={<CompanyEdit />} />
-                <Route path="/companyview/:id" element={<CompanyView />} />
-                <Route path="/employee" element={<Employee />} />
-                <Route path="/employeeregister" element={<EmployeeRegister />} />
-                <Route path="/employeeedit/:id" element={<EmployeeEdit />} />
-                <Route path="/employeeview/:id" element={<EmployeeView />} />
-                <Route path="/role" element={<Role />} />
-                <Route path="/roleregister" element={<RoleRegister />} />
-                <Route path="/roleedit/:id" element={<RoleEdit />} />
-                {/* <Route path="/roleview/:id" element={<RoleView />} /> */}
-                
-                {/* Admin Routes */}
-                <Route path="/attendance" element={<Attendance />} />
-                <Route path="/viewattendance/:userId/:month" element={<AttendanceView />} />
-                
-                {/* Supervisor Routes */}
-                <Route path="/superviseelist" element={<Supervisees />} />
-                <Route path="/superviseetasks" element={<Tasks />} />
-                <Route path="/superviseedetails" element={<SuperviseeDetails />} />
-                
-                {/* Employee Routes */}
-                <Route path="/dashboard" element={<MyDashboard />} />
-                <Route path="/leaverequest" element={<LeaveRequest />} />
-                <Route path="/leavestatus" element={<LeaveStatus />} />
-                <Route path="/schedule" element={<WorkSchedule />} />
-                <Route path="/medicalclaimprofile" element={<MedicalClaimProfile />} />
-                
-                {/* Work Schedule Routes */}
-                <Route path="/newtask" element={<CreateTask />} />
-                <Route path="/mytasks" element={<MyTasks />} />
-                
-                {/* CEO Routes */}
-                <Route path="/ceodashboard" element={<Dashboard />} />
-                
-                {/* Accountant Routes */}
-                <Route path='/employeesalarylist' element={<EmployeeSalaryList />} />
-                <Route path='/viewsalary/:id' element={<ViewEmployeeSalary />} />
-                <Route path="/editsalary/:id" element={<EditEmployeeSalary />} />
-                <Route path="/salary-history/:id" element={<EmployeeSalaryHistory />} />
-                <Route path='/payrollsummary' element={<PayrollSummaryPage />} />
-                <Route path='/payrolldetails/:id' element={<EmployeeDetailsView />} />
-                <Route path='/monthlysalarysummary' element={<MonthlySalarySummaryPage />} />
-                <Route path='/salarycomplaint' element={<SalaryComplaintForm />} />
-                
-                {/* KPI Routes */}
-                <Route path="/KPIWelcom" element={<KPIWelcom />} />
-                <Route path="/KPIdashboard" element={<KPIDashboard />} />
-                <Route path="/kpi-overall-details" element={<KPIOverallDetails />} />
-                <Route path="/employee-performance" element={<EmployeePerformance />} />
-                <Route path="/KpiSetting" element={<CEOKpiSettingPage />} />
-                <Route path="/add-parameter" element={<AddParameter />} />
-                <Route path="/detail-parameter" element={<DetailsParameter />} />
-                
-                {/* Meeting Routes */}
-                <Route path="/meetingHome" element={<MeetingHome />} />
-                <Route path="/meetings" element={<Meetings />} />
-                <Route path="/notifications" element={<Notifications />} />
-                <Route path="/notificationsList" element={<NotificationList />} />
-                </ Route>
-                
-                {/* Fallback Route */}
-                <Route path="*" element={<Navigate to="/NotFound" />} />
-              </Routes>
-            </div>
-          </div>
+            {/* Public Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/NotFound" element={<NotFound />} />
+            <Route path="*" element={<Navigate to="/NotFound" />} />
+          </Routes>
         </div>
-      ) : (
-        <Routes>
-          <Route element={<PrivateRoute/>}>
-          <Route path="/" element={<Home />} />
-          </Route>
-          <Route path="/login" element={<Login />} />
-          <Route path="/NotFound" element={<NotFound />} />
-          <Route path="*" element={<Navigate to="/NotFound" />} />
-        </Routes>
-      )}
+      </div>
+
       <Toaster />
       {!shouldHideSidebarAndNavbar && <Footer />}
     </div>

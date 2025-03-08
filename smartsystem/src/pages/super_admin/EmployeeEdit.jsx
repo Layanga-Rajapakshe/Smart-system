@@ -68,9 +68,9 @@ const EmployeeEdit = () => {
       await updateEmployee({ id: employeeId, ...employeeData }).unwrap();
       toast.success('Employee updated successfully!');
       navigate(`/employeeview/${employeeId}`);
+      window.location.reload();
     } catch (error) {
-      toast.error('Failed to update employee. Please try again.');
-      console.error('Error updating employee:', error);
+      toast.error(error?.message || "Failed to update employee. Please try again.");
     }
   };
 
@@ -313,7 +313,7 @@ const EmployeeEdit = () => {
                 size="lg"
                 className="px-8"
               >
-                {isUpdating ? 'Saving...' : 'Save Changes'}
+                {isUpdating ? 'Updating...' : 'Update Employee'}
               </Button>
             </div>
           </form>

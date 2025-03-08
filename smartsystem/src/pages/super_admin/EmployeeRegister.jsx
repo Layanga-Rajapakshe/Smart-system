@@ -6,12 +6,14 @@ import { useGetRolesQuery } from "../../redux/api/roleApiSlice";
 import { useGetCompaniesQuery } from "../../redux/api/companyApiSlice";
 import { toast } from "react-hot-toast";
 import image1 from '../../assets/images/background1.png';
+import { useNavigate } from "react-router-dom";
 
 const EmployeeRegister = () => {
   const [createEmployee, { isLoading }] = useCreateEmployeeMutation();
   const { data: rolesData, isLoading: rolesLoading } = useGetRolesQuery();
   const { data: companiesData, isLoading: companiesLoading } = useGetCompaniesQuery();
   const { data: employeesData, isLoading: employeesLoading } = useGetEmployeesQuery();
+  const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [birthday, setBirthday] = useState("");
@@ -78,6 +80,8 @@ const EmployeeRegister = () => {
       setSingleOt(0);
       setDoubleOt(0);
       setMealAllowance(0);
+      navigate("/employee");
+      window.location.reload();
     } catch (err) {
       toast.error(err?.data?.message || "Employee Registration Failed");
     }

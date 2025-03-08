@@ -4,10 +4,12 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Toolti
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { GrView } from "react-icons/gr";
-import { useGetEmployeesQuery } from "../../redux/api/employeeApiSlice"; // Import your employee API slice hook
+import { useGetEmployeesQuery, useDeleteEmployeeMutation } from "../../redux/api/employeeApiSlice"; // Import your employee API slice hook
+import toast from "react-hot-toast";
 
 export default function EmployeeList() {
   const { data: employees, error, isLoading } = useGetEmployeesQuery(); // Fetch employees data
+  const [deleteEmployee] = useDeleteEmployeeMutation(); // Delete employee mutation
   const navigate = useNavigate();
 
   const handleEditClick = (employeeId) => {
@@ -16,6 +18,16 @@ export default function EmployeeList() {
 
   const handleViewClick = (employeeId) => {
     navigate(`/employeeview/${employeeId}`);
+  };
+
+  const handleDeleteClick = (employeeId) => {
+    try {
+      deleteEmployee(employeeId);
+      toast.success("Employee deleted successfully");
+      window.location.reload();
+    } catch (error) {
+      toast.error(err?.data?.message || "Failed to delete employee");
+    }
   };
 
   const renderCell = React.useCallback((employee, columnKey) => {
@@ -47,7 +59,7 @@ export default function EmployeeList() {
             </Tooltip>
             <Tooltip color="danger" content="Delete employee">
               <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                <RiDeleteBin6Line />
+                <RiDeleteBin6Line onClick={() => handleDeleteClick(employee._id)} />
               </span>
             </Tooltip>
           </div>

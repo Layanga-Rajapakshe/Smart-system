@@ -46,7 +46,7 @@ const NavBar = () => {
         <NavbarBrand className="mr-4">
           <div className="flex items-center gap-2">
             {/* You can replace this with your actual logo */}
-            <div className="font-bold text-xl text-white">SMART SYSTEM</div>
+            <div className="font-bold text-xl text-white">Smart System</div>
           </div>
         </NavbarBrand>
       </NavbarContent>
@@ -55,19 +55,15 @@ const NavBar = () => {
       <NavbarContent className="hidden lg:flex" justify="center">
         <div className="flex gap-4">
           <Link to="/dashboard" className="flex items-center gap-1 text-white/90 hover:text-white transition px-3 py-2">
-            <RiDashboardLine size={18} />
             <span>Dashboard</span>
           </Link>
           <Link to="/company" className="flex items-center gap-1 text-white/90 hover:text-white transition px-3 py-2">
-            <HiOutlineOfficeBuilding size={18} />
             <span>Companies</span>
           </Link>
           <Link to="/reports" className="flex items-center gap-1 text-white/90 hover:text-white transition px-3 py-2">
-            <IoSettingsOutline size={18} />
             <span>Reports</span>
           </Link>
           <Link to="/help" className="flex items-center gap-1 text-white/90 hover:text-white transition px-3 py-2">
-            <MdOutlineHelp size={18} />
             <span>Support</span>
           </Link>
         </div>

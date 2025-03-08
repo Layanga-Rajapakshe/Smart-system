@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Input, Button, Image, Card, Spinner } from "@heroui/react";
 import image1 from "../../assets/images/background1.png";
 import GeneralBreadCrumb from "../../components/GeneralBreadCrumb";
@@ -6,6 +7,7 @@ import { useCreateCompanyMutation } from "../../redux/api/companyApiSlice";
 import { toast } from "react-hot-toast";
 
 const CompanyRegister = () => {
+  const navigate = useNavigate();
   const [createCompany, { isLoading }] = useCreateCompanyMutation();
 
   const [companyName, setCompanyName] = useState("");
@@ -30,6 +32,8 @@ const CompanyRegister = () => {
       setNumber("");
       setLane("");
       setPhoneNumber("");
+      navigate('/company');
+      window.location.reload();
     } catch (err) {
       toast.error(err?.data?.message || "Company Registration Failed");
     }

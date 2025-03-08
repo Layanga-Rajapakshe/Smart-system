@@ -19,6 +19,9 @@ export default {
       backgroundSize: {
         'glitter': '4px 4px',
       },  
+      fontFamily: {
+        sans: ['Ubuntu', 'Comfortaa'],
+      },
     },
   },
   darkMode: "class",

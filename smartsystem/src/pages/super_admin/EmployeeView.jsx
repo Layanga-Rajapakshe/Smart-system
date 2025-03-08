@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useGetEmployeeQuery } from '../../redux/api/employeeApiSlice';
-import { useParams } from 'react-router-dom';
-import { Input, Image, Card, CircularProgress } from "@heroui/react";
+import { useNavigate, useParams } from 'react-router-dom';
+import { Input, Image, Card, CircularProgress, Button } from "@heroui/react";
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 import image1 from '../../assets/images/background1.png';
 
 const EmployeeView = () => {
   const { id: employeeId } = useParams();
   const { data: employee, isLoading, isError } = useGetEmployeeQuery(employeeId);
+  const navigate = useNavigate();
 
   const [employeeData, setEmployeeData] = useState({
     name: '',
@@ -213,6 +214,21 @@ const EmployeeView = () => {
                   fullWidth
                   className="py-2"
                 />
+              </div>
+              <div className="flex justify-between mt-4">
+                <Button
+                  color="primary"
+                  variant="flat"
+                  onPress={() => navigate('/employee')}
+                >
+                  Back to List
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={() => navigate(`/employeeedit/${employeeId}`)}
+                >
+                  Edit Company
+                </Button>
               </div>
             </div>
           </form>

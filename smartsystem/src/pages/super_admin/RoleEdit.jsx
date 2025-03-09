@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Button, Image, Checkbox, Card, Spacer, CircularProgress } from "@heroui/react";
 import { useNavigate, useParams } from 'react-router-dom';
+import { useGetPermissionsQuery, useUpdateRoleMutation, useGetRoleByIdQuery } from '../../redux/api/roleApiSlice';
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 import image1 from '../../assets/images/background1.png';
 import toast from 'react-hot-toast';
@@ -8,146 +9,131 @@ import toast from 'react-hot-toast';
 const RoleEdit = () => {
   const navigate = useNavigate();
   const { id: roleId } = useParams();
-  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   
   const [roleName, setRoleName] = useState("");
   const [hierarchyLevel, setHierarchyLevel] = useState(1);
+  const [permissions, setPermissions] = useState({});
   
-  // Group permissions by category for better organization
-  const [permissions, setPermissions] = useState({
-    // Employee Management
-    employee: {
-      create_employee: false,
-      view_employee_details: false,
-      update_employee: false,
-      delete_employee: false,
-    },
-    // Role Management
-    role: {
-      create_role: false,
-      assign_role: false,
-      update_role: false,
-      get_roles_permission: false,
-    }
-  });
+  // Use RTK Query hooks
+  const { data: permissionsData, isLoading: isLoadingPermissions } = useGetPermissionsQuery();
+  const { data: roleData, isLoading: isLoadingRole } = useGetRoleByIdQuery(roleId);
+  const [updateRole] = useUpdateRoleMutation();
 
-  // Simulate fetching role data (replace with actual API call)
+  // Initialize permissions when permissionsData is available
   useEffect(() => {
-    const fetchRoleData = async () => {
-      try {
-        // Mock API call - replace with actual data fetching
-        setTimeout(() => {
-          // Sample data - replace with actual API response
-          const roleData = {
-            _id: roleId,
-            name: "Manager",
-            hierarchyLevel: 2,
-            permissions: [
-              "create_employee", 
-              "view_employee_details", 
-              "create_role", 
-              "assign_role"
-            ]
-          };
-          
-          setRoleName(roleData.name);
-          setHierarchyLevel(roleData.hierarchyLevel);
-          
-          // Set permissions based on API response
-          const updatedPermissions = { ...permissions };
-          
-          // Reset all permissions to false
-          Object.keys(updatedPermissions).forEach(category => {
-            Object.keys(updatedPermissions[category]).forEach(perm => {
-              updatedPermissions[category][perm] = false;
-            });
-          });
-          
-          // Set permissions from API to true
-          roleData.permissions.forEach(perm => {
-            for (const category in updatedPermissions) {
-              if (perm in updatedPermissions[category]) {
-                updatedPermissions[category][perm] = true;
-                break;
-              }
-            }
-          });
-          
-          setPermissions(updatedPermissions);
-          setIsLoading(false);
-        }, 1000); // Simulate network delay
-      } catch (error) {
-        toast.error("Error loading role data");
-        setIsLoading(false);
+    if (permissionsData?.permissions) {
+      const initialPermissions = {};
+      permissionsData.permissions.forEach((perm) => {
+        initialPermissions[perm] = false;
+      });
+      setPermissions(initialPermissions);
+    }
+  }, [permissionsData]);
+
+  // Set role data when it's fetched
+  useEffect(() => {
+    if (roleData) {
+      setRoleName(roleData.name);
+      setHierarchyLevel(roleData.hierarchyLevel);
+      
+      // Set permissions based on role data
+      if (roleData.permissions && permissionsData?.permissions) {
+        const updatedPermissions = { ...permissions };
+        
+        // Mark the permissions the role has as true
+        roleData.permissions.forEach(perm => {
+          if (perm in updatedPermissions) {
+            updatedPermissions[perm] = true;
+          }
+        });
+        
+        setPermissions(updatedPermissions);
       }
-    };
+    }
+  }, [roleData, permissionsData]);
 
-    fetchRoleData();
-  }, [roleId]);
+  // Group permissions by category helper
+  const getGroupedPermissions = () => {
+    const grouped = {};
+    
+    if (permissionsData?.permissions) {
+      permissionsData.permissions.forEach(perm => {
+        // Determine category from permission name (e.g., create_employee -> employee)
+        const category = perm.split('_')[1] || 'other';
+        
+        if (!grouped[category]) {
+          grouped[category] = [];
+        }
+        
+        grouped[category].push(perm);
+      });
+    }
+    
+    return grouped;
+  };
 
-  const handlePermissionChange = (category, permission) => {
+  const handlePermissionChange = (permission) => {
     setPermissions(prev => ({
       ...prev,
-      [category]: {
-        ...prev[category],
-        [permission]: !prev[category][permission]
-      }
+      [permission]: !prev[permission]
     }));
   };
 
   const handleSelectAllCategory = (category, isChecked) => {
-    const updatedCategoryPermissions = {};
+    const groupedPermissions = getGroupedPermissions();
+    const categoryPermissions = groupedPermissions[category] || [];
     
-    Object.keys(permissions[category]).forEach(perm => {
-      updatedCategoryPermissions[perm] = isChecked;
+    const updatedPermissions = { ...permissions };
+    
+    categoryPermissions.forEach(perm => {
+      updatedPermissions[perm] = isChecked;
     });
     
-    setPermissions(prev => ({
-      ...prev,
-      [category]: updatedCategoryPermissions
-    }));
+    setPermissions(updatedPermissions);
   };
 
   const isCategoryFullySelected = (category) => {
-    return Object.values(permissions[category]).every(value => value === true);
+    const groupedPermissions = getGroupedPermissions();
+    const categoryPermissions = groupedPermissions[category] || [];
+    
+    return categoryPermissions.length > 0 && 
+           categoryPermissions.every(perm => permissions[perm] === true);
   };
 
   const isCategoryPartiallySelected = (category) => {
-    const values = Object.values(permissions[category]);
-    return values.some(value => value === true) && values.some(value => value === false);
+    const groupedPermissions = getGroupedPermissions();
+    const categoryPermissions = groupedPermissions[category] || [];
+    
+    return categoryPermissions.some(perm => permissions[perm] === true) && 
+           categoryPermissions.some(perm => permissions[perm] === false);
+  };
+
+  const formatPermissionName = (permission) => {
+    return permission.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSaving(true);
     
-    // Flatten permissions object into array of permission strings
-    const flattenedPermissions = [];
-    Object.keys(permissions).forEach(category => {
-      Object.keys(permissions[category]).forEach(perm => {
-        if (permissions[category][perm]) {
-          flattenedPermissions.push(perm);
-        }
-      });
-    });
+    // Get selected permissions
+    const selectedPermissions = Object.keys(permissions).filter(perm => permissions[perm]);
 
-    const roleData = {
+    const updatedRoleData = {
+      id: roleId,
       name: roleName,
-      permissions: flattenedPermissions,
+      permissions: selectedPermissions,
       hierarchyLevel,
     };
 
     try {
-      // Simulate API call - replace with actual update call
-      setTimeout(() => {
-        console.log("Updated Role Data:", roleData);
-        toast.success("Role updated successfully!");
-        setIsSaving(false);
-        navigate('/role');
-      }, 1000);
+      await updateRole(updatedRoleData).unwrap();
+      toast.success("Role updated successfully!");
+      navigate('/role');
     } catch (error) {
       toast.error("Error updating role. Please try again.");
+    } finally {
       setIsSaving(false);
     }
   };
@@ -157,6 +143,8 @@ const RoleEdit = () => {
     { label: "Role Edit", href: `/roleedit/${roleId}`, isCurrentPage: true },
   ];
 
+  const isLoading = isLoadingPermissions || isLoadingRole;
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -164,6 +152,9 @@ const RoleEdit = () => {
       </div>
     );
   }
+
+  // Group permissions by category for display
+  const groupedPermissions = getGroupedPermissions();
 
   return (
     <div className="relative min-h-screen flex flex-col items-center p-6">
@@ -220,53 +211,32 @@ const RoleEdit = () => {
             <div>
               <div className="text-lg font-semibold mb-4 text-black">Permissions</div>
               
-              {/* Employee Permissions */}
-              <div className="mb-4 border border-gray-200 rounded-lg p-4 bg-white/50">
-                <div className="flex items-center mb-2">
-                  <Checkbox
-                    isSelected={isCategoryFullySelected('employee')}
-                    isIndeterminate={isCategoryPartiallySelected('employee')}
-                    onChange={(e) => handleSelectAllCategory('employee', e.target.checked)}
-                    className="mr-2"
-                  />
-                  <span className="font-medium text-black">Employee Management</span>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pl-8">
-                  {Object.keys(permissions.employee).map((perm) => (
+              {Object.keys(groupedPermissions).map(category => (
+                <div key={category} className="mb-4 border border-gray-200 rounded-lg p-4 bg-white/50">
+                  <div className="flex items-center mb-2">
                     <Checkbox
-                      key={perm}
-                      isSelected={permissions.employee[perm]}
-                      onChange={() => handlePermissionChange('employee', perm)}
-                    >
-                      {perm.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
-                    </Checkbox>
-                  ))}
+                      isSelected={isCategoryFullySelected(category)}
+                      isIndeterminate={isCategoryPartiallySelected(category)}
+                      onChange={(e) => handleSelectAllCategory(category, e.target.checked)}
+                      className="mr-2"
+                    />
+                    <span className="font-medium text-black">
+                      {category.charAt(0).toUpperCase() + category.slice(1)} Management
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pl-8">
+                    {groupedPermissions[category].map((perm) => (
+                      <Checkbox
+                        key={perm}
+                        isSelected={permissions[perm] || false}
+                        onChange={() => handlePermissionChange(perm)}
+                      >
+                        {formatPermissionName(perm)}
+                      </Checkbox>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              
-              {/* Role Permissions */}
-              <div className="mb-4 border border-gray-200 rounded-lg p-4 bg-white/50">
-                <div className="flex items-center mb-2">
-                  <Checkbox
-                    isSelected={isCategoryFullySelected('role')}
-                    isIndeterminate={isCategoryPartiallySelected('role')}
-                    onChange={(e) => handleSelectAllCategory('role', e.target.checked)}
-                    className="mr-2"
-                  />
-                  <span className="font-medium text-black">Role Management</span>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pl-8">
-                  {Object.keys(permissions.role).map((perm) => (
-                    <Checkbox
-                      key={perm}
-                      isSelected={permissions.role[perm]}
-                      onChange={() => handlePermissionChange('role', perm)}
-                    >
-                      {perm.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
-                    </Checkbox>
-                  ))}
-                </div>
-              </div>
+              ))}
             </div>
 
             <Spacer y={1} />
@@ -276,7 +246,7 @@ const RoleEdit = () => {
               <Button 
                 type="submit" 
                 color="primary" 
-                isDisabled={isSaving}
+                isDisabled={isSaving || !Object.values(permissions).includes(true)}
                 size="lg"
                 className="px-8"
               >

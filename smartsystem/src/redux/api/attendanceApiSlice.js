@@ -60,8 +60,17 @@ export const attendanceApiSlice = apiSlice.injectEndpoints({
         method: 'GET',
       }),
     }),
+
+    //edit attendance details
+    editAttendanceDetails: builder.mutation({
+      query: ({ data }) => ({
+        url: `${ATTENDANCE_URL}/editattendancedetails`,
+        method: 'PUT',
+        body: data,
+      }),
+    }),
   }),
-}); 
+});
 
 export const {
   useUploadAttendanceMutation,
@@ -71,4 +80,5 @@ export const {
   useGetHolidaysQuery,
   useAddSalMonthMutation,
   useGetAttendanceDetailsQuery,
+  useEditAttendanceDetailsMutation,
 } = attendanceApiSlice;

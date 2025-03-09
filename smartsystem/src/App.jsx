@@ -65,6 +65,9 @@ import NotificationList from './pages/MeetingMinute/NotificationList';
 
 // Protected Routes
 import ProtectedRoute from './components/ProtectedRoute';
+import MyTasks from './pages/workschedule/MyTasks';
+import OneTimeTask from './pages/workschedule/OneTimeTask';
+import CreateTask from './pages/workschedule/CreateTask';
 
 export default function App() {
   const location = useLocation();
@@ -72,16 +75,26 @@ export default function App() {
 
   const shouldHideSidebarAndNavbar = ['/login', '/', '/NotFound'].includes(location.pathname);
 
+  // Create a transition style function to handle smooth content adjustment
+  const getContentStyle = () => {
+    return {
+      marginLeft: isOpen ? '16rem' : '0', // Slightly larger margin to prevent overlap
+      width: isOpen ? 'calc(100% - 16rem)' : '100%',
+      transition: 'all 0.3s ease-in-out',
+    };
+  };
+
   return (
     <div className="h-screen flex-col">
       {!shouldHideSidebarAndNavbar && <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />}
       
-      <div className="flex flex-col" style={{ marginLeft: isOpen ? '14rem' : '0', width: isOpen ? 'calc(100% - 14rem)' : '100%' }}>
-        {!shouldHideSidebarAndNavbar && <NavBar />}
+      <div className="flex flex-col" style={getContentStyle()}>
+        {!shouldHideSidebarAndNavbar && <NavBar isOpen={isOpen} setIsOpen={setIsOpen} />}
         
         <div className="p-4 overflow-auto flex-1">
           <Routes>
             <Route element={<ProtectedRoute />}>
+            
               {/* Common Routes */}
               <Route path="/" element={<Home />} />
               
@@ -112,6 +125,8 @@ export default function App() {
               <Route path="/leaverequest" element={<LeaveRequest />} />
               <Route path="/leavestatus" element={<LeaveStatus />} />
               <Route path="/schedule" element={<WorkSchedule />} />
+              <Route path='/mytasks' element={<MyTasks />} />
+              <Route path='/newtask' element={<CreateTask />} />
               
               {/* Accountant Routes */}
               <Route path="/employeesalarylist" element={<EmployeeSalaryList />} />

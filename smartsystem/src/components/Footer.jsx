@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="col-span-1">
             <div className="flex items-center mb-4">
               {/* Replace with your actual logo */}
-              <div className="font-bold text-2xl">SMART SYSTEM</div>
+              <div className="font-bold text-2xl">Smart System</div>
             </div>
             <p className="text-gray-300 text-sm mb-6">
               Powerful business management solutions to streamline your operations and boost productivity.

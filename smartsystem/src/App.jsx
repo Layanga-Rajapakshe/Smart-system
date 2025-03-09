@@ -68,6 +68,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import MyTasks from './pages/workschedule/MyTasks';
 import OneTimeTask from './pages/workschedule/OneTimeTask';
 import CreateTask from './pages/workschedule/CreateTask';
+import MyProfile from './pages/employee/MyProfile';
 
 export default function App() {
   const location = useLocation();
@@ -127,6 +128,7 @@ export default function App() {
               <Route path="/schedule" element={<WorkSchedule />} />
               <Route path='/mytasks' element={<MyTasks />} />
               <Route path='/newtask' element={<CreateTask />} />
+              <Route path='/myprofile' element={<MyProfile />} />
               
               {/* Accountant Routes */}
               <Route path="/employeesalarylist" element={<EmployeeSalaryList />} />

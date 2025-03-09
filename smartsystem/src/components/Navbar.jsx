@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar, NavbarBrand, NavbarContent, User, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Badge, Button } from "@heroui/react";
 import { IoNotifications } from "react-icons/io5";
 import toast from 'react-hot-toast';
@@ -6,9 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { logout } from '../redux/features/auth/authSlice';
 import { useLogoutMutation } from '../redux/api/authApiSlice';
+import { useGetNotificationsQuery, useMarkNotificationsAsReadMutation } from '../redux/api/notificationApiSlice';
 import ModeToggle from './modetoggle/ModeToggle';
-import { useState } from 'react';
-import { useEffect } from 'react';
 
 const NavBar = ({ isOpen, setIsOpen }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -16,7 +15,21 @@ const NavBar = ({ isOpen, setIsOpen }) => {
   const navigate = useNavigate();
   const [logoutApiCall] = useLogoutMutation();
 
+  // Fetch notifications using the API slice
+  const { 
+    data: notificationsData, 
+    isLoading: isLoadingNotifications,
+    refetch: refetchNotifications
+  } = useGetNotificationsQuery();
+  
+  // Mark notifications as read mutation
+  const [markNotificationsAsRead] = useMarkNotificationsAsReadMutation();
+
   const { userInfo } = useSelector((state) => state.auth) || {};
+
+  // Prepare notifications for display
+  const notifications = notificationsData?.notifications || [];
+  const unreadCount = notifications.filter(notification => !notification.isRead).length;
 
   const handleLogout = async () => {
     try {
@@ -45,14 +58,50 @@ const NavBar = ({ isOpen, setIsOpen }) => {
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseleave", handleMouseLeave);
 
+    // Set up polling for notifications
+    const notificationInterval = setInterval(() => {
+      refetchNotifications();
+    }, 30000); // Poll every 30 seconds
+
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseleave", handleMouseLeave);
+      clearInterval(notificationInterval);
     };
-  }, []);
+  }, [refetchNotifications]);
   
   // Function to toggle sidebar
   const toggleSidebar = () => setIsOpen(true);
+  
+  // Handle opening notification dropdown - mark notifications as read
+  const handleNotificationOpen = async () => {
+    if (unreadCount > 0) {
+      try {
+        await markNotificationsAsRead().unwrap();
+      } catch (error) {
+        console.error("Failed to mark notifications as read:", error);
+      }
+    }
+  };
+
+  // Format notification time
+  const formatNotificationTime = (timestamp) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+    
+    if (diffInMinutes < 1) return 'Just now';
+    if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours} hours ago`;
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays === 1) return 'Yesterday';
+    if (diffInDays < 7) return `${diffInDays} days ago`;
+    
+    return date.toLocaleDateString();
+  };
 
   const userName = userInfo?.name || "Guest User";
   const userRole = userInfo?.role || "N/A";
@@ -97,12 +146,19 @@ const NavBar = ({ isOpen, setIsOpen }) => {
           <ModeToggle />
 
           {/* Notifications */}
-          <Dropdown placement="bottom-end">
+          <Dropdown 
+            placement="bottom-end"
+            onOpenChange={handleNotificationOpen}
+          >
             <DropdownTrigger>
               <Button isIconOnly variant="light" className="text-black relative group">
-                <Badge content="5" shape="circle" color="danger" size="sm" variant="shadow">
+                {unreadCount > 0 ? (
+                  <Badge content={unreadCount} shape="circle" color="danger" size="sm" variant="shadow">
+                    <IoNotifications size={20} />
+                  </Badge>
+                ) : (
                   <IoNotifications size={20} />
-                </Badge>
+                )}
                 <div className="absolute inset-0 rounded-full bg-white/0 group-hover:bg-white/20 transition-all duration-300"></div>
               </Button>
             </DropdownTrigger>
@@ -113,18 +169,38 @@ const NavBar = ({ isOpen, setIsOpen }) => {
               <DropdownItem key="notification_header" className="font-bold" textValue="Recent Notifications">
                 Recent Notifications
               </DropdownItem>
-              <DropdownItem key="notification1" description="2 minutes ago" textValue="New company registered">
-                New company registered
-              </DropdownItem>
-              <DropdownItem key="notification2" description="1 hour ago" textValue="Report generated">
-                Report generated
-              </DropdownItem>
-              <DropdownItem key="notification3" description="Today, 9:30 AM" textValue="System update available">
-                System update available
-              </DropdownItem>
-              <DropdownItem key="view_all" className="text-primary" textValue="View all notifications">
-                View all notifications
-              </DropdownItem>
+              
+              {isLoadingNotifications ? (
+                <DropdownItem key="loading" textValue="Loading notifications...">
+                  Loading notifications...
+                </DropdownItem>
+              ) : notifications.length === 0 ? (
+                <DropdownItem key="no_notifications" textValue="No notifications">
+                  No notifications
+                </DropdownItem>
+              ) : (
+                notifications.slice(0, 5).map((notification, index) => (
+                  <DropdownItem 
+                    key={`notification-${index}`} 
+                    description={formatNotificationTime(notification.createdAt)}
+                    textValue={notification.message}
+                    className={!notification.isRead ? "bg-blue-50 dark:bg-blue-900/20" : ""}
+                  >
+                    {notification.message}
+                  </DropdownItem>
+                ))
+              )}
+              
+              {notifications.length > 5 && (
+                <DropdownItem 
+                  key="view_all" 
+                  className="text-primary"
+                  textValue="View all notifications"
+                  onPress={() => navigate('/notifications')}
+                >
+                  View all notifications ({notifications.length})
+                </DropdownItem>
+              )}
             </DropdownMenu>
           </Dropdown>
 
@@ -147,10 +223,10 @@ const NavBar = ({ isOpen, setIsOpen }) => {
               </div>
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" className="bg-white/90 backdrop-blur-md dark:bg-gray-900/90">
-              <DropdownItem key="profile">My Profile</DropdownItem>
+              <DropdownItem key="profile" onPress={() => navigate('/myprofile')}>My Profile</DropdownItem>
               <DropdownItem key="settings">Settings</DropdownItem>
               <DropdownItem key="help">Help & Support</DropdownItem>
-              <DropdownItem key="logout" color="danger" onClick={handleLogout}>
+              <DropdownItem key="logout" color="danger" onPress={handleLogout}>
                 Logout
               </DropdownItem>
             </DropdownMenu>
@@ -173,8 +249,10 @@ const NavBar = ({ isOpen, setIsOpen }) => {
               <DropdownItem key="reports">Reports</DropdownItem>
               <DropdownItem key="support">Support</DropdownItem>
               <DropdownItem key="divider" className="h-px bg-black-200 dark:bg-gray-700 my-1" />
-              <DropdownItem key="notifications">
-                Notifications <Badge content="5" color="danger" size="sm" className="ml-auto" />
+              <DropdownItem key="notifications" onClick={handleNotificationOpen}>
+                Notifications {unreadCount > 0 && (
+                  <Badge content={unreadCount} color="danger" size="sm" className="ml-auto" />
+                )}
               </DropdownItem>
               <DropdownItem key="profile">My Profile</DropdownItem>
               <DropdownItem key="settings">Settings</DropdownItem>

@@ -1,18 +1,14 @@
-import React, { useState } from 'react';
-import { TextField, Button, Grid, Snackbar, Alert } from '@mui/material';
-import { Event, Description, AccessTime, Room, AddCircleOutline } from '@mui/icons-material';
-import axios from 'axios';
-import './MeetingForm.css';
+import React, { useState } from "react";
+import { Input, Button, Spacer } from "@heroui/react";
+import axios from "axios";
 
-function MeetingForm({ fetchMeetings }) {
+function MeetingForm({ onAddSuccess }) {
   const [formData, setFormData] = useState({
-    topic: '',
-    dateTime: '',
-    description: '',
-    meetingRoomId: '',
+    topic: "",
+    dateTime: "",
+    description: "",
+    meetingRoomId: "",
   });
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [errorSnackbar, setErrorSnackbar] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,103 +16,94 @@ function MeetingForm({ fetchMeetings }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
-      await axios.post('http://localhost:5000/api/meetings', formData);
-      fetchMeetings(); // Refresh the meeting list
-      setFormData({ topic: '', dateTime: '', description: '', meetingRoomId: '' });
-      setOpenSnackbar(true); // Show success notification
+      await axios.post("http://localhost:5000/api/meetings", formData);
+      
+      // Reset form
+      setFormData({ 
+        topic: "", 
+        dateTime: "", 
+        description: "", 
+        meetingRoomId: "" 
+      });
+      
+      // Call callback function to refresh parent component
+      if (onAddSuccess) {
+        onAddSuccess();
+      }
     } catch (error) {
-      console.error('Error creating meeting:', error);
-      setErrorSnackbar(true); // Show error notification
+      console.error("Error creating meeting:", error);
     }
   };
 
-  const handleCloseSnackbar = (event, reason) => {
-    if (reason === 'clickaway') return;
-    setOpenSnackbar(false);
-    setErrorSnackbar(false);
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="meeting-form">
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
-          <TextField
-            name="topic"
+    <div>
+      <h4 className="text-lg font-semibold mb-4 text-black">Add New Meeting</h4>
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            variant="bordered"
             label="Meeting Topic"
+            name="topic"
             value={formData.topic}
             onChange={handleChange}
             fullWidth
             required
-            InputProps={{
-              startAdornment: <Event />,
-            }}
+            className="py-2"
           />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            name="dateTime"
+          
+          <Input
+            variant="bordered"
             label="Date & Time"
+            name="dateTime"
             type="datetime-local"
             value={formData.dateTime}
             onChange={handleChange}
             fullWidth
             required
-            InputProps={{
-              startAdornment: <AccessTime />,
-            }}
+            className="py-2"
           />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            name="description"
+          
+          <Input
+            variant="bordered"
             label="Description"
+            name="description"
             value={formData.description}
             onChange={handleChange}
             fullWidth
             required
-            InputProps={{
-              startAdornment: <Description />,
-            }}
+            className="py-2"
           />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            name="meetingRoomId"
+          
+          <Input
+            variant="bordered"
             label="Meeting Room ID"
+            name="meetingRoomId"
             value={formData.meetingRoomId}
             onChange={handleChange}
             fullWidth
             required
-            InputProps={{
-              startAdornment: <Room />,
-            }}
+            className="py-2"
           />
-        </Grid>
-      </Grid>
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        startIcon={<AddCircleOutline />}
-        fullWidth
-        className="add-meeting-button"
-      >
-        Add Meeting
-      </Button>
-      {/* Success Notification */}
-      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-          Meeting created successfully!
-        </Alert>
-      </Snackbar>
-      {/* Error Notification */}
-      <Snackbar open={errorSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%' }}>
-          Failed to create meeting. Please try again.
-        </Alert>
-      </Snackbar>
-    </form>
+        </div>
+        
+        <Spacer y={1} />
+        
+        <div className="flex justify-center pt-2">
+          <Button
+            type="submit"
+            color="primary"
+            size="lg"
+            className="px-8"
+            isDisabled={!formData.topic || !formData.dateTime || !formData.description || !formData.meetingRoomId}
+          >
+            Add Meeting
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }
 

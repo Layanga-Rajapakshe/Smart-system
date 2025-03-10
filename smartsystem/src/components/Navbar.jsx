@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Navbar, NavbarBrand, NavbarContent, User, Input, DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Badge } from "@heroui/react";
+import { 
+  Navbar, NavbarBrand, NavbarContent, User, Input, 
+  DropdownItem, DropdownTrigger, Dropdown, DropdownMenu, Badge 
+} from "@heroui/react";
 import { CiSearch } from "react-icons/ci";
 import { IoNotifications } from "react-icons/io5";
 import { FaRegMessage } from "react-icons/fa6";
@@ -8,7 +11,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../redux/features/auth/authSlice';
 import { useLogoutMutation } from '../redux/api/authApiSlice';
-import { useGetEmployeeQuery } from '../redux/api/employeeApiSlice';
 import ModeToggle from './modetoggle/ModeToggle';
 
 const NavBar = () => {
@@ -17,7 +19,7 @@ const NavBar = () => {
   const navigate = useNavigate();
   const [logoutApiCall] = useLogoutMutation();
 
-  const { userInfo } = useSelector((state) => state.auth);
+  const { userInfo } = useSelector((state) => state.auth) || {}; // Ensure userInfo is always an object
 
   const handleLogout = async () => {
     try {
@@ -32,9 +34,10 @@ const NavBar = () => {
 
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
 
-  const userName = userInfo.name || "Guest User";
-  const userRole = userInfo.role || "N/A";
-  const userAvatar = userInfo.avatar || "https://i.pravatar.cc/150";
+  // Fallback values to prevent 'null' errors
+  const userName = userInfo?.name || "Guest User";
+  const userRole = userInfo?.role || "N/A";
+  const userAvatar = userInfo?.avatar || "https://i.pravatar.cc/150";
 
   return (
     <Navbar isBordered>
@@ -70,11 +73,7 @@ const NavBar = () => {
                 </Badge>
               </div>
             </DropdownTrigger>
-            <DropdownMenu
-              aria-label="Notifications"
-              color='default'
-              variant='faded'
-            >
+            <DropdownMenu aria-label="Notifications" color='default' variant='faded'>
               <DropdownItem key="notification1">Notification 1</DropdownItem>
               <DropdownItem key="notification2">Notification 2</DropdownItem>
               <DropdownItem key="notification3">Notification 3</DropdownItem>
@@ -89,11 +88,7 @@ const NavBar = () => {
                 </Badge>
               </div>
             </DropdownTrigger>
-            <DropdownMenu
-              aria-label="Messages"
-              color='default'
-              variant='faded'
-            >
+            <DropdownMenu aria-label="Messages" color='default' variant='faded'>
               <DropdownItem key="message1">Message 1</DropdownItem>
               <DropdownItem key="message2">Message 2</DropdownItem>
               <DropdownItem key="message3">Message 3</DropdownItem>
@@ -106,15 +101,13 @@ const NavBar = () => {
                 name={userName}
                 description={userRole}
                 className='cursor-pointer'
-                avatarProps={{
-                  src: userAvatar,
-                }}
+                avatarProps={{ src: userAvatar }}
               />
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
               <DropdownItem key="profile">My Profile</DropdownItem>
               <DropdownItem key="settings">My Settings</DropdownItem>
-              <DropdownItem key="logout" color="danger" onClick={handleLogout}>
+              <DropdownItem key="logout" color="danger" onPress={handleLogout}>
                 Logout
               </DropdownItem>
             </DropdownMenu>
@@ -128,9 +121,7 @@ const NavBar = () => {
                 name={userName}
                 description={userRole}
                 className='cursor-pointer'
-                avatarProps={{
-                  src: userAvatar,
-                }}
+                avatarProps={{ src: userAvatar }}
               />
             </DropdownTrigger>
             <DropdownMenu aria-label="More Options" variant="flat">
@@ -164,7 +155,7 @@ const NavBar = () => {
               </DropdownItem>
               <DropdownItem key="profile">My Profile</DropdownItem>
               <DropdownItem key="settings">My Settings</DropdownItem>
-              <DropdownItem key="logout" color="danger" onClick={handleLogout}>
+              <DropdownItem key="logout" color="danger" onPress={handleLogout}>
                 Logout
               </DropdownItem>
             </DropdownMenu>
@@ -175,4 +166,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default NavBar

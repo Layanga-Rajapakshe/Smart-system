@@ -51,6 +51,11 @@ import MeetingHome from "./pages/MeetingMinute/MeetingHome";
 import Meetings from "./pages/MeetingMinute/Meetings";
 import Notifications from './pages/MeetingMinute/Notifications'
 import NotificationList from './pages/MeetingMinute/NotificationList'
+import LeaveProfile from './pages/LeaveManagement/LeaveProfile'
+import LeaveApproval from './pages/LeaveManagement/LeaveApproval'
+import PermissionRequest from './pages/PermissionManagement/PermissionRequest';
+import PermissionApprove from './pages/PermissionManagement/PermissionApprove';
+import RequestType from './pages/PermissionManagement/RequestType'
 
 export default function App() {
   const location = useLocation();
@@ -109,6 +114,12 @@ export default function App() {
                 <Route path="/meetings" element={<Meetings />} />
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/notificationsList" element={<NotificationList />} />
+
+                <Route path="/leaveProfile" element={<LeaveProfile />} />
+                <Route path="/leaveApprove" element={<LeaveApproval />} />
+                <Route path="/permissionReq" element={<PermissionRequest />} />
+                <Route path="/permissionApp" element={<PermissionApprove />} />
+                <Route path="/requestType" element={<RequestType />} />
                 
                 <Route path="*" element={<Navigate to="/NotFound" />} />
               </Routes>

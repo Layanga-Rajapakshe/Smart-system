@@ -49,7 +49,6 @@ const Login = () => {
         api.photos.getRandom({ query: "cinematic", orientation: "landscape" })
         .then(result => {
           setBackgroundImage(result.response.urls.regular);
-          console.log(result);
         });
       } catch (error) {
         // Fallback image if API fails
@@ -83,7 +82,7 @@ const Login = () => {
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center">
       {/* Background Image */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 border border-white/70 rounded-xl overflow-hidden">
         <img
           src={backgroundImage}
           alt="Background"

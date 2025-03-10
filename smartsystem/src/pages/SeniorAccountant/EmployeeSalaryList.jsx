@@ -12,7 +12,6 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
-  Chip,
   User,
 } from "@heroui/react";
 import { IoAdd } from "react-icons/io5";
@@ -20,38 +19,53 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { CiSearch } from "react-icons/ci";
 import { FaChevronDown } from "react-icons/fa6";
 import { CiEdit } from "react-icons/ci";
-import { RiDeleteBin6Line } from "react-icons/ri";
 import { GrView } from "react-icons/gr";
-import { columns, users, companyOptions } from "../super_admin/datanew";
 import { capitalize } from "../super_admin/utils";
 import PaginationComponent from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
 
-const statusColorMap = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
-};
+// Updated columns definition
+const columns = [
+  { name: "EMPLOYEE ID", uid: "employeeId", sortable: true },
+  { name: "EMPLOYEE NAME", uid: "name", sortable: true },
+  { name: "BASIC SALARY", uid: "basicSalary", sortable: true },
+  { name: "RE ALLOWANCE", uid: "reAllowance", sortable: true },
+  { name: "SINGLE OT", uid: "singleOt", sortable: true },
+  { name: "DOUBLE OT", uid: "doubleOt", sortable: true },
+  { name: "MEAL ALLOWANCE", uid: "mealAllowance", sortable: true },
+  { name: "ACTIONS", uid: "actions" },
+];
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "company", "actions"];
+// Sample employee data
+const employees = [
+  {
+    id: 1,
+    employeeId: "EMP001",
+    name: "John Doe",
+    email: "john@example.com",
+    basicSalary: 50000,
+    reAllowance: 5000,
+    singleOt: 30,
+    doubleOt: 60,
+    mealAllowance: 100,
+    avatar: "https://i.pravatar.cc/150?u=1"
+  },
+  // Add more employee data as needed
+];
+
+const INITIAL_VISIBLE_COLUMNS = ["employeeId", "name", "basicSalary", "reAllowance", "singleOt", "doubleOt", "mealAllowance", "actions"];
 
 const EmployeeSalaryList = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
-  const [statusFilter, setStatusFilter] = React.useState(new Set(["all"]));
-  const [companyFilter, setCompanyFilter] = React.useState(new Set(["all"]));
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
-    column: "age",
+    column: "employeeId",
     direction: "ascending",
   });
   const [page, setPage] = React.useState(1);
-
-  const handleNewClick = () => {
-    navigate("/roleregister");
-  }
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -61,24 +75,15 @@ const EmployeeSalaryList = () => {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredEmployees = [...employees];
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase())
+      filteredEmployees = filteredEmployees.filter((employee) =>
+        employee.employeeId.toLowerCase().includes(filterValue.toLowerCase()) ||
+        employee.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (statusFilter.size && !statusFilter.has("all")) {
-      filteredUsers = filteredUsers.filter((user) =>
-        statusFilter.has(user.status)
-      );
-    }
-    if (companyFilter.size && !companyFilter.has("all")) {
-      filteredUsers = filteredUsers.filter((user) =>
-        companyFilter.has(user.company)
-      );
-    }
-    return filteredUsers;
-  }, [users, filterValue, statusFilter, companyFilter]);
+    return filteredEmployees;
+  }, [employees, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -97,32 +102,27 @@ const EmployeeSalaryList = () => {
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((user, columnKey) => {
-    const cellValue = user[columnKey];
+  const renderCell = React.useCallback((employee, columnKey) => {
+    const cellValue = employee[columnKey];
     switch (columnKey) {
       case "name":
         return (
           <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.email}
+            avatarProps={{ radius: "lg", src: employee.avatar }}
+            description={employee.email}
             name={cellValue}
           >
-            {user.email}
+            {employee.email}
           </User>
         );
-      case "role":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-400">{user.team}</p>
-          </div>
-        );
-        case "status":
-            return (
-                <Chip className="capitalize" color={statusColorMap[user.status]} size="sm" variant="flat">
-                {cellValue}
-                </Chip>
-            );
+      case "basicSalary":
+      case "reAllowance":
+        return `$${cellValue.toLocaleString()}`;
+      case "singleOt":
+      case "doubleOt":
+        return `$${cellValue}/hr`;
+      case "mealAllowance":
+        return `$${cellValue}/day`;
       case "actions":
         return (
           <div className="relative flex justify-end items-center gap-2">
@@ -133,8 +133,8 @@ const EmployeeSalaryList = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem startContent={<GrView/>} href="/viewsalary">View</DropdownItem>
-                <DropdownItem startContent={<CiEdit/>} href="/editsalary">Edit</DropdownItem>
+                <DropdownItem startContent={<GrView/>} href="/viewsalary/1">View</DropdownItem>
+                <DropdownItem startContent={<CiEdit/>} href="/editsalary/1">Edit</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -182,55 +182,13 @@ const EmployeeSalaryList = () => {
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by name..."
+            placeholder="Search by Employee ID or Name..."
             startContent={<CiSearch />}
             value={filterValue}
             onClear={() => onClear()}
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button endContent={<FaChevronDown className="text-small" />} variant="flat">
-                  Status
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Status Filter"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {["all", "active", "paused", "vacation"].map((status) => (
-                  <DropdownItem key={status} className="capitalize">
-                    {capitalize(status)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button endContent={<FaChevronDown className="text-small" />} variant="flat">
-                  Company
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Company Filter"
-                closeOnSelect={false}
-                selectedKeys={companyFilter}
-                selectionMode="multiple"
-                onSelectionChange={setCompanyFilter}
-              >
-                {["all", ...companyOptions.map((company) => company.name)].map((company) => (
-                  <DropdownItem key={company} className="capitalize">
-                    {capitalize(company)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button endContent={<FaChevronDown className="text-small" />} variant="flat">
@@ -255,7 +213,7 @@ const EmployeeSalaryList = () => {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {users.length} users</span>
+          <span className="text-default-400 text-small">Total {employees.length} employees</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -272,18 +230,15 @@ const EmployeeSalaryList = () => {
     );
   }, [
     filterValue,
-    statusFilter,
-    companyFilter,
     visibleColumns,
     onRowsPerPageChange,
-    users.length,
+    employees.length,
     onSearchChange,
-    hasSearchFilter,
   ]);
 
   return (
     <Table
-      aria-label="Example table with custom cells, pagination and sorting"
+      aria-label="Employee Salary List"
       isHeaderSticky
       bottomContent={
         <PaginationComponent
@@ -319,7 +274,7 @@ const EmployeeSalaryList = () => {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No users found"} items={sortedItems}>
+      <TableBody emptyContent={"No employees found"} items={sortedItems}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
@@ -327,7 +282,7 @@ const EmployeeSalaryList = () => {
         )}
       </TableBody>
     </Table>
-  )
-}
+  );
+};
 
-export default EmployeeSalaryList
+export default EmployeeSalaryList;

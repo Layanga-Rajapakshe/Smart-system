@@ -4,10 +4,12 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Toolti
 import { CiEdit } from "react-icons/ci";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { GrView } from "react-icons/gr";
-import { useGetCompaniesQuery } from "../../redux/api/companyApiSlice"; // Import your API slice hook
+import { useGetCompaniesQuery, useDeleteCompanyMutation } from "../../redux/api/companyApiSlice"; // Import your API slice hook
+import toast from "react-hot-toast";
 
 export default function CompanyList() {
   const { data: companies, error, isLoading } = useGetCompaniesQuery(); // Fetch companies data
+  const [deleteCompany] = useDeleteCompanyMutation(); // Delete company mutation
   const navigate = useNavigate();
 
   const handleEditClick = (companyId) => {
@@ -17,6 +19,16 @@ export default function CompanyList() {
   const handleViewClick = (companyId) => {
     navigate(`/companyview/${companyId}`);
   };
+
+  const handleDeleteClick = (companyId) => {
+    try {
+      deleteCompany(companyId);
+      toast.success("Company deleted successfully");
+      window.location.reload();
+    } catch (err) {
+      toast.error(err?.data?.message || "Company deletion failed");
+    }  
+  }
 
   const renderCell = React.useCallback((company, columnKey) => {
     switch (columnKey) {
@@ -51,7 +63,7 @@ export default function CompanyList() {
             </Tooltip>
             <Tooltip color="danger" content="Delete company">
               <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                <RiDeleteBin6Line />
+                <RiDeleteBin6Line onClick={() => handleDeleteClick(company._id)}  />
               </span>
             </Tooltip>
           </div>

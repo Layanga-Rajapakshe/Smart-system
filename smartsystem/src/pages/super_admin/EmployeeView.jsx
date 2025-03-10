@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useGetEmployeeQuery } from '../../redux/api/employeeApiSlice';
-import { useParams } from 'react-router-dom';
-import { Input, Image, CircularProgress } from "@heroui/react";
+import { useNavigate, useParams } from 'react-router-dom';
+import { Input, Image, Card, CircularProgress, Button } from "@heroui/react";
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
-import image1 from '../../assets/images/companyRegister.png';
+import image1 from '../../assets/images/background1.png';
 
 const EmployeeView = () => {
   const { id: employeeId } = useParams();
   const { data: employee, isLoading, isError } = useGetEmployeeQuery(employeeId);
+  const navigate = useNavigate();
 
   const [employeeData, setEmployeeData] = useState({
     name: '',
@@ -45,51 +46,193 @@ const EmployeeView = () => {
   if (isError) return <div>Error fetching employee data</div>;
 
   return (
-    <div>
-      <GeneralBreadCrumb items={breadcrumbItems} />
-      <div className="flex h-screen overflow-hidden">
-        <div className="flex-1 flex-col flex items-center justify-center p-6 relative">
-          <div className="md:hidden absolute inset-0 z-0">
-            <Image
-              isBlurred
-              className="w-full h-full object-cover"
-              src="https://nextui.org/gradients/docs-right.png"
-              alt="Background image"
-            />
-          </div>
+    <div className="relative min-h-screen flex flex-col items-center justify-center p-6">
+      {/* Background Image Container */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden z-0 rounded-xl">
+        <Image
+          src={image1}
+          alt="Background"
+          className="inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-md"></div>
+      </div>
+      
+      {/* Breadcrumb with better positioning */}
+      <div className="absolute top-6 left-6 z-10">
+        <GeneralBreadCrumb items={breadcrumbItems} />
+      </div>
 
-          <div className="text-center text-[25px] font-bold mb-6 z-10">Employee View</div>
+      {/* Form Card Container */}
+      <div className="relative z-10 w-full max-w-4xl mt-20 mb-10">
+        <Card className="p-6 sm:p-8 shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl border border-white/40">
+          <h3 className="text-2xl font-bold text-center text-black mb-6">Employee View</h3>
 
-          <form className="flex flex-col w-full max-w-md gap-4 mb-4 z-10 overflow-auto">
-            <Input variant="bordered" label="Name" type="text" value={employeeData.name} readOnly />
-            <Input variant="bordered" label="Birthday" type="text" value={employeeData.birthday} readOnly />
-            <Input variant="bordered" label="User ID" type="text" value={employeeData.userId} readOnly />
-            <Input variant="bordered" label="Hired Date" type="text" value={employeeData.hired_date} readOnly />
-            <Input variant="bordered" label="Post" type="text" value={employeeData.post} readOnly />
-            <Input variant="bordered" label="Role" type="text" value={employeeData.role} readOnly />
-            <Input variant="bordered" label="Status" type="text" value={employeeData.status} readOnly />
-            <Input variant="bordered" label="Age" type="text" value={employeeData.age} readOnly />
-            <Input variant="bordered" label="Email" type="text" value={employeeData.email} readOnly />
-            <Input variant="bordered" label="Company" type="text" value={employeeData.company} readOnly />
-            <Input variant="bordered" label="Supervisor" type="text" value={employeeData.supervisor} readOnly />
-            <Input variant="bordered" label="Agreed Basic" type="text" value={employeeData.agreed_basic} readOnly />
-            <Input variant="bordered" label="Re-allowance" type="text" value={employeeData.re_allowance} readOnly />
-            <Input variant="bordered" label="Single OT" type="text" value={employeeData.single_ot} readOnly />
-            <Input variant="bordered" label="Double OT" type="text" value={employeeData.double_ot} readOnly />
-            <Input variant="bordered" label="Meal Allowance" type="text" value={employeeData.meal_allowance} readOnly />
+          <form className="space-y-6">
+            {/* Personal Information Section */}
+            <div>
+              <div className="text-lg font-semibold mb-4 text-black">Personal Information</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="Full Name"
+                  value={employeeData.name}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+                <Input
+                  label="Email"
+                  value={employeeData.email}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+                <Input
+                  label="User ID"
+                  value={employeeData.userId}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+                <Input
+                  label="Birthday"
+                  value={employeeData.birthday}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+                <Input
+                  label="Age"
+                  value={employeeData.age}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+                <Input
+                  label="Avatar"
+                  value={employeeData.avatar}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+              </div>
+            </div>
+
+            {/* Employment Information Section */}
+            <div>
+              <div className="text-lg font-semibold mb-4 text-black">Employment Information</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="Hired Date"
+                  value={employeeData.hired_date}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+                <Input
+                  label="Post"
+                  value={employeeData.post}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+                <Input
+                  label="Role"
+                  value={employeeData.role}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+                <Input
+                  label="Status"
+                  value={employeeData.status}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+                <Input
+                  label="Supervisor"
+                  value={employeeData.supervisor}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+              </div>
+            </div>
+
+            {/* Compensation Information Section */}
+            <div>
+              <div className="text-lg font-semibold mb-4 text-black">Compensation Details</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Input
+                  label="Agreed Basic"
+                  value={employeeData.agreed_basic}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+                <Input
+                  label="RE Allowance"
+                  value={employeeData.re_allowance}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+                <Input
+                  label="Single OT"
+                  value={employeeData.single_ot}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+                <Input
+                  label="Double OT"
+                  value={employeeData.double_ot}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+                <Input
+                  label="Meal Allowance"
+                  value={employeeData.meal_allowance}
+                  readOnly
+                  variant="bordered"
+                  fullWidth
+                  className="py-2"
+                />
+              </div>
+              <div className="flex justify-between mt-4">
+                <Button
+                  color="primary"
+                  variant="flat"
+                  onPress={() => navigate('/employee')}
+                >
+                  Back to List
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={() => navigate(`/employeeedit/${employeeId}`)}
+                >
+                  Edit Company
+                </Button>
+              </div>
+            </div>
           </form>
-        </div>
-
-        <div className="hidden md:flex flex-1 items-center justify-center p-6">
-          <div className="w-full h-full flex items-center justify-center">
-            <Image
-              isBlurred
-              className="w-full h-full object-cover"
-              src={image1}
-              alt="Employee Avatar"
-            />
-          </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

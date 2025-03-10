@@ -8,7 +8,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/company");
+    navigate("/dashboard");
   }
   
   return (

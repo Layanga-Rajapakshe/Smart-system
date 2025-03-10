@@ -1,87 +1,162 @@
-import React from 'react';
-import { Table, Image } from "@heroui/react";
-import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
-import image1 from '../../assets/images/companyRegister.png';
+import React, { useEffect, useState } from "react";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Button,
+  Spinner
+} from "@heroui/react";
+import { IoArrowBack } from "react-icons/io5";
+import {useNavigate} from "react-router-dom";
 
-const ViewEmployeeSalary = ({ employee }) => {
-  const breadcrumbItems = [
-    { label: 'Employee Menu', href: '/employee' },
-    { label: 'View Salary', href: '/employeeview', isCurrentPage: true },
-  ];
+const mockEmployeeData = {
+  employeeId: "EMP001",
+  name: "John Doe",
+  email: "john.doe@company.com",
+  avatar: "/api/placeholder/150/150",
+  basicSalary: 75000,
+  reAllowance: 1200,
+  singleOt: 45,
+  doubleOt: 90,
+  mealAllowance: 25
+};
 
-  // Example employee salary data (replace with actual data from props or API call)
-  const salaryDetails = employee || {
-    agreed_basic: 50000,
-    re_allowance: 10000,
-    single_ot: 200,
-    double_ot: 400,
-    meal_allowance: 5000,
+const EmployeeSalaryDetails = () => {
+  const navigate = useNavigate();
+  const [employee, setEmployee] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchEmployeeData = async () => {
+      try {
+        setLoading(true);
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Use mock data for employee ID 1
+        setEmployee(mockEmployeeData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEmployeeData();
+  }, []);
+
+  const handleBack = () => {
+    navigate(-1);
   };
 
-  return (
-    <div>
-      <GeneralBreadCrumb items={breadcrumbItems} />
-      <div className="flex h-screen overflow-hidden">
-        <div className="flex-1 flex-col flex items-center justify-center p-6">
-          <div className="md:hidden absolute left-0 right-0 bottom-0 top-0 z-0">
-            <Image
-              isBlurred
-              className="w-full h-screen/2 fill-inherit"
-              src="https://nextui.org/gradients/docs-right.png"
-              alt="Background image"
-            />
-          </div>
-
-          <div className="text-center text-[25px] font-bold mb-6">Employee Salary Details</div>
-
-          <Table
-            bordered
-            shadow={false}
-            aria-label="Employee Salary Details"
-            css={{ minWidth: "50%", marginTop: "1rem" }}
-          >
-            <Table.Header>
-              <Table.Column>Salary Component</Table.Column>
-              <Table.Column>Amount</Table.Column>
-            </Table.Header>
-            <Table.Body>
-              <Table.Row>
-                <Table.Cell>Agreed Basic</Table.Cell>
-                <Table.Cell>{salaryDetails.agreed_basic}</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>RE Allowance</Table.Cell>
-                <Table.Cell>{salaryDetails.re_allowance}</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>Single OT</Table.Cell>
-                <Table.Cell>{salaryDetails.single_ot}</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>Double OT</Table.Cell>
-                <Table.Cell>{salaryDetails.double_ot}</Table.Cell>
-              </Table.Row>
-              <Table.Row>
-                <Table.Cell>Meal Allowance</Table.Cell>
-                <Table.Cell>{salaryDetails.meal_allowance}</Table.Cell>
-              </Table.Row>
-            </Table.Body>
-          </Table>
-        </div>
-
-        <div className="hidden md:flex flex-1 items-center justify-center p-6">
-          <div className="w-full h-full flex items-center justify-center">
-            <Image
-              isBlurred
-              className="w-full h-full object-fill"
-              src={image1}
-              alt="Salary Details"
-            />
-          </div>
-        </div>
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <Spinner size="lg" />
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center gap-4 min-h-[400px] pt-8">
+        <div className="text-lg text-danger">{error}</div>
+        <Button color="primary" variant="light" onClick={handleBack}>
+          <IoArrowBack className="mr-2" /> Go Back
+        </Button>
+      </div>
+    );
+  }
+
+  if (!employee) {
+    return null;
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto p-4">
+      <div className="mb-4">
+        <Button 
+          color="primary" 
+          variant="light" 
+          onPress={handleBack}
+          startContent={<IoArrowBack />}
+        >
+          Back to List
+        </Button>
+      </div>
+
+      <Card className="w-full">
+        <CardHeader className="flex justify-between items-center px-6 py-4">
+          <h2 className="text-xl font-bold">Employee Salary Details</h2>
+          <div className="text-small text-default-500">
+            Employee ID: {employee.employeeId}
+          </div>
+        </CardHeader>
+        
+        <CardBody className="px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Personal Information Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Personal Information</h3>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <img 
+                    src={employee.avatar} 
+                    alt={employee.name}
+                    className="w-16 h-16 rounded-lg"
+                  />
+                  <div>
+                    <p className="font-medium">{employee.name}</p>
+                    <p className="text-small text-default-500">{employee.email}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Salary Information Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Salary Information</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-small text-default-500">Basic Salary</p>
+                  <p className="font-medium">${employee.basicSalary?.toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-small text-default-500">RE Allowance</p>
+                  <p className="font-medium">${employee.reAllowance?.toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Overtime Rates Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Overtime Rates</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-small text-default-500">Single OT Rate</p>
+                  <p className="font-medium">${employee.singleOt}/hr</p>
+                </div>
+                <div>
+                  <p className="text-small text-default-500">Double OT Rate</p>
+                  <p className="font-medium">${employee.doubleOt}/hr</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Allowances Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Additional Allowances</h3>
+              <div>
+                <p className="text-small text-default-500">Meal Allowance</p>
+                <p className="font-medium">${employee.mealAllowance}/day</p>
+              </div>
+            </div>
+          </div>
+        </CardBody>
+      </Card>
     </div>
   );
 };
 
-export default ViewEmployeeSalary;
+export default EmployeeSalaryDetails;

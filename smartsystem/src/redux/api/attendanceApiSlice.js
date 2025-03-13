@@ -69,6 +69,8 @@ export const attendanceApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+
+    //get s
   }),
 });
 

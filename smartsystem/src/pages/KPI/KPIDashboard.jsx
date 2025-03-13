@@ -1,38 +1,49 @@
 import React, { useState } from "react";
-import { Button, Container, Box, Stack, Typography, Modal, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Button, Card, Image, Select } from "@heroui/react";
+import { useNavigate } from "react-router-dom";
 import Header from "../../components/KPI/Header";
 import ScoreTable from "../../components/KPI/ScoreTable";
 import KPIChart from "../../components/KPI/KPIChart";
 import EmployeeDetails from "../../components/KPI/EmployeeDetails";
 import { sampleEmployees } from "../../components/KPI/SampleData";
-import { useNavigate } from "react-router-dom";
+import backgroundImage from '../../assets/images/background1.png';
 
-const EmployeeSelection = ({ employees, onSelect, onMonthChange, selectedMonth }) => (
-  <Box sx={{ display: "flex", width: "100%", gap: 2 }}>
-    <FormControl sx={{ flex: 1 }}>
-      <InputLabel>Employee</InputLabel>
-      <Select onChange={(e) => onSelect(e.target.value)} label="Employee" size="small">
-        {employees.map((employee) => (
-          <MenuItem key={employee.id} value={employee}>
-            {employee.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-    <FormControl sx={{ flex: 1 }}>
-      <TextField
-        label="Month"
-        type="month"
-        value={selectedMonth}
-        onChange={(e) => {
-          onMonthChange(e.target.value);
-        }}
-        InputLabelProps={{ shrink: true }}
-        size="small"
-      />
-    </FormControl>
-  </Box>
-);
+const EmployeeSelection = ({ employees, onSelect, onMonthChange, selectedMonth }) => {
+  // Transform employees into format expected by HeroUI Select
+  const employeeOptions = employees.map(employee => ({
+    value: employee,
+    label: employee.name
+  }));
+  
+  // Add a placeholder option
+  const options = [
+    { value: "", label: "Select an employee" },
+    ...employeeOptions
+  ];
+
+  return (
+    <div className="flex w-full gap-4">
+      <div className="flex-1">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Employee</label>
+        <Select 
+          options={options}
+          onChange={(selectedOption) => onSelect(selectedOption.value)}
+          className="w-full"
+          placeholder="Select an employee"
+        />
+      </div>
+      <div className="flex-1">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Month</label>
+        <input
+          type="month"
+          value={selectedMonth}
+          onChange={(e) => onMonthChange(e.target.value)}
+          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
+      </div>
+    </div>
+  );
+};
 
 const KPIDashboard = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -82,80 +93,118 @@ const KPIDashboard = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Header />
-
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-        <EmployeeSelection
-          employees={sampleEmployees}
-          onSelect={(employee) => {
-            setSelectedEmployee(employee);
-            setErrorMessage("");
-            setSuccessMessage("");
-          }}
-          onMonthChange={(month) => {
-            setSelectedMonth(month);
-            if (month) setErrorMessage("");
-          }}
-          selectedMonth={selectedMonth}
+    <div className="relative min-h-screen">
+      {/* Background Image Container */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
+        <Image
+          src={backgroundImage}
+          alt="Background"
+          className="w-full h-full object-cover"
         />
-      </Box>
+        <div className="absolute inset-0 bg-black rounded-2xl bg-opacity-50 backdrop-blur-md"></div>
+      </div>
+      
+      {/* Main Content */}
+      <div className="relative z-10 container mx-auto py-6 px-4">
+        <h1 className="text-3xl font-semibold text-black text-center mb-6">
+          KPI Dashboard
+        </h1>
+        
+        <Card className="p-6 shadow-2xl bg-white/90 backdrop-blur-md rounded-2xl border border-white/40 mb-6">
+          <div className="mb-4">
+            <EmployeeSelection
+              employees={sampleEmployees}
+              onSelect={(employee) => {
+                setSelectedEmployee(employee);
+                setErrorMessage("");
+                setSuccessMessage("");
+              }}
+              onMonthChange={(month) => {
+                setSelectedMonth(month);
+                if (month) setErrorMessage("");
+              }}
+              selectedMonth={selectedMonth}
+            />
+          </div>
 
-      <EmployeeDetails employee={selectedEmployee} />
+          <EmployeeDetails employee={selectedEmployee} />
 
-      {successMessage && (
-        <Typography variant="h6" color="success" sx={{ mt: 1, textAlign: "center", fontWeight: 600 }}>
-          {successMessage}
-        </Typography>
+          {successMessage && (
+            <div className="mt-4 text-center text-green-600 font-semibold text-lg">
+              {successMessage}
+            </div>
+          )}
+
+          {errorMessage && (
+            <div className="mt-4 text-center text-red-600 font-semibold">
+              {errorMessage}
+            </div>
+          )}
+
+          <div className="mt-6">
+            <ScoreTable scores={scores} setScores={setScores} />
+          </div>
+
+          <div className="mt-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+              Supervisor's Comment
+            </h2>
+            <textarea
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 h-32"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Add comments about the employee's performance"
+            />
+          </div>
+
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <Button
+              onClick={handleAddScores}
+              color="primary"
+              className="px-6 py-2 rounded-full font-semibold transition-all hover:scale-105"
+            >
+              Add Score
+            </Button>
+            <Button
+              onClick={handleViewAnalysis}
+              color="primary"
+              className="px-6 py-2 rounded-full font-semibold transition-all hover:scale-105"
+            >
+              View Analysis
+            </Button>
+            <Button
+              onClick={handleViewKPIDetails}
+              color="secondary"
+              className="px-6 py-2 rounded-full font-semibold transition-all hover:scale-105"
+            >
+              View Overall KPI Details
+            </Button>
+          </div>
+        </Card>
+      </div>
+
+      {/* Analysis Modal */}
+      {showChart && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onClick={() => setShowChart(false)}></div>
+          <Card className="relative z-10 w-4/5 p-6 shadow-2xl bg-white rounded-2xl border border-white/40">
+            <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+              KPI Analysis Chart
+            </h2>
+            <KPIChart employeeScores={employeeScores} />
+            <div className="mt-6 flex justify-center">
+              <Button
+                onClick={() => setShowChart(false)}
+                color="danger"
+                className="px-6 py-2 rounded-full font-semibold"
+              >
+                Close
+              </Button>
+            </div>
+          </Card>
+        </div>
       )}
-
-      {errorMessage && (
-        <Typography variant="body2" color="error" sx={{ mt: 1, textAlign: "center", fontWeight: 600 }}>
-          {errorMessage}
-        </Typography>
-      )}
-
-      <ScoreTable scores={scores} setScores={setScores} />
-
-      <Box sx={{ mt: 2 }}>
-        <Typography variant="h6" sx={{ mb: 1, fontWeight: 600 }}>
-          Supervisor's Comment
-        </Typography>
-        <TextField
-          fullWidth
-          multiline
-          rows={4}
-          variant="outlined"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder="Add comments about the employee’s performance"
-        />
-      </Box>
-
-      <Stack direction="row" spacing={2} sx={{ mt: 3, justifyContent: "center" }}>
-        <Button onClick={handleAddScores} variant="contained" color="primary" sx={{ borderRadius: "20px", px: 4, fontWeight: 600 }}>
-          Add Score
-        </Button>
-        <Button onClick={handleViewAnalysis} variant="contained" color="primary" sx={{ borderRadius: "20px", px: 4, fontWeight: 600 }}>
-          View Analysis
-        </Button>
-        <Button onClick={handleViewKPIDetails} variant="outlined" color="info" sx={{ borderRadius: "20px", px: 4, fontWeight: 600 }}>
-          View Overall KPI Details
-        </Button>
-      </Stack>
-
-      <Modal open={showChart} onClose={() => setShowChart(false)} aria-labelledby="analysis-chart" sx={{ display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(5px)" }}>
-        <Box sx={{ width: "80%", bgcolor: "background.paper", borderRadius: 2, boxShadow: 24, p: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <Typography id="analysis-chart" variant="h6" component="h2" sx={{ mb: 2 }}>
-            KPI Analysis Chart
-          </Typography>
-          <KPIChart employeeScores={employeeScores} />
-          <Button onClick={() => setShowChart(false)} variant="contained" color="error" sx={{ mt: 3, borderRadius: "20px" }}>
-            Close
-          </Button>
-        </Box>
-      </Modal>
-    </Container>
+    </div>
   );
 };
 

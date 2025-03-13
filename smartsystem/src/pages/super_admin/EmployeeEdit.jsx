@@ -7,7 +7,7 @@ import {
 import { useGetRolesQuery } from '../../redux/api/roleApiSlice';
 import { useGetCompaniesQuery } from '../../redux/api/companyApiSlice';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Input, Button, CircularProgress, Image, Select, SelectItem, Card } from "@heroui/react";
+import { Input, Button, CircularProgress, Image, Select, SelectItem, Card, Checkbox } from "@heroui/react";
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 import image1 from '../../assets/images/background1.png';
 import { toast } from 'react-hot-toast';
@@ -41,6 +41,7 @@ const EmployeeEdit = () => {
     single_ot: 0,
     double_ot: 0,
     meal_allowance: 0,
+    isEPF: false, // Added EPF field
   });
 
   const breadcrumbItems = [
@@ -59,6 +60,14 @@ const EmployeeEdit = () => {
     setEmployeeData((prevData) => ({
       ...prevData,
       [name]: value,
+    }));
+  };
+
+  // Handle checkbox changes
+  const handleCheckboxChange = (checked) => {
+    setEmployeeData((prevData) => ({
+      ...prevData,
+      isEPF: checked,
     }));
   };
 
@@ -301,6 +310,16 @@ const EmployeeEdit = () => {
                   fullWidth
                   className="py-2"
                 />
+                <div className="flex items-center h-full">
+                  <Checkbox
+                    isSelected={employeeData.isEPF}
+                    onValueChange={handleCheckboxChange}
+                    color="primary"
+                    className="py-2"
+                  >
+                    <span className="ml-2">EPF Eligible</span>
+                  </Checkbox>
+                </div>
               </div>
             </div>
 

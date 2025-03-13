@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input, Button, Image, Card, Spinner, Select, SelectItem } from "@heroui/react";
+import { Input, Button, Image, Card, Spinner, Select, SelectItem, Checkbox } from "@heroui/react";
 import GeneralBreadCrumb from "../../components/GeneralBreadCrumb";
 import { useCreateEmployeeMutation, useGetEmployeesQuery } from "../../redux/api/employeeApiSlice";
 import { useGetRolesQuery } from "../../redux/api/roleApiSlice";
@@ -33,6 +33,7 @@ const EmployeeRegister = () => {
   const [singleOt, setSingleOt] = useState(0);
   const [doubleOt, setDoubleOt] = useState(0);
   const [mealAllowance, setMealAllowance] = useState(0);
+  const [isEPF, setIsEPF] = useState(false); // New state for EPF status
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,6 +56,7 @@ const EmployeeRegister = () => {
       single_ot: parseFloat(singleOt),
       double_ot: parseFloat(doubleOt),
       meal_allowance: parseFloat(mealAllowance),
+      isEPF, // Add the new EPF field
     };
 
     try {
@@ -80,6 +82,7 @@ const EmployeeRegister = () => {
       setSingleOt(0);
       setDoubleOt(0);
       setMealAllowance(0);
+      setIsEPF(false); // Reset EPF field
       navigate("/employee");
       window.location.reload();
     } catch (err) {
@@ -322,6 +325,16 @@ const EmployeeRegister = () => {
                   fullWidth
                   className="py-2"
                 />
+                <div className="flex items-center h-full">
+                  <Checkbox
+                    isSelected={isEPF}
+                    onValueChange={setIsEPF}
+                    color="primary"
+                    className="py-2"
+                  >
+                    <span className="ml-2">EPF Eligible</span>
+                  </Checkbox>
+                </div>
               </div>
             </div>
 

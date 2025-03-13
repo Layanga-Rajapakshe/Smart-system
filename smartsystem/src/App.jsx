@@ -56,6 +56,7 @@ import SalaryComplaintForm from './pages/Salary/SalaryComplaintForm';
 import KPIDashboard from './pages/KPI/KPIDashboard';
 import EmployeePerformance from './pages/KPI/EmployeePerformance';
 import CEOKpiSettingPage from './pages/KPI/CEOKpiSettingPage';
+import KPIWelcome from './pages/KPI/KPIWelcome';
 
 // Meeting Pages
 import MeetingHome from "./pages/MeetingMinute/MeetingHome";
@@ -69,6 +70,7 @@ import MyTasks from './pages/workschedule/MyTasks';
 import OneTimeTask from './pages/workschedule/OneTimeTask';
 import CreateTask from './pages/workschedule/CreateTask';
 import MyProfile from './pages/employee/MyProfile';
+
 
 export default function App() {
   const location = useLocation();
@@ -141,6 +143,7 @@ export default function App() {
               <Route path="/salarycomplaint" element={<SalaryComplaintForm />} />
               
               {/* KPI Routes */}
+              <Route path='/KPIWelcome' element={<KPIWelcome />} />
               <Route path="/KPIdashboard" element={<KPIDashboard />} />
               <Route path="/employee-performance" element={<EmployeePerformance />} />
               <Route path="/KpiSetting" element={<CEOKpiSettingPage />} />

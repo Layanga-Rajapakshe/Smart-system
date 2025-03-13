@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Slider, Paper, Typography, Tooltip } from "@mui/material";
+import { Card, Slider } from "@heroui/react";
 
 const categories = [
   { name: "Attitude", subParams: ["Communication", "Behavior", "Teamwork"] },
@@ -17,6 +17,14 @@ const getComment = (score) => {
   return "Very Poor";
 };
 
+const getCommentColor = (score) => {
+  if (score >= 9) return "text-green-600";
+  if (score >= 7) return "text-blue-600";
+  if (score >= 5) return "text-yellow-600";
+  if (score >= 3) return "text-orange-600";
+  return "text-red-600";
+};
+
 const ScoreTable = ({ scores, setScores }) => {
   const calculateOverallKPI = () => {
     const sum = Object.values(scores).reduce((acc, category) => acc + category.subParams.reduce((subAcc, score) => subAcc + (score || 0), 0), 0);
@@ -30,63 +38,68 @@ const ScoreTable = ({ scores, setScores }) => {
     setScores(newScores);
   };
 
+  const overallScore = calculateOverallKPI();
+
   return (
-    <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
-      <Typography variant="h6" component="h2" sx={{ mb: 2, fontWeight: "bold", textAlign: "center" }}>
-        KPI Score Table
-      </Typography>
-      <TableContainer>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold", width: "30%", py: 0.5 }}>Category</TableCell>
-              <TableCell sx={{ fontWeight: "bold", width: "30%", textAlign: "center", py: 0.5 }}>Score</TableCell>
-              <TableCell sx={{ fontWeight: "bold", width: "40%", textAlign: "center", py: 0.5 }}>Comment</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+    <Card className="p-4 shadow-lg rounded-xl bg-white/90 backdrop-blur-sm">
+      <h2 className="text-xl font-bold text-center mb-4">KPI Score Table</h2>
+      
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b border-gray-200">
+              <th className="text-left font-bold py-2 w-1/3">Category</th>
+              <th className="text-center font-bold py-2 w-1/3">Score</th>
+              <th className="text-center font-bold py-2 w-1/3">Comment</th>
+            </tr>
+          </thead>
+          <tbody>
             {categories.map((category) => (
               <React.Fragment key={category.name}>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: "bold" }} colSpan={3}>
+                <tr className="border-b border-gray-200 bg-gray-50">
+                  <td className="py-2 px-2 font-semibold" colSpan={3}>
                     {category.name}
-                  </TableCell>
-                </TableRow>
-                {category.subParams.map((subParam, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{subParam}</TableCell>
-                    <TableCell align="center">
-                      <Tooltip title={`Score: ${scores[category.name].subParams[index]}`} arrow>
-                        <Slider
-                          value={scores[category.name].subParams[index]}
-                          onChange={(e, value) => handleScoreChange(category.name, index, value)}
-                          step={1}
-                          min={0}
-                          max={10}
-                          marks
-                          sx={{ width: "90%" }}
-                          valueLabelDisplay="auto"
-                        />
-                      </Tooltip>
-                    </TableCell>
-                    <TableCell align="center">{getComment(scores[category.name].subParams[index])}</TableCell>
-                  </TableRow>
-                ))}
+                  </td>
+                </tr>
+                {category.subParams.map((subParam, index) => {
+                  const score = scores[category.name].subParams[index];
+                  const commentClass = getCommentColor(score);
+                  
+                  return (
+                    <tr key={index} className="border-b border-gray-100">
+                      <td className="py-2 px-2">{subParam}</td>
+                      <td className="text-center py-2 px-2">
+                        <div className="relative px-2" title={`Score: ${score}`}>
+                          <Slider
+                            value={score}
+                            onChange={(value) => handleScoreChange(category.name, index, value)}
+                            min={0}
+                            max={10}
+                            step={1}
+                            className="w-full"
+                          />
+                          <div className="text-xs mt-1 text-center">{score}</div>
+                        </div>
+                      </td>
+                      <td className={`text-center py-2 px-2 font-medium ${commentClass}`}>
+                        {getComment(score)}
+                      </td>
+                    </tr>
+                  );
+                })}
               </React.Fragment>
             ))}
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold", color: "#00796b" }}>Overall KPI</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", color: "#00796b" }}>
-                {calculateOverallKPI()}
-              </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold", color: "#00796b" }}>
-                {getComment(calculateOverallKPI())}
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
+            <tr className="border-t-2 border-gray-300 bg-blue-50">
+              <td className="py-3 px-2 font-bold text-blue-800">Overall KPI</td>
+              <td className="text-center py-3 px-2 font-bold text-blue-800">{overallScore}</td>
+              <td className={`text-center py-3 px-2 font-bold ${getCommentColor(overallScore)}`}>
+                {getComment(overallScore)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </Card>
   );
 };
 

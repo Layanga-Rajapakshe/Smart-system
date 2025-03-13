@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGetEmployeeQuery } from '../../redux/api/employeeApiSlice';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Input, Image, Card, CircularProgress, Button } from "@heroui/react";
+import { Input, Image, Card, CircularProgress, Button, Checkbox } from "@heroui/react";
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 import image1 from '../../assets/images/background1.png';
 
@@ -29,6 +29,7 @@ const EmployeeView = () => {
     single_ot: 0,
     double_ot: 0,
     meal_allowance: 0,
+    isEPF: false, // Added EPF field
   });
 
   const breadcrumbItems = [
@@ -214,6 +215,16 @@ const EmployeeView = () => {
                   fullWidth
                   className="py-2"
                 />
+                <div className="flex items-center h-full">
+                  <Checkbox
+                    isSelected={employeeData.isEPF}
+                    isDisabled={true}
+                    color="primary"
+                    className="py-2"
+                  >
+                    <span className="ml-2">EPF Eligible</span>
+                  </Checkbox>
+                </div>
               </div>
               <div className="flex justify-between mt-4">
                 <Button
@@ -227,7 +238,7 @@ const EmployeeView = () => {
                   color="primary"
                   onPress={() => navigate(`/employeeedit/${employeeId}`)}
                 >
-                  Edit Company
+                  Edit Employee
                 </Button>
               </div>
             </div>

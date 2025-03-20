@@ -8,3 +8,5 @@ export const TASKS_URL = "/api/twoweek";
 export const NOTIFICATIONS_URL = "/api/notifications";
 export const SALARYMANAGEMENT_URL = "/api/salParam";
 export const SALARYCALCULATION_URL = "/api/salary";
+export const MEETING_URL = "/api/meeting";
+export const KPI_URL = "/api/kpi";

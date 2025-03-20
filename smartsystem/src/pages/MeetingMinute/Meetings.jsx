@@ -1,36 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Card, Image, Button, CircularProgress, Spacer } from "@heroui/react";
-import axios from "axios";
 import image1 from "../../assets/images/background1.png";
 import GeneralBreadCrumb from "../../components/GeneralBreadCrumb";
 import MeetingForm from "../../components/MeetingMinute/MeetingForm";
 import MeetingList from "../../components/MeetingMinute/MeetingList";
 import toast from "react-hot-toast";
+import { useGetMeetingsQuery } from "../../redux/api/meetingApiSlice";
 
 const Meetings = () => {
-  const [meetings, setMeetings] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-
-  const fetchMeetings = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axios.get("http://localhost:5000/api/meetings");
-      setMeetings(response.data);
-    } catch (error) {
-      console.error("Error fetching meetings:", error);
-      toast.error("Failed to fetch meetings. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchMeetings();
-  }, []);
+  
+  // Replace axios with RTK Query hook
+  const { 
+    data: meetings = [], 
+    isLoading, 
+    isError, 
+    refetch 
+  } = useGetMeetingsQuery();
 
   const handleAddSuccess = () => {
-    fetchMeetings();
+    // Refetch meetings data after adding a new one
+    refetch();
     setShowForm(false);
     toast.success("Meeting added successfully!");
   };
@@ -40,12 +30,18 @@ const Meetings = () => {
     { label: "Meetings Management", href: "/meetings", isCurrentPage: true },
   ];
 
+  // Show loading state
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <CircularProgress aria-label="Loading" />
       </div>
     );
+  }
+
+  // Show error state
+  if (isError) {
+    toast.error("Failed to fetch meetings. Please try again.");
   }
 
   return (
@@ -94,7 +90,7 @@ const Meetings = () => {
             <div className="text-lg font-semibold mb-4 text-black">Meeting Records</div>
             <MeetingList 
               meetings={meetings} 
-              onUpdate={fetchMeetings} 
+              onUpdate={refetch} 
             />
           </div>
         </Card>

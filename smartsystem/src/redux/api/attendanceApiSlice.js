@@ -61,16 +61,14 @@ export const attendanceApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
-    //edit attendance details
+    // Edit attendance details - Updated to match the route path
     editAttendanceDetails: builder.mutation({
-      query: ({ data }) => ({
-        url: `${ATTENDANCE_URL}/editattendancedetails`,
+      query: (data) => ({
+        url: `${ATTENDANCE_URL}/editAttendanceRec`,
         method: 'PUT',
         body: data,
       }),
     }),
-
-    //get s
   }),
 });
 

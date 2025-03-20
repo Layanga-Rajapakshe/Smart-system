@@ -6,3 +6,5 @@ export const ROLE_URL = "/api/role";
 export const ATTENDANCE_URL = "api/attendance"
 export const TASKS_URL = "/api/twoweek";
 export const NOTIFICATIONS_URL = "/api/notifications";
+export const SALARYMANAGEMENT_URL = "/api/salParam";
+export const SALARYCALCULATION_URL = "/api/salary";

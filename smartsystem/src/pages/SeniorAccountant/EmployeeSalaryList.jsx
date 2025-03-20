@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -13,6 +13,9 @@ import {
   DropdownMenu,
   DropdownItem,
   User,
+  Card,
+  Image,
+  CircularProgress
 } from "@heroui/react";
 import { IoAdd } from "react-icons/io5";
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -23,49 +26,52 @@ import { GrView } from "react-icons/gr";
 import { capitalize } from "../super_admin/utils";
 import PaginationComponent from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
+import { useGetSalaryParametersQuery, useUpdateSalaryParametersMutation } from "../../redux/api/salarymanagementApiSlice";
+import GeneralBreadCrumb from "../../components/GeneralBreadCrumb";
+import image1 from "../../assets/images/background1.png";
+import toast from "react-hot-toast";
 
 // Updated columns definition
 const columns = [
-  { name: "EMPLOYEE ID", uid: "employeeId", sortable: true },
+  { name: "EMPLOYEE ID", uid: "userId", sortable: true },
   { name: "EMPLOYEE NAME", uid: "name", sortable: true },
-  { name: "BASIC SALARY", uid: "basicSalary", sortable: true },
-  { name: "RE ALLOWANCE", uid: "reAllowance", sortable: true },
-  { name: "SINGLE OT", uid: "singleOt", sortable: true },
-  { name: "DOUBLE OT", uid: "doubleOt", sortable: true },
-  { name: "MEAL ALLOWANCE", uid: "mealAllowance", sortable: true },
+  { name: "POST", uid: "post", sortable: true },
+  { name: "ROLE", uid: "role", sortable: true },
+  { name: "BASIC SALARY", uid: "agreed_basic", sortable: true },
+  { name: "RE ALLOWANCE", uid: "re_allowance", sortable: true },
+  { name: "SINGLE OT", uid: "single_ot", sortable: true },
+  { name: "DOUBLE OT", uid: "double_ot", sortable: true },
+  { name: "MEAL ALLOWANCE", uid: "meal_allowance", sortable: true },
   { name: "ACTIONS", uid: "actions" },
 ];
 
-// Sample employee data
-const employees = [
-  {
-    id: 1,
-    employeeId: "EMP001",
-    name: "John Doe",
-    email: "john@example.com",
-    basicSalary: 50000,
-    reAllowance: 5000,
-    singleOt: 30,
-    doubleOt: 60,
-    mealAllowance: 100,
-    avatar: "https://i.pravatar.cc/150?u=1"
-  },
-  // Add more employee data as needed
-];
-
-const INITIAL_VISIBLE_COLUMNS = ["employeeId", "name", "basicSalary", "reAllowance", "singleOt", "doubleOt", "mealAllowance", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["userId", "name", "post", "agreed_basic", "re_allowance", "single_ot", "double_ot", "meal_allowance", "actions"];
 
 const EmployeeSalaryList = () => {
   const navigate = useNavigate();
-  const [filterValue, setFilterValue] = React.useState("");
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
-  const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [sortDescriptor, setSortDescriptor] = React.useState({
-    column: "employeeId",
+  const [filterValue, setFilterValue] = useState("");
+  const [selectedKeys, setSelectedKeys] = useState(new Set([]));
+  const [visibleColumns, setVisibleColumns] = useState(new Set(INITIAL_VISIBLE_COLUMNS));
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [sortDescriptor, setSortDescriptor] = useState({
+    column: "userId",
     direction: "ascending",
   });
-  const [page, setPage] = React.useState(1);
+  const [page, setPage] = useState(1);
+
+  // Get user role from localStorage
+  const userRole = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')).role : null;
+  
+  // Use RTK Query hook to fetch salary parameters with the role from localStorage
+  const { 
+    data: salaryData, 
+    isLoading: isLoadingSalaries, 
+    isError, 
+    error 
+  } = useGetSalaryParametersQuery(userRole);
+  
+  // Update salary parameters mutation
+  const [updateSalaryParameters, { isLoading: isUpdating }] = useUpdateSalaryParametersMutation();
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -75,15 +81,22 @@ const EmployeeSalaryList = () => {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredEmployees = [...employees];
-    if (hasSearchFilter) {
-      filteredEmployees = filteredEmployees.filter((employee) =>
-        employee.employeeId.toLowerCase().includes(filterValue.toLowerCase()) ||
-        employee.name.toLowerCase().includes(filterValue.toLowerCase())
-      );
+    let filteredEmployees = [];
+    
+    // Use data from the query if available
+    if (salaryData?.salaryParameters) {
+      filteredEmployees = [...salaryData.salaryParameters];
+      
+      if (hasSearchFilter) {
+        filteredEmployees = filteredEmployees.filter((employee) =>
+          employee.userId.toString().toLowerCase().includes(filterValue.toLowerCase()) ||
+          employee.name.toLowerCase().includes(filterValue.toLowerCase())
+        );
+      }
     }
+    
     return filteredEmployees;
-  }, [employees, filterValue]);
+  }, [salaryData, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -102,26 +115,54 @@ const EmployeeSalaryList = () => {
     });
   }, [sortDescriptor, items]);
 
+  // Handle errors from the API
+  useEffect(() => {
+    if (isError) {
+      toast.error(`Error fetching data: ${error?.data?.message || "Unknown error"}`);
+    }
+  }, [isError, error]);
+
+  // Check if userRole exists on component mount
+  useEffect(() => {
+    if (!userRole) {
+      toast.error("User role not found. Please log in again.");
+      // Optionally redirect to login
+      // navigate('/login');
+    }
+  }, [userRole]);
+
+  const handleEditSalary = (id) => {
+    navigate(`/editsalary/${id}`);
+  };
+
+  const handleViewSalary = (id) => {
+    navigate(`/viewsalary/${id}`);
+  };
+
+  const handleAddNew = () => {
+    navigate("/addsalary");
+  };
+
   const renderCell = React.useCallback((employee, columnKey) => {
     const cellValue = employee[columnKey];
     switch (columnKey) {
       case "name":
         return (
           <User
-            avatarProps={{ radius: "lg", src: employee.avatar }}
-            description={employee.email}
+            avatarProps={{ radius: "lg", src: employee.avatar || "https://via.placeholder.com/40" }}
+            description={employee.post}
             name={cellValue}
           >
-            {employee.email}
+            {employee.post}
           </User>
         );
-      case "basicSalary":
-      case "reAllowance":
+      case "agreed_basic":
+      case "re_allowance":
         return `$${cellValue.toLocaleString()}`;
-      case "singleOt":
-      case "doubleOt":
+      case "single_ot":
+      case "double_ot":
         return `$${cellValue}/hr`;
-      case "mealAllowance":
+      case "meal_allowance":
         return `$${cellValue}/day`;
       case "actions":
         return (
@@ -133,8 +174,18 @@ const EmployeeSalaryList = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem startContent={<GrView/>} href="/viewsalary/1">View</DropdownItem>
-                <DropdownItem startContent={<CiEdit/>} href="/editsalary/1">Edit</DropdownItem>
+                <DropdownItem 
+                  startContent={<GrView />}
+                  onPress={() => handleViewSalary(employee.userId)}
+                >
+                  View
+                </DropdownItem>
+                <DropdownItem 
+                  startContent={<CiEdit />}
+                  onPress={() => handleEditSalary(employee.userId)}
+                >
+                  Edit
+                </DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -187,6 +238,7 @@ const EmployeeSalaryList = () => {
             value={filterValue}
             onClear={() => onClear()}
             onValueChange={onSearchChange}
+            variant="bordered"
           />
           <div className="flex gap-3">
             <Dropdown>
@@ -210,15 +262,25 @@ const EmployeeSalaryList = () => {
                 ))}
               </DropdownMenu>
             </Dropdown>
+            <Button 
+              color="primary" 
+              endContent={<IoAdd />}
+              onPress={handleAddNew}
+            >
+              Add New
+            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {employees.length} employees</span>
+          <span className="text-default-400 text-small">
+            Total {filteredItems.length} employees
+          </span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
-              className="bg-transparent outline-none text-default-400 text-small"
+              className="bg-transparent outline-none text-default-400 text-small ml-2"
               onChange={onRowsPerPageChange}
+              value={rowsPerPage}
             >
               <option value="5">5</option>
               <option value="10">10</option>
@@ -232,56 +294,96 @@ const EmployeeSalaryList = () => {
     filterValue,
     visibleColumns,
     onRowsPerPageChange,
-    employees.length,
+    filteredItems.length,
     onSearchChange,
+    rowsPerPage,
   ]);
 
+  // Breadcrumb setup
+  const breadcrumbItems = [
+    { label: "Dashboard", href: "/dashboard" },
+    { label: "Employee Salary", href: "/salary", isCurrentPage: true },
+  ];
+
+  if (isLoadingSalaries) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <CircularProgress aria-label="Loading" />
+      </div>
+    );
+  }
+
   return (
-    <Table
-      aria-label="Employee Salary List"
-      isHeaderSticky
-      bottomContent={
-        <PaginationComponent
-          page={page}
-          pages={pages}
-          onPageChange={setPage}
-          onPreviousPage={onPreviousPage}
-          onNextPage={onNextPage}
-          selectedKeys={selectedKeys}
-          filteredItems={filteredItems}
-        />
-      }
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[382px]",
-      }}
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
+    <div className="relative min-h-screen flex flex-col items-center p-6">
+      {/* Background Image */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden z-0 rounded-xl">
+        <Image src={image1} alt="Background" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-md"></div>
+      </div>
+
+      {/* Breadcrumb */}
+      <div className="absolute top-6 left-6 z-10">
+        <GeneralBreadCrumb items={breadcrumbItems} />
+      </div>
+
+      {/* Table Card */}
+      <div className="relative z-10 w-full max-w-6xl mt-20 mb-10">
+        <Card className="p-6 sm:p-8 shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl border border-white/40">
+          <h3 className="text-2xl font-bold text-center text-black mb-6">Employee Salary List</h3>
+          
+          <Table
+            aria-label="Employee Salary List"
+            isHeaderSticky
+            bottomContent={
+              <PaginationComponent
+                page={page}
+                pages={pages}
+                onPageChange={setPage}
+                onPreviousPage={onPreviousPage}
+                onNextPage={onNextPage}
+                selectedKeys={selectedKeys}
+                filteredItems={filteredItems}
+              />
+            }
+            bottomContentPlacement="outside"
+            classNames={{
+              wrapper: "max-h-[600px]",
+            }}
+            selectedKeys={selectedKeys}
+            selectionMode="multiple"
+            sortDescriptor={sortDescriptor}
+            topContent={topContent}
+            topContentPlacement="outside"
+            onSelectionChange={setSelectedKeys}
+            onSortChange={setSortDescriptor}
           >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"No employees found"} items={sortedItems}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+            <TableHeader columns={headerColumns}>
+              {(column) => (
+                <TableColumn
+                  key={column.uid}
+                  align={column.uid === "actions" ? "center" : "start"}
+                  allowsSorting={column.sortable}
+                >
+                  {column.name}
+                </TableColumn>
+              )}
+            </TableHeader>
+            <TableBody 
+              emptyContent={"No employees found"} 
+              items={sortedItems}
+              isLoading={isLoadingSalaries}
+              loadingContent={<CircularProgress aria-label="Loading" />}
+            >
+              {(item) => (
+                <TableRow key={item.userId}>
+                  {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </Card>
+      </div>
+    </div>
   );
 };
 

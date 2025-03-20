@@ -138,7 +138,7 @@ export default function App() {
               <Route path="/editsalary/:id" element={<EditEmployeeSalary />} />
               <Route path="/salary-history/:id" element={<EmployeeSalaryHistory />} />
               <Route path="/payrollsummary" element={<PayrollSummaryPage />} />
-              <Route path="/payrolldetails/:id" element={<EmployeeDetailsView />} />
+              <Route path="/payrolldetails/:userId/:month" element={<EmployeeDetailsView />} />
               <Route path="/monthlysalarysummary" element={<MonthlySalarySummaryPage />} />
               <Route path="/salarycomplaint" element={<SalaryComplaintForm />} />
               

@@ -57,6 +57,9 @@ import KPIDashboard from './pages/KPI/KPIDashboard';
 import EmployeePerformance from './pages/KPI/EmployeePerformance';
 import CEOKpiSettingPage from './pages/KPI/CEOKpiSettingPage';
 import KPIWelcome from './pages/KPI/KPIWelcome';
+import ParameterUpdate from './pages/KPI/Add_Parameter';
+import EmployeesOverall from './pages/KPI/KPIOverallDetails';
+import KPIDetails from './pages/KPI/ParameterDetails';
 
 // Meeting Pages
 import MeetingHome from "./pages/MeetingMinute/MeetingHome";
@@ -143,11 +146,14 @@ export default function App() {
               <Route path="/salarycomplaint" element={<SalaryComplaintForm />} />
               
               {/* KPI Routes */}
-              <Route path='/KPIWelcome' element={<KPIWelcome />} />
-              <Route path="/KPIdashboard" element={<KPIDashboard />} />
-              <Route path="/employee-performance" element={<EmployeePerformance />} />
-              <Route path="/KpiSetting" element={<CEOKpiSettingPage />} />
-              
+              <Route path='/kpiwelcome' element={<KPIWelcome />} />
+              <Route path="/kpidashboard" element={<KPIDashboard />} />
+              <Route path="/employee_performance" element={<EmployeePerformance />} />
+              <Route path="/kpiSetting" element={<CEOKpiSettingPage />} />
+              <Route path="/updateParameter" element={<ParameterUpdate />} />
+              <Route path="/employeesOverall" element={<EmployeesOverall />} />
+              <Route path="/kpidetails" element={<KPIDetails />} />
+
               {/* Meeting Routes */}
               <Route path="/meetingHome" element={<MeetingHome />} />
               <Route path="/meetings" element={<Meetings />} />

@@ -24,10 +24,13 @@ import { useGetSalarySheetQuery } from "../../redux/api/salaryCalculationApiSlic
 import GeneralBreadCrumb from "../../components/GeneralBreadCrumb";
 import image1 from "../../assets/images/background1.png";
 import toast from "react-hot-toast";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const EmployeeDetailsView = () => {
   const navigate = useNavigate();
   const { userId, month } = useParams();
+  const printRef = React.useRef(null);
   
   // Use RTK Query hook to fetch salary sheet data
   const { 
@@ -51,9 +54,71 @@ const EmployeeDetailsView = () => {
   // Breadcrumb setup
   const breadcrumbItems = [
     { label: "Dashboard", href: "/dashboard" },
-    { label: "Payroll", href: "/payroll" },
-    { label: "Employee Details", href: "#", isCurrentPage: true },
+    { label: "Salary History", href: "/salary-history/:id" },
+    { label: "Employee Details", href: "/payrolldetails/:userId/:month", isCurrentPage: true },
   ];
+
+  // Generate PDF function
+  const generatePDF = async () => {
+    if (!printRef.current) return;
+    
+    try {
+      toast.loading("Generating PDF...");
+      
+      const content = printRef.current;
+      const canvas = await html2canvas(content, {
+        scale: 2,
+        logging: false,
+        useCORS: true,
+        backgroundColor: "#ffffff"
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+
+      // Get page dimensions and set a margin
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const margin = 10;
+      
+      // Calculate the ratio to fit the content within the PDF page
+      const contentWidth = canvas.width;
+      const contentHeight = canvas.height;
+      const ratio = Math.min(
+        (pdfWidth - 2 * margin) / contentWidth,
+        (pdfHeight - 2 * margin) / contentHeight
+      );
+      
+      const scaledWidth = contentWidth * ratio;
+      const scaledHeight = contentHeight * ratio;
+      
+      // Add the image to the PDF, centered
+      const x = (pdfWidth - scaledWidth) / 2;
+      const y = margin;
+      
+      pdf.addImage(imgData, 'PNG', x, y, scaledWidth, scaledHeight);
+      
+      // Save the PDF with a filename based on employee data
+      const fileName = `Payslip_${employee.name.replace(/\s+/g, '_')}_${month}.pdf`;
+      pdf.save(fileName);
+      
+      toast.dismiss();
+      toast.success("PDF generated successfully!");
+    } catch (error) {
+      toast.dismiss();
+      toast.error(`Failed to generate PDF: ${error.message}`);
+      console.error("PDF generation error:", error);
+    }
+  };
+
+  // Print function
+  const handlePrint = () => {
+    window.print();
+  };
 
   if (isLoading) {
     return (
@@ -77,7 +142,7 @@ const EmployeeDetailsView = () => {
           <Button
             color="primary"
             startContent={<BsArrowLeft />}
-            onClick={() => navigate(-1)}
+            onPress={() => navigate(-1)}
           >
             Go Back
           </Button>
@@ -121,238 +186,271 @@ const EmployeeDetailsView = () => {
             <Button variant="light" startContent={<BsArrowLeft />} onPress={() => navigate(-1)}>
               Back
             </Button>
-            <Button color="primary" startContent={<BsDownload />}>
+            <Button color="primary" startContent={<BsDownload />} onPress={generatePDF}>
               Download Slip
             </Button>
-            <Button color="secondary" startContent={<BsPrinter />}>
+            <Button color="secondary" startContent={<BsPrinter />} onPress={handlePrint}>
               Print Slip
             </Button>
           </div>
         </div>
 
-        {/* Employee Basic Info Card */}
-        <Card className="mb-6 shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl border border-white/40">
-          <CardHeader className="flex justify-between items-center">
-            <div className="flex gap-5">
-              <img
-                alt={employee.name}
-                src={employee.avatar || "https://via.placeholder.com/80"}
-                className="w-20 h-20 rounded-full"
-              />
-              <div className="flex flex-col gap-1">
-                <h2 className="text-xl font-bold">{employee.name}</h2>
-                <div className="flex items-center gap-2">
-                  <BsPersonVcard className="text-default-500" />
-                  <p className="text-small text-default-500">Employee ID: {employee.userId}</p>
+        {/* Printable content area - ref added for PDF generation */}
+        <div ref={printRef} className="print-container">
+          {/* Employee Basic Info Card */}
+          <Card className="mb-6 shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl border border-white/40">
+            <CardHeader className="flex justify-between items-center">
+              <div className="flex gap-5">
+                <img
+                  alt={employee.name}
+                  src={employee.avatar || "https://via.placeholder.com/80"}
+                  className="w-20 h-20 rounded-full"
+                />
+                <div className="flex flex-col gap-1">
+                  <h2 className="text-xl font-bold">{employee.name}</h2>
+                  <div className="flex items-center gap-2">
+                    <BsPersonVcard className="text-default-500" />
+                    <p className="text-small text-default-500">Employee ID: {employee.userId}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <BsBuilding className="text-default-500" />
+                    <p className="text-small text-default-500">{employee.post}</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <BsBuilding className="text-default-500" />
-                  <p className="text-small text-default-500">{employee.post}</p>
-                </div>
-              </div>
-            </div>
-            <div>
-              <p className="text-small text-default-500">Agreed Basic: ${employee.agreed_basic}</p>
-              <p className="text-small text-default-500">Month: {formatDate(salaryDetails.month)}</p>
-            </div>
-          </CardHeader>
-          <Divider />
-          <CardBody>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <p className="text-small font-semibold">Contact Information</p>
-                <p className="text-small text-default-500">Email: {employee.email}</p>
-                <p className="text-small text-default-500">Age: {employee.age}</p>
               </div>
               <div>
-                <p className="text-small font-semibold">Employment Details</p>
-                <p className="text-small text-default-500">Join Date: {formatDate(employee.hired_date)}</p>
-                <p className="text-small text-default-500">Birthday: {formatDate(employee.birthday)}</p>
-              </div>
-              <div>
-                <p className="text-small font-semibold">EPF Status</p>
-                <p className="text-small text-default-500">EPF Eligible: {employee.isEPF ? "Yes" : "No"}</p>
-                <p className="text-small text-default-500">Employee EPF: ${salaryDetails.EPF_employee}</p>
-                <p className="text-small text-default-500">Employer EPF: ${salaryDetails.EPF_employer}</p>
-              </div>
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* Work Details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <Card className="shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl border border-white/40">
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <BsCalendarWeek className="text-primary" />
-                <h3 className="text-lg font-semibold">Work Details</h3>
+                <p className="text-small text-default-500">Agreed Basic: ${employee.agreed_basic}</p>
+                <p className="text-small text-default-500">Month: {formatDate(salaryDetails.month)}</p>
               </div>
             </CardHeader>
             <Divider />
             <CardBody>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Total Extra Working Hours</span>
-                  <span className="font-semibold">{formatTimeToHours(salaryDetails.totalExtraWorkingHrs)}</span>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-small font-semibold">Contact Information</p>
+                  <p className="text-small text-default-500">Email: {employee.email}</p>
+                  <p className="text-small text-default-500">Age: {employee.age}</p>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Total Short Working Hours</span>
-                  <span className="font-semibold">{formatTimeToHours(salaryDetails.totalShortWorkingHrs)}</span>
+                <div>
+                  <p className="text-small font-semibold">Employment Details</p>
+                  <p className="text-small text-default-500">Join Date: {formatDate(employee.hired_date)}</p>
+                  <p className="text-small text-default-500">Birthday: {formatDate(employee.birthday)}</p>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">No Pay Days</span>
-                  <span className="font-semibold">{salaryDetails.totalNPdays}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">No Pay Days OT</span>
-                  <span className="font-semibold">{salaryDetails.nopaydays_ot}</span>
+                <div>
+                  <p className="text-small font-semibold">EPF Status</p>
+                  <p className="text-small text-default-500">EPF Eligible: {employee.isEPF ? "Yes" : "No"}</p>
+                  <p className="text-small text-default-500">Employee EPF: ${salaryDetails.EPF_employee}</p>
+                  <p className="text-small text-default-500">Employer EPF: ${salaryDetails.EPF_employer}</p>
                 </div>
               </div>
             </CardBody>
           </Card>
 
-          <Card className="shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl border border-white/40">
+          {/* Work Details */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <Card className="shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl border border-white/40">
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <BsCalendarWeek className="text-primary" />
+                  <h3 className="text-lg font-semibold">Work Details</h3>
+                </div>
+              </CardHeader>
+              <Divider />
+              <CardBody>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Total Extra Working Hours</span>
+                    <span className="font-semibold">{formatTimeToHours(salaryDetails.totalExtraWorkingHrs)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Total Short Working Hours</span>
+                    <span className="font-semibold">{formatTimeToHours(salaryDetails.totalShortWorkingHrs)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">No Pay Days</span>
+                    <span className="font-semibold">{salaryDetails.totalNPdays}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">No Pay Days OT</span>
+                    <span className="font-semibold">{salaryDetails.nopaydays_ot}</span>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+
+            <Card className="shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl border border-white/40">
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <BsCalendarWeek className="text-primary" />
+                  <h3 className="text-lg font-semibold">Overtime Details</h3>
+                </div>
+              </CardHeader>
+              <Divider />
+              <CardBody>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Single OT Rate</span>
+                    <span className="font-semibold">${employee.single_ot}/hr</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Double OT Rate</span>
+                    <span className="font-semibold">${employee.double_ot}/hr</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Total Single OT</span>
+                    <span className="font-semibold">{formatTimeToHours(salaryDetails.totalSingleOt)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Total Double OT</span>
+                    <span className="font-semibold">{formatTimeToHours(salaryDetails.totalDoubleOt)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Total Poya OT</span>
+                    <span className="font-semibold">{formatTimeToHours(salaryDetails.totalPoyaOt)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">OT Earnings</span>
+                    <span className="font-semibold">${salaryDetails.OtEarnings}</span>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          </div>
+
+          {/* Payment Details */}
+          <Card className="mb-6 shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl border border-white/40">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <BsCalendarWeek className="text-primary" />
-                <h3 className="text-lg font-semibold">Overtime Details</h3>
+                <BsCashStack className="text-primary" />
+                <h3 className="text-lg font-semibold">Payment Details</h3>
               </div>
             </CardHeader>
             <Divider />
             <CardBody>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Single OT Rate</span>
-                  <span className="font-semibold">${employee.single_ot}/hr</span>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-3">
+                  <h4 className="text-medium font-semibold">Earnings</h4>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Agreed Basic Salary</span>
+                    <span className="font-semibold">${employee.agreed_basic}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Rent Allowance</span>
+                    <span className="font-semibold">${employee.re_allowance}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Meal Allowance</span>
+                    <span className="font-semibold">${employee.meal_allowance}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Adjusted Basic</span>
+                    <span className="font-semibold">${salaryDetails.newBasic}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Adjusted RE</span>
+                    <span className="font-semibold">${salaryDetails.newRE}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">OT Earnings</span>
+                    <span className="font-semibold">${salaryDetails.OtEarnings}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Double OT Rate</span>
-                  <span className="font-semibold">${employee.double_ot}/hr</span>
+
+                <div className="space-y-3">
+                  <h4 className="text-medium font-semibold">Deductions</h4>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">No Pay Basic Deduction</span>
+                    <span className="font-semibold">${salaryDetails.noPayDeductionBasic}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">No Pay RE Deduction</span>
+                    <span className="font-semibold">${salaryDetails.noPayDeductionREallowance}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Meal Advance</span>
+                    <span className="font-semibold">${salaryDetails.mealAdvance}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Salary Advance</span>
+                    <span className="font-semibold">${salaryDetails.sallaryAdvance}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">OT Deduction</span>
+                    <span className="font-semibold">${salaryDetails.OtDeduction}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Other Deductions</span>
+                    <span className="font-semibold">${salaryDetails.otherDeductions}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">EPF Employee</span>
+                    <span className="font-semibold">${salaryDetails.EPF_employee}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Total Single OT</span>
-                  <span className="font-semibold">{formatTimeToHours(salaryDetails.totalSingleOt)}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Total Double OT</span>
-                  <span className="font-semibold">{formatTimeToHours(salaryDetails.totalDoubleOt)}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Total Poya OT</span>
-                  <span className="font-semibold">{formatTimeToHours(salaryDetails.totalPoyaOt)}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">OT Earnings</span>
-                  <span className="font-semibold">${salaryDetails.OtEarnings}</span>
+
+                <div className="space-y-3">
+                  <h4 className="text-medium font-semibold">Payment Summary</h4>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Total Income</span>
+                    <span className="font-semibold">${salaryDetails.totalIncomeForTheMonth}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Final Salary</span>
+                    <span className="font-semibold">${salaryDetails.FinalSalary}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Created At</span>
+                    <span className="font-semibold">{new Date(salaryDetails.createdAt).toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-small text-default-500">Last Updated</span>
+                    <span className="font-semibold">{new Date(salaryDetails.updatedAt).toLocaleString()}</span>
+                  </div>
                 </div>
               </div>
             </CardBody>
+            <Divider />
+            <CardFooter className="flex justify-between">
+              <Button variant="light" startContent={<BsDownload />} onPress={generatePDF}>
+                Download Report
+              </Button>
+              <Button color="primary" startContent={<BsPrinter />} onPress={handlePrint}>
+                Print Payslip
+              </Button>
+            </CardFooter>
           </Card>
         </div>
-
-        {/* Payment Details */}
-        <Card className="mb-6 shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl border border-white/40">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <BsCashStack className="text-primary" />
-              <h3 className="text-lg font-semibold">Payment Details</h3>
-            </div>
-          </CardHeader>
-          <Divider />
-          <CardBody>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-3">
-                <h4 className="text-medium font-semibold">Earnings</h4>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Agreed Basic Salary</span>
-                  <span className="font-semibold">${employee.agreed_basic}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Rent Allowance</span>
-                  <span className="font-semibold">${employee.re_allowance}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Meal Allowance</span>
-                  <span className="font-semibold">${employee.meal_allowance}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Adjusted Basic</span>
-                  <span className="font-semibold">${salaryDetails.newBasic}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Adjusted RE</span>
-                  <span className="font-semibold">${salaryDetails.newRE}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">OT Earnings</span>
-                  <span className="font-semibold">${salaryDetails.OtEarnings}</span>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <h4 className="text-medium font-semibold">Deductions</h4>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">No Pay Basic Deduction</span>
-                  <span className="font-semibold">${salaryDetails.noPayDeductionBasic}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">No Pay RE Deduction</span>
-                  <span className="font-semibold">${salaryDetails.noPayDeductionREallowance}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Meal Advance</span>
-                  <span className="font-semibold">${salaryDetails.mealAdvance}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Salary Advance</span>
-                  <span className="font-semibold">${salaryDetails.sallaryAdvance}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">OT Deduction</span>
-                  <span className="font-semibold">${salaryDetails.OtDeduction}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Other Deductions</span>
-                  <span className="font-semibold">${salaryDetails.otherDeductions}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">EPF Employee</span>
-                  <span className="font-semibold">${salaryDetails.EPF_employee}</span>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <h4 className="text-medium font-semibold">Payment Summary</h4>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Total Income</span>
-                  <span className="font-semibold">${salaryDetails.totalIncomeForTheMonth}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Final Salary</span>
-                  <span className="font-semibold">${salaryDetails.FinalSalary}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Created At</span>
-                  <span className="font-semibold">{new Date(salaryDetails.createdAt).toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-small text-default-500">Last Updated</span>
-                  <span className="font-semibold">{new Date(salaryDetails.updatedAt).toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-          </CardBody>
-          <Divider />
-          <CardFooter className="flex justify-between">
-            <Button variant="light" startContent={<BsDownload />}>
-              Download Report
-            </Button>
-            <Button color="primary" startContent={<BsPrinter />}>
-              Print Payslip
-            </Button>
-          </CardFooter>
-        </Card>
       </div>
+
+      {/* Print styles - only applied when printing */}
+      <style jsx global>{`
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          .print-container, .print-container * {
+            visibility: visible;
+          }
+          .print-container {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+          }
+          /* Hide buttons and background image when printing */
+          .print-container button, 
+          .absolute.inset-0 {
+            display: none !important;
+          }
+          /* Optimize cards for printing */
+          .card {
+            box-shadow: none !important;
+            border: 1px solid #ddd !important;
+            background-color: white !important;
+            break-inside: avoid;
+          }
+        }
+      `}</style>
     </div>
   );
 };

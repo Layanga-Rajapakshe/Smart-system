@@ -20,6 +20,14 @@ export const salaryManagementApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
+    // Get salary history for a user (GET /history/:userId)
+    getSalaryHistory: builder.query({
+      query: (userId) => ({
+        url: `${SALARYCALCULATION_URL}/history/${userId}`,
+        method: 'GET',
+      }),
+    }),
+
   }),
 });
 
@@ -27,4 +35,5 @@ export const {
   useCalculateSalaryMutation,
   useGetSalarySheetQuery,
   useUpdateSalaryParametersMutation,
+  useGetSalaryHistoryQuery,
 } = salaryManagementApiSlice;

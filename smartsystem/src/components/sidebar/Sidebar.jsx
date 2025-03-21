@@ -83,7 +83,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     const employeeMenuItems = [
         { title: 'My Dashboard', href: '/dashboard', icon: <TbLayoutDashboard />, isActive: ['/dashboard'].includes(location.pathname) },
         { title: 'Smart Weekly Plan', href: '/mytasks', icon: <GrTask />, isActive: ['/mytasks'].includes(location.pathname) },
-        { title: 'My Salary History', href: '/salary-history/1', icon: <GrTask />, isActive: ['/salary-history/1'].includes(location.pathname) },
+        { title: 'My Salary History', href: '/salary-history/0123', icon: <GrTask />, isActive: ['/salary-history/0123'].includes(location.pathname) },
     ];
 
     const seniorAccountantMenuItems = [

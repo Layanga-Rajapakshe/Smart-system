@@ -55,7 +55,6 @@ import SalaryComplaintForm from './pages/Salary/SalaryComplaintForm';
 // KPI Pages
 import KPIDashboard from './pages/KPI/KPIDashboard';
 import EmployeePerformance from './pages/KPI/EmployeePerformance';
-import CEOKpiSettingPage from './pages/KPI/CEOKpiSettingPage';
 import KPIWelcome from './pages/KPI/KPIWelcome';
 import ParameterUpdate from './pages/KPI/Add_Parameter';
 import EmployeesOverall from './pages/KPI/KPIOverallDetails';
@@ -149,7 +148,6 @@ export default function App() {
               <Route path='/kpiwelcome' element={<KPIWelcome />} />
               <Route path="/kpidashboard" element={<KPIDashboard />} />
               <Route path="/employee_performance" element={<EmployeePerformance />} />
-              <Route path="/kpiSetting" element={<CEOKpiSettingPage />} />
               <Route path="/updateParameter" element={<ParameterUpdate />} />
               <Route path="/employeesOverall" element={<EmployeesOverall />} />
               <Route path="/kpidetails" element={<KPIDetails />} />

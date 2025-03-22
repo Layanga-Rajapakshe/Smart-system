@@ -16,12 +16,12 @@ const NavBar = ({ isOpen, setIsOpen }) => {
   const [logoutApiCall] = useLogoutMutation();
 
   // Fetch notifications using the API slice
-  const { 
-    data: notificationsData, 
+  const {
+    data: notificationsData,
     isLoading: isLoadingNotifications,
     refetch: refetchNotifications
   } = useGetNotificationsQuery();
-  
+
   // Mark notifications as read mutation
   const [markNotificationsAsRead] = useMarkNotificationsAsReadMutation();
 
@@ -69,10 +69,10 @@ const NavBar = ({ isOpen, setIsOpen }) => {
       clearInterval(notificationInterval);
     };
   }, [refetchNotifications]);
-  
+
   // Function to toggle sidebar
   const toggleSidebar = () => setIsOpen(true);
-  
+
   // Handle opening notification dropdown - mark notifications as read
   const handleNotificationOpen = async () => {
     if (unreadCount > 0) {
@@ -89,17 +89,17 @@ const NavBar = ({ isOpen, setIsOpen }) => {
     const date = new Date(timestamp);
     const now = new Date();
     const diffInMinutes = Math.floor((now - date) / (1000 * 60));
-    
+
     if (diffInMinutes < 1) return 'Just now';
     if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
-    
+
     const diffInHours = Math.floor(diffInMinutes / 60);
     if (diffInHours < 24) return `${diffInHours} hours ago`;
-    
+
     const diffInDays = Math.floor(diffInHours / 24);
     if (diffInDays === 1) return 'Yesterday';
     if (diffInDays < 7) return `${diffInDays} days ago`;
-    
+
     return date.toLocaleDateString();
   };
 
@@ -111,7 +111,7 @@ const NavBar = ({ isOpen, setIsOpen }) => {
     <Navbar className="backdrop-blur-md bg-white/60 border-b border-white/10 shadow-lg text-white py-2 sticky top-0 z-50">
       {/* Logo and Brand */}
       <NavbarContent justify="start">
-        <NavbarBrand 
+        <NavbarBrand
           className="mr-4 cursor-pointer"
           onClick={toggleSidebar}
           onMouseEnter={toggleSidebar}
@@ -131,8 +131,8 @@ const NavBar = ({ isOpen, setIsOpen }) => {
           <Link to="/company" className="text-black/90 hover:black-white hover:bg-white/10 transition rounded-lg px-3 py-2">
             <span>Companies</span>
           </Link>
-          <Link to="/reports" className="text-black/90 hover:black-white hover:bg-white/10 transition rounded-lg px-3 py-2">
-            <span>Reports</span>
+          <Link to="/employee_performance" className="text-black/90 hover:black-white hover:bg-white/10 transition rounded-lg px-3 py-2">
+            <span>KPI Performance</span>
           </Link>
           <Link to="/help" className="text-black/90 hover:black-white hover:bg-white/10 transition rounded-lg px-3 py-2">
             <span>Support</span>
@@ -146,7 +146,7 @@ const NavBar = ({ isOpen, setIsOpen }) => {
           <ModeToggle />
 
           {/* Notifications */}
-          <Dropdown 
+          <Dropdown
             placement="bottom-end"
             onOpenChange={handleNotificationOpen}
           >
@@ -169,7 +169,7 @@ const NavBar = ({ isOpen, setIsOpen }) => {
               <DropdownItem key="notification_header" className="font-bold" textValue="Recent Notifications">
                 Recent Notifications
               </DropdownItem>
-              
+
               {isLoadingNotifications ? (
                 <DropdownItem key="loading" textValue="Loading notifications...">
                   Loading notifications...
@@ -180,8 +180,8 @@ const NavBar = ({ isOpen, setIsOpen }) => {
                 </DropdownItem>
               ) : (
                 notifications.slice(0, 5).map((notification, index) => (
-                  <DropdownItem 
-                    key={`notification-${index}`} 
+                  <DropdownItem
+                    key={`notification-${index}`}
                     description={formatNotificationTime(notification.createdAt)}
                     textValue={notification.message}
                     className={!notification.isRead ? "bg-blue-50 dark:bg-blue-900/20" : ""}
@@ -190,10 +190,10 @@ const NavBar = ({ isOpen, setIsOpen }) => {
                   </DropdownItem>
                 ))
               )}
-              
+
               {notifications.length > 5 && (
-                <DropdownItem 
-                  key="view_all" 
+                <DropdownItem
+                  key="view_all"
                   className="text-primary"
                   textValue="View all notifications"
                   onPress={() => navigate('/notifications')}
@@ -246,7 +246,7 @@ const NavBar = ({ isOpen, setIsOpen }) => {
             <DropdownMenu aria-label="Mobile Navigation" className="bg-white/90 backdrop-blur-md dark:bg-gray-900/90 w-72">
               <DropdownItem key="dashboard">Dashboard</DropdownItem>
               <DropdownItem key="companies">Companies</DropdownItem>
-              <DropdownItem key="reports">Reports</DropdownItem>
+              <DropdownItem key="kpi_performance" onPress={() => navigate('/employee_performance')}>KPI Performance</DropdownItem>
               <DropdownItem key="support">Support</DropdownItem>
               <DropdownItem key="divider" className="h-px bg-black-200 dark:bg-gray-700 my-1" />
               <DropdownItem key="notifications" onClick={handleNotificationOpen}>

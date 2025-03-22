@@ -101,6 +101,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         { title: 'KPI Home', href: '/KPIWelcome', icon: <FaMoneyCheck />, isActive: ['/KPIWelcom'].includes(location.pathname) },
         { title: 'KPI Dashboard', href: '/KPIdashboard', icon: <FaMoneyCheck />, isActive: ['/KPIdashboard'].includes(location.pathname) },
         { title: 'KPI Parameter Details', href: '/kpidetails', icon: <FaMoneyCheck />, isActive: ['/kpidetails'].includes(location.pathname) },
+        { title: 'Employee Performance', href: '/employeesOverall', icon: <uClipboardList />, isActive: ['/employeesOverall'].includes(location.pathname) },
+        
     ];
 
     return (

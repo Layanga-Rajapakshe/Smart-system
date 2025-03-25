@@ -74,6 +74,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     const supervisorMenuItems = [
         { title: 'My Supervisee List', href: '/superviseelist', icon: <MdSupervisorAccount />, isActive: ['/superviseelist', '/superviseedetails'].includes(location.pathname) },
         { title: 'My Supervisee Tasks', href: '/superviseetasks', icon: <FaTasks />, isActive: ['/superviseetasks', '/newtask'].includes(location.pathname) },
+        { title: 'My Supervisee Leaves', href: '/leaveapproval', icon: <FaTasks />, isActive: ['/leaveapproval'].includes(location.pathname) },
     ];
 
     const ceoMenuItems = [
@@ -83,7 +84,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     const employeeMenuItems = [
         { title: 'My Dashboard', href: '/dashboard', icon: <TbLayoutDashboard />, isActive: ['/dashboard'].includes(location.pathname) },
         { title: 'Smart Weekly Plan', href: '/mytasks', icon: <GrTask />, isActive: ['/mytasks'].includes(location.pathname) },
-        { title: 'My Salary History', href: '/salary-history/0123', icon: <GrTask />, isActive: ['/salary-history/0123'].includes(location.pathname) },
+        { title: 'My Salary History', href: '/salary-history/1', icon: <GrTask />, isActive: ['/salary-history/1'].includes(location.pathname) },
+        { title: 'Leave Dashboard', href: '/leaveprofile', icon: <GrTask />, isActive: ['/leaveprofile'].includes(location.pathname) },
     ];
 
     const seniorAccountantMenuItems = [
@@ -100,6 +102,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     const kpiMenuItems = [
         { title: 'KPI Home', href: '/KPIWelcome', icon: <FaMoneyCheck />, isActive: ['/KPIWelcom'].includes(location.pathname) },
         { title: 'KPI Dashboard', href: '/KPIdashboard', icon: <FaMoneyCheck />, isActive: ['/KPIdashboard'].includes(location.pathname) },
+        { title: 'KPI Parameter Details', href: '/kpidetails', icon: <FaMoneyCheck />, isActive: ['/kpidetails'].includes(location.pathname) },
+        { title: 'Employee Performance', href: '/employeesOverall', icon: <uClipboardList />, isActive: ['/employeesOverall'].includes(location.pathname) },
+        
     ];
 
     return (

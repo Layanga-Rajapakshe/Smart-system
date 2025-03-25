@@ -27,8 +27,8 @@ import RoleEdit from './pages/super_admin/RoleEdit';
 
 // Employee Pages
 import MyDashboard from './pages/employee/MyDashboard';
-import LeaveStatus from './pages/employee/LeaveStatus';
-import LeaveRequest from './pages/employee/LeaveRequest';
+import LeaveHistory from './pages/LeaveManagement/LeaveHistory';
+import LeaveProfile from './pages/LeaveManagement/LeaveProfile';
 import WorkSchedule from './pages/employee/WorkSchedule';
 
 // Admin Pages
@@ -39,6 +39,7 @@ import AttendanceView from './pages/admin/ViewAttendance';
 import Supervisees from './pages/supervisor/Supervisees';
 import Tasks from './pages/supervisor/Tasks';
 import SuperviseeDetails from './pages/supervisor/SuperviseeDetails';
+import LeaveApproval from './pages/LeaveManagement/LeaveApproval';
 
 // Accountant Pages
 import EmployeeSalaryList from './pages/SeniorAccountant/EmployeeSalaryList';
@@ -55,9 +56,7 @@ import SalaryComplaintForm from './pages/Salary/SalaryComplaintForm';
 // KPI Pages
 import KPIDashboard from './pages/KPI/KPIDashboard';
 import EmployeePerformance from './pages/KPI/EmployeePerformance';
-import CEOKpiSettingPage from './pages/KPI/CEOKpiSettingPage';
 import KPIWelcome from './pages/KPI/KPIWelcome';
-import ParameterUpdate from './pages/KPI/Add_Parameter';
 import EmployeesOverall from './pages/KPI/KPIOverallDetails';
 import KPIDetails from './pages/KPI/ParameterDetails';
 
@@ -125,11 +124,12 @@ export default function App() {
               <Route path="/superviseelist" element={<Supervisees />} />
               <Route path="/superviseetasks" element={<Tasks />} />
               <Route path="/superviseedetails" element={<SuperviseeDetails />} />
+              <Route path="/leaveapproval" element={<LeaveApproval />} />
               
               {/* Employee Routes */}
               <Route path="/dashboard" element={<MyDashboard />} />
-              <Route path="/leaverequest" element={<LeaveRequest />} />
-              <Route path="/leavestatus" element={<LeaveStatus />} />
+              <Route path="/leaveprofile" element={<LeaveProfile />} />
+              <Route path="/leavehistory" element={<LeaveHistory />} />
               <Route path="/schedule" element={<WorkSchedule />} />
               <Route path='/mytasks' element={<MyTasks />} />
               <Route path='/newtask' element={<CreateTask />} />
@@ -149,8 +149,6 @@ export default function App() {
               <Route path='/kpiwelcome' element={<KPIWelcome />} />
               <Route path="/kpidashboard" element={<KPIDashboard />} />
               <Route path="/employee_performance" element={<EmployeePerformance />} />
-              <Route path="/kpiSetting" element={<CEOKpiSettingPage />} />
-              <Route path="/updateParameter" element={<ParameterUpdate />} />
               <Route path="/employeesOverall" element={<EmployeesOverall />} />
               <Route path="/kpidetails" element={<KPIDetails />} />
 

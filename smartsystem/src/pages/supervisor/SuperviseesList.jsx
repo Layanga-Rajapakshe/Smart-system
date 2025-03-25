@@ -15,22 +15,23 @@ import {
     Chip,
     User,
   } from "@heroui/react";
-  import { BsThreeDotsVertical } from "react-icons/bs";
-  import { CiSearch } from "react-icons/ci";
-  import { FaChevronDown } from "react-icons/fa6";
-  import { GrView } from "react-icons/gr";
-  import { columns, users } from "./datanew";
-  import { capitalize } from "./utils";
-  import PaginationComponent from "../../components/Pagination";
-  import { useNavigate } from "react-router-dom";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { CiSearch } from "react-icons/ci";
+import { FaChevronDown } from "react-icons/fa6";
+import { GrView } from "react-icons/gr";
+import { columns } from "./datanew";
+import { capitalize } from "./utils";
+import PaginationComponent from "../../components/Pagination";
+import { useNavigate } from "react-router-dom";
+import { useGetSuperviseesQuery } from "../../redux/api/supervisorApiSlice"; // Updated import
 
 const statusColorMap = {
     active: "success",
     paused: "danger",
     vacation: "warning",
-  };
+};
   
-  const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "performance", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "performance", "actions"];
 
 const SuperviseesList = () => {
     const navigate = useNavigate();
@@ -44,6 +45,9 @@ const SuperviseesList = () => {
       direction: "ascending",
     });
     const [page, setPage] = React.useState(1);
+  
+    // Replace static users with API data
+    const { data: users = [], isLoading, error } = useGetSuperviseesQuery();
   
     const hasSearchFilter = Boolean(filterValue);
   
@@ -253,54 +257,58 @@ const SuperviseesList = () => {
       hasSearchFilter,
     ]);
 
+    // Handle loading and error states
+    if (isLoading) return <div>Loading...</div>;
+    if(!users) return <div>No supervisees found for this id</div>;
+    if (error) return <div>Error loading supervisees</div>;
 
-  return (
-    <Table
-      aria-label="Example table with custom cells, pagination and sorting"
-      isHeaderSticky
-      bottomContent={
-        <PaginationComponent
-          page={page}
-          pages={pages}
-          onPageChange={setPage}
-          onPreviousPage={onPreviousPage}
-          onNextPage={onNextPage}
-          selectedKeys={selectedKeys}
-          filteredItems={filteredItems}
-        />
-      }
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[382px]",
-      }}
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"No users found"} items={sortedItems}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
-  )
+    return (
+      <Table
+        aria-label="Example table with custom cells, pagination and sorting"
+        isHeaderSticky
+        bottomContent={
+          <PaginationComponent
+            page={page}
+            pages={pages}
+            onPageChange={setPage}
+            onPreviousPage={onPreviousPage}
+            onNextPage={onNextPage}
+            selectedKeys={selectedKeys}
+            filteredItems={filteredItems}
+          />
+        }
+        bottomContentPlacement="outside"
+        classNames={{
+          wrapper: "max-h-[382px]",
+        }}
+        selectedKeys={selectedKeys}
+        selectionMode="multiple"
+        sortDescriptor={sortDescriptor}
+        topContent={topContent}
+        topContentPlacement="outside"
+        onSelectionChange={setSelectedKeys}
+        onSortChange={setSortDescriptor}
+      >
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn
+              key={column.uid}
+              align={column.uid === "actions" ? "center" : "start"}
+              allowsSorting={column.sortable}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody emptyContent={"No users found"} items={sortedItems}>
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    )
 }
 
-export default SuperviseesList 
+export default SuperviseesList

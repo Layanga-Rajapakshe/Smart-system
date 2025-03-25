@@ -74,6 +74,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     const supervisorMenuItems = [
         { title: 'My Supervisee List', href: '/superviseelist', icon: <MdSupervisorAccount />, isActive: ['/superviseelist', '/superviseedetails'].includes(location.pathname) },
         { title: 'My Supervisee Tasks', href: '/superviseetasks', icon: <FaTasks />, isActive: ['/superviseetasks', '/newtask'].includes(location.pathname) },
+        { title: 'My Supervisee Leaves', href: '/leaveapproval', icon: <FaTasks />, isActive: ['/leaveapproval'].includes(location.pathname) },
     ];
 
     const ceoMenuItems = [
@@ -84,6 +85,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         { title: 'My Dashboard', href: '/dashboard', icon: <TbLayoutDashboard />, isActive: ['/dashboard'].includes(location.pathname) },
         { title: 'Smart Weekly Plan', href: '/mytasks', icon: <GrTask />, isActive: ['/mytasks'].includes(location.pathname) },
         { title: 'My Salary History', href: '/salary-history/1', icon: <GrTask />, isActive: ['/salary-history/1'].includes(location.pathname) },
+        { title: 'Leave Dashboard', href: '/leaveprofile', icon: <GrTask />, isActive: ['/leaveprofile'].includes(location.pathname) },
     ];
 
     const seniorAccountantMenuItems = [

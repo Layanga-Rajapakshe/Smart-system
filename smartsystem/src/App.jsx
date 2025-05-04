@@ -66,6 +66,11 @@ import Meetings from "./pages/MeetingMinute/Meetings";
 import Notifications from './pages/MeetingMinute/Notifications';
 import NotificationList from './pages/MeetingMinute/NotificationList';
 
+//Permission Management
+import PermissionApproval from "./pages/PermissionManagement/PermissionApprove";
+import PermissionRequests from "./pages/PermissionManagement/PermissionRequest";
+import RequestType from "./pages/PermissionManagement/RequestType";
+
 // Protected Routes
 import ProtectedRoute from './components/ProtectedRoute';
 import MyTasks from './pages/workschedule/MyTasks';
@@ -157,6 +162,11 @@ export default function App() {
               <Route path="/meetings" element={<Meetings />} />
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/notificationsList" element={<NotificationList />} />
+
+              {/*Permission Management*/}
+              <Route path="/permissionapprove" element={<PermissionApproval />}/>
+              <Route path="/permissionrequests" element={<PermissionRequests />}/>
+              <Route path="/requestType" element={<RequestType />}/>
             </Route>
 
             {/* Public Routes */}

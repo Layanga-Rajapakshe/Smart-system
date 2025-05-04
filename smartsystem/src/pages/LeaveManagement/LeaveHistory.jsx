@@ -222,6 +222,30 @@ export default function App() {
         approvedBy: "Manager B",
         status: "Approved",
       },
+      {
+        "date": "2024-04-05",
+        "leaveStart": "2024-04-10",
+        "noOfDays": 5,
+        "reason": "Medical",
+        "approvedBy": "Manager Y",
+        "status": "Approved"
+      },
+      {
+        "date": "2024-05-01",
+        "leaveStart": "2024-05-03",
+        "noOfDays": 2,
+        "reason": "Family Emergency",
+        "approvedBy": "Manager Z",
+        "status": "Rejected"
+      },
+      {
+        "date": "2024-06-12",
+        "leaveStart": "2024-06-14",
+        "noOfDays": 2,
+        "reason": "Personal",
+        "approvedBy": "Manager A",
+        "status": "Pending"
+      }
       // ... (rest of the leave records)
     ]
   };

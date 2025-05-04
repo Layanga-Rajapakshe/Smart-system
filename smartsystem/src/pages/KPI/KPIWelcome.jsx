@@ -45,11 +45,11 @@ const KPIWelcome = () => {
                                 KPI Scoring Guidelines
                             </h2>
                             <ul className="text-sm text-gray-700 space-y-2">
-                                <li><strong>0-2:</strong> Very Poor - Minimal capability or effort in this area.</li>
-                                <li><strong>3-4:</strong> Below Average - Needs improvement to meet expectations.</li>
-                                <li><strong>5-6:</strong> Average - Meets expectations but has room for growth.</li>
-                                <li><strong>7-8:</strong> Good - Strong performance, exceeds basic requirements.</li>
-                                <li><strong>9-10:</strong> Excellent - Consistently exceeds expectations and excels.</li>
+                                <li><strong>0-20:</strong> Very Poor - Minimal capability or effort in this area.</li>
+                                <li><strong>30-40:</strong> Below Average - Needs improvement to meet expectations.</li>
+                                <li><strong>50-60:</strong> Average - Meets expectations but has room for growth.</li>
+                                <li><strong>70-80:</strong> Good - Strong performance, exceeds basic requirements.</li>
+                                <li><strong>90-100:</strong> Excellent - Consistently exceeds expectations and excels.</li>
                             </ul>
                         </div>
                     </Card>

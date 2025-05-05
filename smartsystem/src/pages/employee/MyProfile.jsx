@@ -1,92 +1,171 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Card,
-  CardBody,
-  CardHeader,
-  CardFooter,
   Image,
   Tabs,
   Tab,
   Button,
   Divider,
   Input,
-  Textarea,
-  Select,
-  SelectItem,
   Avatar,
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
-  useDisclosure
+  useDisclosure,
+  Spinner,
+  Checkbox,
+  Card,
+  CardBody
 } from "@heroui/react";
 import {
   IoSave,
   IoCamera,
   IoPersonCircleOutline,
-  IoBriefcaseOutline,
   IoMailOutline,
   IoCallOutline,
   IoLocationOutline,
   IoCalendarOutline,
   IoKeyOutline,
-  IoShieldOutline,
-  IoArrowBack
+  IoArrowBack,
+  IoBriefcaseOutline,
+  IoWalletOutline,
+  IoPeopleOutline
 } from "react-icons/io5";
 import { useNavigate } from 'react-router-dom';
-import { useUpdateEmployeeMutation } from '../../redux/api/employeeApiSlice';
+import { useSelector } from 'react-redux';
+import { useUpdateEmployeeMutation, useGetEmployeeQuery } from '../../redux/api/employeeApiSlice';
+import { useUpdatePasswordMutation } from '../../redux/api/authApiSlice';
 import backgroundImage from "../../assets/images/background1.png";
 
 const MyProfile = () => {
   const navigate = useNavigate();
-  const [updateEmployee, { isLoading }] = useUpdateEmployeeMutation();
+  const [updateEmployee, { isLoading: isUpdating }] = useUpdateEmployeeMutation();
+  const [updatePassword, { isLoading: isUpdatingPassword }] = useUpdatePasswordMutation();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  // Get current user info from Redux store
+  const { userInfo } = useSelector((state) => state.auth);
   
-  // Mock user data - in a real app, this would come from your API
+  // Fetch employee data using RTK Query
+  const { data: employee, isLoading: isLoadingEmployee, error } = useGetEmployeeQuery(
+    userInfo.id || ''
+  );
+
+  // State for password fields
+  const [passwordData, setPasswordData] = useState({
+    email: '',
+    currentPassword: '',
+    newPassword: '',
+    confirmNewPassword: ''
+  });
+  
+  // State for profile data - updated with all fields
   const [profileData, setProfileData] = useState({
-    id: "EMP001",
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@company.com",
-    phone: "+1 (555) 123-4567",
-    position: "Senior Software Engineer",
-    department: "Engineering",
-    location: "New York Office",
-    joinDate: "2020-05-15",
-    manager: "Jane Smith",
-    emergencyContact: {
-      name: "Mary Doe",
-      relationship: "Spouse",
-      phone: "+1 (555) 987-6543"
-    },
-    profileImage: "https://i.pravatar.cc/300"
+    id: '',
+    name: '',
+    email: '',
+    phone: '',
+    birthday: '',
+    location: '',
+    avatar: '',
+    userId: '',
+    hired_date: '',
+    post: '',
+    role: '',
+    status: '',
+    age: '',
+    company: '',
+    supervisor: '',
+    supervisees: [],
+    agreed_basic: 0,
+    re_allowance: 0,
+    single_ot: 0,
+    double_ot: 0,
+    meal_allowance: 0,
+    isEPF: false
   });
 
-  // State for new profile image
+  // State for profile image
   const [newProfileImage, setNewProfileImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  
+  // State for form validation and feedback
+  const [passwordError, setPasswordError] = useState('');
+  const [updateSuccess, setUpdateSuccess] = useState('');
+
+  // Format currency values
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2
+    }).format(value || 0);
+  };
+
+  // Update profileData when employee data is loaded
+  useEffect(() => {
+    if (employee) {
+      setProfileData({
+        id: employee._id || '',
+        name: employee.name || '',
+        email: employee.email || '',
+        phone: employee.phone || '',
+        birthday: employee.birthday || '',
+        location: employee.location || '',
+        avatar: employee.avatar || '',
+        userId: employee.userId || '',
+        hired_date: employee.hired_date || '',
+        post: employee.post || '',
+        role: employee.role || '',
+        status: employee.status || '',
+        age: employee.age || '',
+        company: employee.company || '',
+        supervisor: employee.supervisor || '',
+        supervisees: employee.supervisees || [],
+        agreed_basic: employee.agreed_basic || 0,
+        re_allowance: employee.re_allowance || 0,
+        single_ot: employee.single_ot || 0,
+        double_ot: employee.double_ot || 0,
+        meal_allowance: employee.meal_allowance || 0,
+        isEPF: employee.isEPF || false
+      });
+      
+      console.log("Employee data loaded:", employee);
+
+      // Also set email for password update
+      setPasswordData(prev => ({
+        ...prev,
+        email: employee.email || ''
+      }));
+    }
+  }, [employee]);
 
   const handleNavigateBack = () => {
     navigate('/dashboard');
   };
 
   const handleInputChange = (field, value) => {
-    if (field.includes('.')) {
-      const [parentField, childField] = field.split('.');
-      setProfileData({
-        ...profileData,
-        [parentField]: {
-          ...profileData[parentField],
-          [childField]: value
-        }
-      });
-    } else {
-      setProfileData({
-        ...profileData,
-        [field]: value
-      });
+    // Handle numeric fields
+    if (['agreed_basic', 're_allowance', 'single_ot', 'double_ot', 'meal_allowance'].includes(field)) {
+      value = parseFloat(value) || 0;
     }
+    
+    setProfileData({
+      ...profileData,
+      [field]: value
+    });
+  };
+
+  const handlePasswordChange = (field, value) => {
+    setPasswordData({
+      ...passwordData,
+      [field]: value
+    });
+    
+    // Clear previous errors when user starts typing
+    if (passwordError) setPasswordError('');
+    if (updateSuccess) setUpdateSuccess('');
   };
 
   const handleImageChange = (e) => {
@@ -105,11 +184,9 @@ const MyProfile = () => {
   };
 
   const handleConfirmImageUpdate = () => {
-    // In a real implementation, you would upload the image to your server
-    // and get back a URL to store in the profile data
     setProfileData({
       ...profileData,
-      profileImage: previewImage || profileData.profileImage
+      avatar: previewImage || profileData.avatar
     });
     onClose();
   };
@@ -122,15 +199,83 @@ const MyProfile = () => {
 
   const handleUpdateProfile = async () => {
     try {
-      await updateEmployee(profileData);
-      // Show success notification or feedback here
-      alert("Profile updated successfully");
+      // Extract the ID from profileData and then send the rest
+      const { id, ...updatedEmployeeData } = profileData;
+      
+      await updateEmployee({ 
+        id, 
+        updatedEmployeeData 
+      });
+      
+      // Show success notification
+      setUpdateSuccess("Profile updated successfully");
+      setTimeout(() => setUpdateSuccess(''), 3000);
     } catch (error) {
-      // Handle error
       console.error("Error updating profile:", error);
       alert("Failed to update profile");
     }
   };
+
+  const handleUpdatePassword = async () => {
+    try {
+      // Validate passwords
+      if (passwordData.newPassword !== passwordData.confirmNewPassword) {
+        setPasswordError("New passwords don't match");
+        return;
+      }
+      
+      if (passwordData.newPassword.length < 8) {
+        setPasswordError("Password must be at least 8 characters");
+        return;
+      }
+
+      // Call the password update mutation
+      await updatePassword({
+        email: passwordData.email,
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword
+      }).unwrap();
+      
+      // Clear fields and show success message
+      setPasswordData({
+        ...passwordData,
+        currentPassword: '',
+        newPassword: '',
+        confirmNewPassword: ''
+      });
+      setUpdateSuccess("Password updated successfully");
+      setTimeout(() => setUpdateSuccess(''), 3000);
+    } catch (error) {
+      console.error("Error updating password:", error);
+      setPasswordError(error.data?.message || "Failed to update password");
+    }
+  };
+
+  // Show loading state while fetching employee data
+  if (isLoadingEmployee && !employee) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  // Show error if data fetch failed
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="text-center">
+          <p className="text-red-500 text-xl mb-4">Failed to load profile data</p>
+          <Button color="primary" onClick={() => navigate('/dashboard')}>
+            Return to Dashboard
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Calculate number of supervisees
+  const superviseeCount = profileData.supervisees?.length || 0;
 
   return (
     <div className="relative min-h-screen">
@@ -166,8 +311,8 @@ const MyProfile = () => {
             <Button 
               color="primary" 
               endContent={<IoSave />}
-              isLoading={isLoading}
-              onClick={handleUpdateProfile}
+              isLoading={isUpdating}
+              onPress={handleUpdateProfile}
             >
               Save Changes
             </Button>
@@ -183,7 +328,7 @@ const MyProfile = () => {
             <div className="w-full md:w-1/4 flex flex-col items-center">
               <div className="relative group">
                 <Avatar
-                  src={previewImage || profileData.profileImage}
+                  src={previewImage || profileData.avatar}
                   className="w-40 h-40 text-large mb-4 border-4 border-white shadow-lg"
                   isBordered
                 />
@@ -202,12 +347,58 @@ const MyProfile = () => {
                   </label>
                 </div>
               </div>
-              <h2 className="text-xl font-bold mt-2">{`${profileData.firstName} ${profileData.lastName}`}</h2>
-              <p className="text-gray-600">{profileData.position}</p>
-              <p className="text-sm text-gray-500">{profileData.department}</p>
+              <h2 className="text-xl font-bold mt-2">{profileData.name}</h2>
+              <p className="text-sm text-gray-500 mb-1">{profileData.post}</p>
+              <p className="text-sm text-gray-500">{profileData.company}</p>
+              
+              {/* Status indicator */}
+              <div className="mt-4 mb-2">
+                <span className={`px-3 py-1 rounded-full text-xs font-medium
+                  ${profileData.status === 'Active' ? 'bg-green-100 text-green-800' : 
+                    profileData.status === 'On Leave' ? 'bg-yellow-100 text-yellow-800' : 
+                    'bg-gray-100 text-gray-800'}`}>
+                  {profileData.status || 'Status'}
+                </span>
+              </div>
+              
+              {/* Quick Stats Cards */}
+              <div className="w-full mt-4 space-y-3">
+                <Card className="bg-blue-50 border border-blue-100">
+                  <CardBody className="py-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-blue-700">Role</span>
+                      <span className="font-medium">{profileData.role || 'Not Set'}</span>
+                    </div>
+                  </CardBody>
+                </Card>
+                
+                <Card className="bg-purple-50 border border-purple-100">
+                  <CardBody className="py-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-purple-700">Supervisees</span>
+                      <span className="font-medium">{superviseeCount}</span>
+                    </div>
+                  </CardBody>
+                </Card>
+                
+                <Card className="bg-green-50 border border-green-100">
+                  <CardBody className="py-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-green-700">Basic Salary</span>
+                      <span className="font-medium">{formatCurrency(profileData.agreed_basic)}</span>
+                    </div>
+                  </CardBody>
+                </Card>
+              </div>
             </div>
 
             <div className="w-full md:w-3/4">
+              {updateSuccess && (
+                <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-lg">
+                  {updateSuccess}
+                </div>
+              )}
+              
               <Tabs 
                 aria-label="Profile sections"
                 fullWidth
@@ -227,16 +418,9 @@ const MyProfile = () => {
                 >
                   <div className="pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
-                      label="First Name"
-                      value={profileData.firstName}
-                      onChange={(e) => handleInputChange('firstName', e.target.value)}
-                      variant="bordered"
-                      labelPlacement="outside"
-                    />
-                    <Input
-                      label="Last Name"
-                      value={profileData.lastName}
-                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      label="Full Name"
+                      value={profileData.name}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
                       variant="bordered"
                       labelPlacement="outside"
                     />
@@ -250,7 +434,7 @@ const MyProfile = () => {
                     />
                     <Input
                       label="Phone"
-                      value={profileData.phone}
+                      value={profileData.phone || ''}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
                       variant="bordered"
                       labelPlacement="outside"
@@ -258,111 +442,201 @@ const MyProfile = () => {
                     />
                     <Input
                       label="Location"
-                      value={profileData.location}
+                      value={profileData.location || ''}
                       onChange={(e) => handleInputChange('location', e.target.value)}
                       variant="bordered"
                       labelPlacement="outside"
                       startContent={<IoLocationOutline className="text-gray-400" />}
                     />
                     <Input
-                      label="Join Date"
-                      value={profileData.joinDate}
-                      onChange={(e) => handleInputChange('joinDate', e.target.value)}
+                      label="Birthday"
+                      value={profileData.birthday || ''}
+                      onChange={(e) => handleInputChange('birthday', e.target.value)}
                       type="date"
                       variant="bordered"
                       labelPlacement="outside"
                       startContent={<IoCalendarOutline className="text-gray-400" />}
                     />
-                  </div>
-                </Tab>
-                
-                <Tab 
-                  key="professional" 
-                  title={
-                    <div className="flex items-center gap-2">
-                      <IoBriefcaseOutline />
-                      <span>Work Details</span>
-                    </div>
-                  }
-                >
-                  <div className="pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Input
+                      label="Age"
+                      value={profileData.age || ''}
+                      onChange={(e) => handleInputChange('age', e.target.value)}
+                      type="number"
+                      variant="bordered"
+                      labelPlacement="outside"
+                    />
                     <Input
                       label="Employee ID"
-                      value={profileData.id}
+                      value={profileData.userId || ''}
                       isReadOnly
                       variant="bordered"
                       labelPlacement="outside"
                     />
-                    <Input
-                      label="Position"
-                      value={profileData.position}
-                      onChange={(e) => handleInputChange('position', e.target.value)}
-                      variant="bordered"
-                      labelPlacement="outside"
-                    />
-                    <Select
-                      label="Department"
-                      selectedKeys={[profileData.department]}
-                      onChange={(e) => handleInputChange('department', e.target.value)}
-                      variant="bordered"
-                      labelPlacement="outside"
-                    >
-                      <SelectItem key="Engineering">Engineering</SelectItem>
-                      <SelectItem key="Marketing">Marketing</SelectItem>
-                      <SelectItem key="Sales">Sales</SelectItem>
-                      <SelectItem key="HR">Human Resources</SelectItem>
-                      <SelectItem key="Finance">Finance</SelectItem>
-                    </Select>
-                    <Input
-                      label="Manager"
-                      value={profileData.manager}
-                      onChange={(e) => handleInputChange('manager', e.target.value)}
-                      variant="bordered"
-                      labelPlacement="outside"
-                    />
-                    <Textarea
-                      label="Professional Bio"
-                      placeholder="Share a brief description of your professional background"
-                      variant="bordered"
-                      labelPlacement="outside"
-                      className="col-span-2"
-                    />
                   </div>
                 </Tab>
                 
                 <Tab 
-                  key="emergency" 
+                  key="employment" 
                   title={
                     <div className="flex items-center gap-2">
-                      <IoShieldOutline />
-                      <span>Emergency Contact</span>
+                      <IoBriefcaseOutline />
+                      <span>Employment</span>
                     </div>
                   }
                 >
                   <div className="pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
-                      label="Contact Name"
-                      value={profileData.emergencyContact.name}
-                      onChange={(e) => handleInputChange('emergencyContact.name', e.target.value)}
+                      label="Company"
+                      value={profileData.company || ''}
+                      onChange={(e) => handleInputChange('company', e.target.value)}
                       variant="bordered"
                       labelPlacement="outside"
                     />
                     <Input
-                      label="Relationship"
-                      value={profileData.emergencyContact.relationship}
-                      onChange={(e) => handleInputChange('emergencyContact.relationship', e.target.value)}
+                      label="Position/Post"
+                      value={profileData.post || ''}
+                      onChange={(e) => handleInputChange('post', e.target.value)}
                       variant="bordered"
                       labelPlacement="outside"
                     />
                     <Input
-                      label="Emergency Phone"
-                      value={profileData.emergencyContact.phone}
-                      onChange={(e) => handleInputChange('emergencyContact.phone', e.target.value)}
+                      label="Role"
+                      value={profileData.role || ''}
+                      onChange={(e) => handleInputChange('role', e.target.value)}
                       variant="bordered"
                       labelPlacement="outside"
-                      startContent={<IoCallOutline className="text-gray-400" />}
-                      className="col-span-2 md:col-span-1"
                     />
+                    <Input
+                      label="Status"
+                      value={profileData.status || ''}
+                      onChange={(e) => handleInputChange('status', e.target.value)}
+                      variant="bordered"
+                      labelPlacement="outside"
+                    />
+                    <Input
+                      label="Hiring Date"
+                      value={profileData.hired_date || ''}
+                      onChange={(e) => handleInputChange('hired_date', e.target.value)}
+                      type="date"
+                      variant="bordered"
+                      labelPlacement="outside"
+                    />
+                    <Input
+                      label="Supervisor"
+                      value={profileData.supervisor || ''}
+                      onChange={(e) => handleInputChange('supervisor', e.target.value)}
+                      variant="bordered"
+                      labelPlacement="outside"
+                    />
+                  </div>
+                </Tab>
+                
+                <Tab 
+                  key="compensation" 
+                  title={
+                    <div className="flex items-center gap-2">
+                      <IoWalletOutline />
+                      <span>Compensation</span>
+                    </div>
+                  }
+                >
+                  <div className="pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Input
+                      label="Agreed Basic Salary"
+                      value={profileData.agreed_basic || ''}
+                      onChange={(e) => handleInputChange('agreed_basic', e.target.value)}
+                      type="number"
+                      variant="bordered"
+                      labelPlacement="outside"
+                      startContent={<span className="text-gray-400">$</span>}
+                    />
+                    <Input
+                      label="RE Allowance"
+                      value={profileData.re_allowance || ''}
+                      onChange={(e) => handleInputChange('re_allowance', e.target.value)}
+                      type="number"
+                      variant="bordered"
+                      labelPlacement="outside"
+                      startContent={<span className="text-gray-400">$</span>}
+                    />
+                    <Input
+                      label="Single OT Rate"
+                      value={profileData.single_ot || ''}
+                      onChange={(e) => handleInputChange('single_ot', e.target.value)}
+                      type="number"
+                      variant="bordered"
+                      labelPlacement="outside"
+                      startContent={<span className="text-gray-400">$</span>}
+                    />
+                    <Input
+                      label="Double OT Rate"
+                      value={profileData.double_ot || ''}
+                      onChange={(e) => handleInputChange('double_ot', e.target.value)}
+                      type="number"
+                      variant="bordered"
+                      labelPlacement="outside"
+                      startContent={<span className="text-gray-400">$</span>}
+                    />
+                    <Input
+                      label="Meal Allowance"
+                      value={profileData.meal_allowance || ''}
+                      onChange={(e) => handleInputChange('meal_allowance', e.target.value)}
+                      type="number"
+                      variant="bordered"
+                      labelPlacement="outside"
+                      startContent={<span className="text-gray-400">$</span>}
+                    />
+                    <div>
+                      <Checkbox
+                        isSelected={profileData.isEPF}
+                        onChange={(e) => handleInputChange('isEPF', e.target.checked)}
+                        className="mt-8"
+                      >
+                        Enrolled in EPF
+                      </Checkbox>
+                    </div>
+                  </div>
+                </Tab>
+                
+                <Tab 
+                  key="team" 
+                  title={
+                    <div className="flex items-center gap-2">
+                      <IoPeopleOutline />
+                      <span>Team</span>
+                    </div>
+                  }
+                >
+                  <div className="pt-4">
+                    <div className="mb-4">
+                      <p className="text-lg font-medium mb-2">Your Supervisor</p>
+                      <Card className="bg-gray-50">
+                        <CardBody>
+                          <p>{profileData.supervisor || 'Not assigned'}</p>
+                        </CardBody>
+                      </Card>
+                    </div>
+                    
+                    <div>
+                      <p className="text-lg font-medium mb-2">Your Team Members ({superviseeCount})</p>
+                      {superviseeCount > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                          {profileData.supervisees.map((member, index) => (
+                            <Card key={index} className="bg-gray-50">
+                              <CardBody className="py-2">
+                                <p>{member}</p>
+                              </CardBody>
+                            </Card>
+                          ))}
+                        </div>
+                      ) : (
+                        <Card className="bg-gray-50">
+                          <CardBody>
+                            <p className="text-gray-500">You don't have any team members reporting to you.</p>
+                          </CardBody>
+                        </Card>
+                      )}
+                    </div>
                   </div>
                 </Tab>
                 
@@ -376,10 +650,18 @@ const MyProfile = () => {
                   }
                 >
                   <div className="pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {passwordError && (
+                      <div className="col-span-2 p-3 bg-red-100 text-red-700 rounded-lg mb-2">
+                        {passwordError}
+                      </div>
+                    )}
+                    
                     <Input
                       label="Current Password"
                       type="password"
                       placeholder="Enter your current password"
+                      value={passwordData.currentPassword}
+                      onChange={(e) => handlePasswordChange('currentPassword', e.target.value)}
                       variant="bordered"
                       labelPlacement="outside"
                     />
@@ -390,6 +672,8 @@ const MyProfile = () => {
                       label="New Password"
                       type="password"
                       placeholder="Enter new password"
+                      value={passwordData.newPassword}
+                      onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
                       variant="bordered"
                       labelPlacement="outside"
                     />
@@ -397,11 +681,18 @@ const MyProfile = () => {
                       label="Confirm New Password"
                       type="password"
                       placeholder="Confirm new password"
+                      value={passwordData.confirmNewPassword}
+                      onChange={(e) => handlePasswordChange('confirmNewPassword', e.target.value)}
                       variant="bordered"
                       labelPlacement="outside"
                     />
                     <div className="md:col-span-2 mt-4">
-                      <Button color="primary">
+                      <Button 
+                        color="primary"
+                        isLoading={isUpdatingPassword}
+                        onClick={handleUpdatePassword}
+                        disabled={!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmNewPassword}
+                      >
                         Change Password
                       </Button>
                     </div>

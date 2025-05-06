@@ -14,7 +14,8 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  Chip
+  Chip,
+  Spinner
 } from "@heroui/react";
 import { useParams, Link } from 'react-router-dom';
 import { FaFileDownload, FaEye, FaExclamationTriangle } from 'react-icons/fa';
@@ -22,36 +23,24 @@ import { IoFilterSharp } from 'react-icons/io5';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
+import { useGetSalaryHistoryQuery } from '../../redux/api/salaryCalculationApiSlice';
 
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
 
-// Dummy data remains the same
-const dummySalaryHistory = [
-  {
-    month: 1,
-    year: 2024,
-    employeeId: "1",
-    employeeName: "John Doe",
-    department: "Engineering",
-    basicSalary: 5000.00,
-    reAllowance: 500.00,
-    singleOT: 200.00,
-    doubleOT: 300.00,
-    mealAllowance: 150.00,
-    incomeTax: 600.00,
-    insurance: 200.00,
-    netPay: 5350.00,
-    status: "Paid",
-    paymentDate: "2024-01-25"
-  },
-  // ... other data entries remain the same
-];
-
 const EmployeeSalaryHistory = () => {
-  const [selectedYear, setSelectedYear] = useState(2024);
+  const { id } = useParams();
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  
+  // Fetch salary history using the RTK Query hook
+  const {
+    data: salaryHistory,
+    isLoading,
+    isError,
+    error
+  } = useGetSalaryHistoryQuery(id || '');
   
   const breadcrumbItems = [
     { label: 'Dashboard', href: '/dashboard' },
@@ -122,7 +111,7 @@ const EmployeeSalaryHistory = () => {
   };
 
   const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case 'paid':
         return 'success';
       case 'pending':
@@ -134,18 +123,48 @@ const EmployeeSalaryHistory = () => {
     }
   };
 
-  const years = Array.from(
-    new Set(dummySalaryHistory.map(item => item.year))
-  ).sort((a, b) => b - a);
+  // Get unique years from the salary history data
+  const years = salaryHistory 
+    ? Array.from(new Set(salaryHistory.map(item => item.year))).sort((a, b) => b - a)
+    : [new Date().getFullYear()];
 
-  const filteredSalaryHistory = dummySalaryHistory.filter(
-    item => item.year === selectedYear
-  );
+  // Filter salary history by selected year
+  const filteredSalaryHistory = salaryHistory
+    ? salaryHistory.filter(item => item.year === selectedYear)
+    : [];
 
   const handleYearSelect = (keys) => {
     const selectedKey = Array.from(keys)[0];
     setSelectedYear(Number(selectedKey));
   };
+
+  // Render loading state
+  if (isLoading) {
+    return (
+      <div className="p-6 flex justify-center items-center h-64">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  // Render error state
+  if (isError) {
+    return (
+      <div className="p-6">
+        <GeneralBreadCrumb items={breadcrumbItems} />
+        <Card>
+          <CardBody>
+            <div className="text-center p-6 text-danger">
+              <p>Error loading salary history: {error?.data?.message || 'Something went wrong'}</p>
+              <Button color="primary" className="mt-4" onClick={() => window.location.reload()}>
+                Try Again
+              </Button>
+            </div>
+          </CardBody>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -190,52 +209,58 @@ const EmployeeSalaryHistory = () => {
         </CardHeader>
         
         <CardBody>
-          <Table 
-            aria-label="Salary history table"
-            removeWrapper
-          >
-            <TableHeader>
-              <TableColumn>MONTH</TableColumn>
-              <TableColumn>NET SALARY</TableColumn>
-              <TableColumn>STATUS</TableColumn>
-              <TableColumn>PAYMENT DATE</TableColumn>
-              <TableColumn>ACTIONS</TableColumn>
-            </TableHeader>
-            <TableBody>
-              {filteredSalaryHistory.map((item) => (
-                <TableRow key={`${item.year}-${item.month}`}>
-                  <TableCell>{monthNames[item.month - 1]}</TableCell>
-                  <TableCell>${item.netPay.toLocaleString()}</TableCell>
-                  <TableCell>
-                    <Chip color={getStatusColor(item.status)} size="sm">
-                      {item.status}
-                    </Chip>
-                  </TableCell>
-                  <TableCell>{item.paymentDate || '-'}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        onPress={() => generatePDF(item)}
-                      >
-                        <FaFileDownload className="text-lg" />
-                      </Button>
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        onPress={() => {/* Handle view details */}}
-                      >
-                        <FaEye className="text-lg" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          {filteredSalaryHistory.length === 0 ? (
+            <div className="text-center p-6 text-gray-500">
+              No salary records found for {selectedYear}
+            </div>
+          ) : (
+            <Table 
+              aria-label="Salary history table"
+              removeWrapper
+            >
+              <TableHeader>
+                <TableColumn>MONTH</TableColumn>
+                <TableColumn>NET SALARY</TableColumn>
+                <TableColumn>STATUS</TableColumn>
+                <TableColumn>PAYMENT DATE</TableColumn>
+                <TableColumn>ACTIONS</TableColumn>
+              </TableHeader>
+              <TableBody>
+                {filteredSalaryHistory.map((item) => (
+                  <TableRow key={`${item.year}-${item.month}`}>
+                    <TableCell>{monthNames[item.month - 1]}</TableCell>
+                    <TableCell>${item.netPay.toLocaleString()}</TableCell>
+                    <TableCell>
+                      <Chip color={getStatusColor(item.status)} size="sm">
+                        {item.status}
+                      </Chip>
+                    </TableCell>
+                    <TableCell>{item.paymentDate || '-'}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          onPress={() => generatePDF(item)}
+                        >
+                          <FaFileDownload className="text-lg" />
+                        </Button>
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          onPress={() => {/* Handle view details */}}
+                        >
+                          <FaEye className="text-lg" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardBody>
       </Card>
     </div>

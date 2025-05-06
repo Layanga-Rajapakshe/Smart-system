@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import CompaniesDropdown from './CompaniesDropdown';
 import SidebarItem from './SidebarItem';
 import { FaBuilding } from "react-icons/fa6";
@@ -20,6 +21,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     const location = useLocation();
     const sidebarRef = useRef(null);
     const timeoutRef = useRef(null);
+
+    const { userInfo } = useSelector((state) => state.auth);
 
     const toggleSidebar = () => {
         setIsOpen((prev) => !prev);
@@ -84,7 +87,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     const employeeMenuItems = [
         { title: 'My Dashboard', href: '/dashboard', icon: <TbLayoutDashboard />, isActive: ['/dashboard'].includes(location.pathname) },
         { title: 'Smart Weekly Plan', href: '/mytasks', icon: <GrTask />, isActive: ['/mytasks'].includes(location.pathname) },
-        { title: 'My Salary History', href: '/salary-history/1', icon: <GrTask />, isActive: ['/salary-history/1'].includes(location.pathname) },
+        { title: 'My Salary History', href: '/salary-history/1', icon: <GrTask />, isActive: [`/salary-history/${userInfo.userId}`].includes(location.pathname) },
         { title: 'Leave Dashboard', href: '/leaveprofile', icon: <GrTask />, isActive: ['/leaveprofile'].includes(location.pathname) },
     ];
 
@@ -92,6 +95,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         { title: 'Employee Salary Details', href: '/employeesalarylist', icon: <FaMoneyCheck />, isActive: ['/employeesalarylist'].includes(location.pathname) },
         { title: 'Payroll Summary', href: '/payrollsummary', icon: <GiTakeMyMoney />, isActive: ['/payrollsummary'].includes(location.pathname) },
         { title: 'Monthly Summary', href: '/monthlysalarysummary', icon: <FaEdit />, isActive: ['/monthlysalarysummary'].includes(location.pathname) },
+        { title: 'Complaints', href: '/complaints', icon: <GiTakeMyMoney />, isActive: ['/complaints'].includes(location.pathname) },
+        
+       
     ];
 
     const meetingMinuteMenuItems = [

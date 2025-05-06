@@ -11,12 +11,14 @@ import {
 } from "@heroui/react";
 import { IoArrowBack } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { useSendComplaintMutation } from "../../redux/api/salaryCalculationApiSlice"; // Import the mutation hook
 
 const SalaryComplaintForm = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState("");
+  
+  // Replace the manual API call with the mutation hook
+  const [sendComplaint, { isLoading, error }] = useSendComplaintMutation();
 
   const [formData, setFormData] = useState({
     employeeId: "",
@@ -24,17 +26,31 @@ const SalaryComplaintForm = () => {
     expectedAmount: "",
     actualAmount: "",
     description: "",
-    category: "", // New field for categorizing the issue
+    category: "",
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-
+    
     try {
-      // Simulated API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Format the complaint text to include all relevant information
+      const complaintText = `
+        Salary Discrepancy Report:
+        Pay Period: ${formData.payPeriod}
+        Expected Amount: $${formData.expectedAmount}
+        Actual Amount: $${formData.actualAmount}
+        Category: ${formData.category}
+        
+        Details: ${formData.description}
+      `;
+      
+      // Send the complaint using the mutation hook
+      await sendComplaint({
+        userId: formData.employeeId, // Using employeeId as userId
+        text: complaintText
+      }).unwrap();
+      
+      // Reset form and show success message
       setSubmitted(true);
       setFormData({
         employeeId: "",
@@ -45,9 +61,8 @@ const SalaryComplaintForm = () => {
         category: "",
       });
     } catch (err) {
-      setError("An error occurred while submitting your report.");
-    } finally {
-      setLoading(false);
+      // Error handling is now managed by the mutation hook
+      console.error("Failed to submit complaint:", err);
     }
   };
 
@@ -85,7 +100,7 @@ const SalaryComplaintForm = () => {
           {submitted ? (
             <div className="text-center py-8 space-y-4">
               <div className="text-lg text-success">
-                Your report has been submitted successfully.
+                Your salary discrepancy report has been submitted successfully.
               </div>
               <p className="text-default-500">
                 An accountant will review your case and contact you soon.
@@ -179,7 +194,9 @@ const SalaryComplaintForm = () => {
               />
 
               {error && (
-                <div className="text-danger text-small">{error}</div>
+                <div className="text-danger text-small">
+                  {error.data?.error || "An error occurred while submitting your report."}
+                </div>
               )}
 
               <div className="flex justify-end gap-3">
@@ -193,7 +210,7 @@ const SalaryComplaintForm = () => {
                 <Button
                   color="primary"
                   type="submit"
-                  isLoading={loading}
+                  isLoading={isLoading}
                 >
                   Submit Report
                 </Button>

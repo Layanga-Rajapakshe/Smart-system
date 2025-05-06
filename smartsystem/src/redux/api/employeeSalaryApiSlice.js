@@ -3,7 +3,7 @@ import { apiSlice } from './apiSlice';
 export const employeeSalaryHistoryApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getEmployeeSalaryHistory: builder.query({
-      query: (employeeId) => `/employees/${employeeId}/salary-history`,
+      query: (employeeId) => `/employees/history/${employeeId}`,
       transformResponse: (response) => {
         // Transform the dates to proper format and sort by date
         return response.map(item => ({

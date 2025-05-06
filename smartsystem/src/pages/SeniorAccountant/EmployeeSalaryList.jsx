@@ -45,7 +45,7 @@ const columns = [
   { name: "ACTIONS", uid: "actions" },
 ];
 
-const INITIAL_VISIBLE_COLUMNS = ["userId", "name", "post", "agreed_basic", "re_allowance", "single_ot", "double_ot", "meal_allowance", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["userId", "name", "post", "agreed_basic", "re_allowance", "single_ot", "double_ot", "meal_allowance"];
 
 const EmployeeSalaryList = () => {
   const navigate = useNavigate();
@@ -131,17 +131,17 @@ const EmployeeSalaryList = () => {
     }
   }, [userRole]);
 
-  const handleEditSalary = (id) => {
-    navigate(`/editsalary/${id}`);
-  };
+  // const handleEditSalary = (id) => {
+  //   navigate(`/editsalary/${id}`);
+  // };
 
-  const handleViewSalary = (id) => {
-    navigate(`/viewsalary/${id}`);
-  };
+  // const handleViewSalary = (id) => {
+  //   navigate(`/viewsalary/${id}`);
+  // };
 
-  const handleAddNew = () => {
-    navigate("/addsalary");
-  };
+  // const handleAddNew = () => {
+  //   navigate("/addsalary");
+  // };
 
   const renderCell = React.useCallback((employee, columnKey) => {
     const cellValue = employee[columnKey];
@@ -164,32 +164,32 @@ const EmployeeSalaryList = () => {
         return `$${cellValue}/hr`;
       case "meal_allowance":
         return `$${cellValue}/day`;
-      case "actions":
-        return (
-          <div className="relative flex justify-end items-center gap-2">
-            <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <BsThreeDotsVertical className="text-default-300" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem 
-                  startContent={<GrView />}
-                  onPress={() => handleViewSalary(employee.userId)}
-                >
-                  View
-                </DropdownItem>
-                <DropdownItem 
-                  startContent={<CiEdit />}
-                  onPress={() => handleEditSalary(employee.userId)}
-                >
-                  Edit
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        );
+      // case "actions":
+      //   return (
+      //     <div className="relative flex justify-end items-center gap-2">
+      //       {/* <Dropdown>
+      //         <DropdownTrigger>
+      //           <Button isIconOnly size="sm" variant="light">
+      //             <BsThreeDotsVertical className="text-default-300" />
+      //           </Button>
+      //         </DropdownTrigger>
+      //         <DropdownMenu>
+      //           <DropdownItem 
+      //             startContent={<GrView />}
+      //             onPress={() => handleViewSalary(employee.userId)}
+      //           >
+      //             View
+      //           </DropdownItem>
+      //           <DropdownItem 
+      //             startContent={<CiEdit />}
+      //             onPress={() => handleEditSalary(employee.userId)}
+      //           >
+      //             Edit
+      //           </DropdownItem>
+      //         </DropdownMenu>
+      //       </Dropdown> */}
+      //     </div>
+      //   );
       default:
         return cellValue;
     }
@@ -262,13 +262,13 @@ const EmployeeSalaryList = () => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button 
+            {/* <Button 
               color="primary" 
               endContent={<IoAdd />}
               onPress={handleAddNew}
             >
               Add New
-            </Button>
+            </Button> */}
           </div>
         </div>
         <div className="flex justify-between items-center">

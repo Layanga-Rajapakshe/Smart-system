@@ -42,6 +42,13 @@ const Login = () => {
 
   const { userInfo } = useSelector((state) => state.auth);
 
+  useEffect (() => {
+    // Redirect to dashboard if user is already logged in
+    if (userInfo) {
+      navigate("/dashboard");
+    }
+  },[])
+
   useEffect(() => {
     // Get random background image from Unsplash
     const fetchRandomImage = async () => {

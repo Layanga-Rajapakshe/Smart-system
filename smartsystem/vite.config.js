@@ -26,7 +26,7 @@ export default defineConfig({
     strictPort: false,
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'https://smart-system-api.vercel.app/',
         changeOrigin: true,
         secure: false,
       },

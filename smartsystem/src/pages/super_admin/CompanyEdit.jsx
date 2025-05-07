@@ -64,7 +64,7 @@ const CompanyEdit = () => {
       const token = localStorage.getItem('token'); // Adjust based on your auth setup
       
       const response = await axios.put(
-        `/api/companies/${companyId}`, 
+        `/api/company/${companyId}`, 
         companyData,
         {
           headers: {

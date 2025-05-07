@@ -1,4 +1,4 @@
-export const BASE_URL = "";
+export const BASE_URL = "https://smart-system-api.vercel.app/";
 export const AUTH_URL = "/api/auth";
 export const COMPANY_URL = "/api/company";
 export const EMPLOYEE_URL = "/api/employees";

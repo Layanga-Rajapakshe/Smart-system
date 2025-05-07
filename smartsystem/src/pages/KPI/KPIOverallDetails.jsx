@@ -6,7 +6,7 @@ import {
   ModalFooter, Input, Select, SelectItem
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { jsPDF } from "jspdf";
+import jsPDF from "jspdf";
 import "jspdf-autotable";
 
 // Sample employee data

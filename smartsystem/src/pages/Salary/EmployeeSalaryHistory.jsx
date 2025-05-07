@@ -20,7 +20,7 @@ import {
 import { useParams, Link } from 'react-router-dom';
 import { FaFileDownload, FaEye, FaExclamationTriangle } from 'react-icons/fa';
 import { IoFilterSharp } from 'react-icons/io5';
-import { jsPDF } from 'jspdf';
+import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 import { useGetSalaryHistoryQuery } from '../../redux/api/salaryCalculationApiSlice';

@@ -15,6 +15,7 @@ import { MdSupervisorAccount } from "react-icons/md";
 import { FaTasks } from "react-icons/fa";
 import { TbLayoutDashboard } from "react-icons/tb";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
+import { FaCalculator } from "react-icons/fa";
 import SidebarMenu from './SidebarMenu';
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -23,6 +24,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     const timeoutRef = useRef(null);
 
     const { userInfo } = useSelector((state) => state.auth);
+    const userRole = userInfo?.role || '';
 
     const toggleSidebar = () => {
         setIsOpen((prev) => !prev);
@@ -64,6 +66,19 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     }, []);
 
     // Menu items categorized by roles
+    const employeeMenuItems = [
+        { title: 'My Dashboard', href: '/dashboard', icon: <TbLayoutDashboard />, isActive: ['/dashboard'].includes(location.pathname) },
+        { title: 'Smart Weekly Plan', href: '/mytasks', icon: <GrTask />, isActive: ['/mytasks'].includes(location.pathname) },
+        { title: 'My Salary History', href: '/salary-history/1', icon: <GiTakeMyMoney />, isActive: [`/salary-history/${userInfo.userId}`].includes(location.pathname) },
+        { title: 'Leave Dashboard', href: '/leaveprofile', icon: <SlCalender />, isActive: ['/leaveprofile'].includes(location.pathname) },
+    ];
+
+    const supervisorMenuItems = [
+        { title: 'My Supervisee List', href: '/superviseelist', icon: <MdSupervisorAccount />, isActive: ['/superviseelist', '/superviseedetails'].includes(location.pathname) },
+        { title: 'My Supervisee Tasks', href: '/superviseetasks', icon: <FaTasks />, isActive: ['/superviseetasks', '/newtask'].includes(location.pathname) },
+        { title: 'My Supervisee Leaves', href: '/leaveapproval', icon: <SlCalender />, isActive: ['/leaveapproval'].includes(location.pathname) },
+    ];
+
     const superAdminMenuItems = [
         { title: 'Company Manager', href: '/company', icon: <FaBuilding />, isActive: ['/company', '/companyregister', '/companyedit', '/companyview'].includes(location.pathname) },
         { title: 'Employee Manager', href: '/employee', icon: <BsFillPersonVcardFill />, isActive: ['/employee', '/employeeregister', '/employeeedit', '/employeeview'].includes(location.pathname) },
@@ -71,33 +86,18 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     ];
 
     const adminMenuItems = [
-        { title: 'Attendance ', href: '/attendance', icon: <LuClipboardList />, isActive: ['/attendance'].includes(location.pathname) },
-    ];
-
-    const supervisorMenuItems = [
-        { title: 'My Supervisee List', href: '/superviseelist', icon: <MdSupervisorAccount />, isActive: ['/superviseelist', '/superviseedetails'].includes(location.pathname) },
-        { title: 'My Supervisee Tasks', href: '/superviseetasks', icon: <FaTasks />, isActive: ['/superviseetasks', '/newtask'].includes(location.pathname) },
-        { title: 'My Supervisee Leaves', href: '/leaveapproval', icon: <FaTasks />, isActive: ['/leaveapproval'].includes(location.pathname) },
+        { title: 'Attendance', href: '/attendance', icon: <LuClipboardList />, isActive: ['/attendance'].includes(location.pathname) },
     ];
 
     const ceoMenuItems = [
         { title: 'CEO Dashboard', href: '/ceodashboard', icon: <TbLayoutDashboard />, isActive: ['/ceodashboard'].includes(location.pathname) },
     ];
 
-    const employeeMenuItems = [
-        { title: 'My Dashboard', href: '/dashboard', icon: <TbLayoutDashboard />, isActive: ['/dashboard'].includes(location.pathname) },
-        { title: 'Smart Weekly Plan', href: '/mytasks', icon: <GrTask />, isActive: ['/mytasks'].includes(location.pathname) },
-        { title: 'My Salary History', href: '/salary-history/1', icon: <GrTask />, isActive: [`/salary-history/${userInfo.userId}`].includes(location.pathname) },
-        { title: 'Leave Dashboard', href: '/leaveprofile', icon: <GrTask />, isActive: ['/leaveprofile'].includes(location.pathname) },
-    ];
-
     const seniorAccountantMenuItems = [
+        { title: 'Calculate Salary', href: '/calculatesalary', icon: <FaCalculator />, isActive: ['/calculatesalary'].includes(location.pathname) },
         { title: 'Employee Salary Details', href: '/employeesalarylist', icon: <FaMoneyCheck />, isActive: ['/employeesalarylist'].includes(location.pathname) },
-        { title: 'Payroll Summary', href: '/payrollsummary', icon: <GiTakeMyMoney />, isActive: ['/payrollsummary'].includes(location.pathname) },
         { title: 'Monthly Summary', href: '/monthlysalarysummary', icon: <FaEdit />, isActive: ['/monthlysalarysummary'].includes(location.pathname) },
         { title: 'Complaints', href: '/complaints', icon: <GiTakeMyMoney />, isActive: ['/complaints'].includes(location.pathname) },
-        
-       
     ];
 
     const meetingMinuteMenuItems = [
@@ -106,25 +106,26 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     ];
 
     const kpiMenuItems = [
-        { title: 'KPI Home', href: '/KPIWelcome', icon: <FaMoneyCheck />, isActive: ['/KPIWelcom'].includes(location.pathname) },
+        { title: 'KPI Home', href: '/KPIWelcome', icon: <FaMoneyCheck />, isActive: ['/KPIWelcome'].includes(location.pathname) },
         { title: 'KPI Dashboard', href: '/KPIdashboard', icon: <FaMoneyCheck />, isActive: ['/KPIdashboard'].includes(location.pathname) },
         { title: 'KPI Parameter Details', href: '/kpidetails', icon: <FaMoneyCheck />, isActive: ['/kpidetails'].includes(location.pathname) },
-        { title: 'Employee Performance', href: '/employeesOverall', icon: <uClipboardList />, isActive: ['/employeesOverall'].includes(location.pathname) },
-        
+        { title: 'Employee Performance', href: '/employeesOverall', icon: <LuClipboardList />, isActive: ['/employeesOverall'].includes(location.pathname) },
     ];
+
+    // Determine which menus to show based on user role
+    const showSuperAdminMenu = userRole === 'Super Admin';
+    const showCompanyAdminMenu = userRole === 'Super Admin' || userRole === 'companyadmin';
+    const showAccountantMenu = userRole === 'Super Admin' || userRole === 'companyadmin' || userRole === 'accountant';
+    const showCEOMenu = userRole === 'Super Admin' || userRole === 'companyadmin' || userRole === 'ceo';
+    const showSupervisorMenu = userRole === 'Super Admin' || userRole === 'companyadmin' || userRole === 'supervisor';
+    const showKPIMenu = userRole === 'Super Admin' || userRole === 'companyadmin' || userRole === 'hr';
+    
+    // Employee menu and meeting minutes are available to all users
+    const showEmployeeMenu = true;
+    const showMeetingMinuteMenu = true;
 
     return (
         <>
-            {/* Sidebar Toggle Button
-            <button
-                className={`fixed top-4 z-50 p-2 bg-indigo-600/80 backdrop-filter backdrop-blur-md text-white rounded-md shadow-lg transition-all duration-300 ease-in-out hover:bg-indigo-700/90 ${
-                    isOpen ? 'left-64' : 'left-4'
-                }`}
-                onClick={toggleSidebar}
-            >
-                {isOpen ? "×" : "☰"}
-            </button> */}
-
             {/* Sidebar Component with Glassmorphism */}
             <div
                 ref={sidebarRef}
@@ -150,103 +151,127 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                         </p>
                     </div>
 
-                    {/* Collapsible Menus */}
+                    {/* Collapsible Menus - Reorganized */}
                     <div className="py-4 px-4">
-                        <SidebarMenu title="Super Admin Menu">
-                            <nav className="flex-grow">
-                                <ul className="space-y-1">
-                                    {superAdminMenuItems.map((item, index) => (
-                                        <li key={index} className={`rounded-md overflow-hidden`}>
-                                            <SidebarItem {...item} />
-                                        </li>
-                                    ))}
-                                </ul>
-                            </nav>
-                        </SidebarMenu>
+                        {/* Employee Menu - Always visible */}
+                        {showEmployeeMenu && (
+                            <SidebarMenu title="Employee Menu">
+                                <nav className="flex-grow">
+                                    <ul className="space-y-1">
+                                        {employeeMenuItems.map((item, index) => (
+                                            <li key={index} className={`rounded-md overflow-hidden`}>
+                                                <SidebarItem {...item} />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </nav>
+                            </SidebarMenu>
+                        )}
 
-                        <SidebarMenu title="Company Admin Menu">
-                            <nav className="flex-grow">
-                                <ul className="space-y-1">
-                                    {adminMenuItems.map((item, index) => (
-                                        <li key={index} className={`rounded-md overflow-hidden`}>
-                                            <SidebarItem {...item} />
-                                        </li>
-                                    ))}
-                                </ul>
-                            </nav>
-                        </SidebarMenu>
+                        {/* Meeting Minutes Menu - Always visible */}
+                        {showMeetingMinuteMenu && (
+                            <SidebarMenu title="Meeting Minute Menu">
+                                <nav className="flex-grow">
+                                    <ul className="space-y-1">
+                                        {meetingMinuteMenuItems.map((item, index) => (
+                                            <li key={index} className={`rounded-md overflow-hidden`}>
+                                                <SidebarItem {...item} />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </nav>
+                            </SidebarMenu>
+                        )}
 
-                        <SidebarMenu title="Supervisor Menu">
-                            <nav className="flex-grow">
-                                <ul className="space-y-1">
-                                    {supervisorMenuItems.map((item, index) => (
-                                        <li key={index} className={`rounded-md overflow-hidden`}>
-                                            <SidebarItem {...item} />
-                                        </li>
-                                    ))}
-                                </ul>
-                            </nav>
-                        </SidebarMenu>
+                        {/* Supervisor Menu */}
+                        {showSupervisorMenu && (
+                            <SidebarMenu title="Supervisor Menu">
+                                <nav className="flex-grow">
+                                    <ul className="space-y-1">
+                                        {supervisorMenuItems.map((item, index) => (
+                                            <li key={index} className={`rounded-md overflow-hidden`}>
+                                                <SidebarItem {...item} />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </nav>
+                            </SidebarMenu>
+                        )}
 
-                        <SidebarMenu title="CEO Menu">
-                            <nav className="flex-grow">
-                                <ul className="space-y-1">
-                                    {ceoMenuItems.map((item, index) => (
-                                        <li key={index} className={`rounded-md overflow-hidden`}>
-                                            <SidebarItem {...item} />
-                                        </li>
-                                    ))}
-                                </ul>
-                            </nav>
-                        </SidebarMenu>
+                        {/* Super Admin Menu */}
+                        {showSuperAdminMenu && (
+                            <SidebarMenu title="Super Admin Menu">
+                                <nav className="flex-grow">
+                                    <ul className="space-y-1">
+                                        {superAdminMenuItems.map((item, index) => (
+                                            <li key={index} className={`rounded-md overflow-hidden`}>
+                                                <SidebarItem {...item} />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </nav>
+                            </SidebarMenu>
+                        )}
 
-                        <SidebarMenu title="Employee Menu">
-                            <nav className="flex-grow">
-                                <ul className="space-y-1">
-                                    {employeeMenuItems.map((item, index) => (
-                                        <li key={index} className={`rounded-md overflow-hidden`}>
-                                            <SidebarItem {...item} />
-                                        </li>
-                                    ))}
-                                </ul>
-                            </nav>
-                        </SidebarMenu>
+                        {/* Company Admin Menu */}
+                        {showCompanyAdminMenu && (
+                            <SidebarMenu title="Company Admin Menu">
+                                <nav className="flex-grow">
+                                    <ul className="space-y-1">
+                                        {adminMenuItems.map((item, index) => (
+                                            <li key={index} className={`rounded-md overflow-hidden`}>
+                                                <SidebarItem {...item} />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </nav>
+                            </SidebarMenu>
+                        )}
 
-                        <SidebarMenu title="Senior Accountant Menu">
-                            <nav className="flex-grow">
-                                <ul className="space-y-1">
-                                    {seniorAccountantMenuItems.map((item, index) => (
-                                        <li key={index} className={`rounded-md overflow-hidden`}>
-                                            <SidebarItem {...item} />
-                                        </li>
-                                    ))}
-                                </ul>
-                            </nav>
-                        </SidebarMenu>
+                        {/* CEO Menu */}
+                        {showCEOMenu && (
+                            <SidebarMenu title="CEO Menu">
+                                <nav className="flex-grow">
+                                    <ul className="space-y-1">
+                                        {ceoMenuItems.map((item, index) => (
+                                            <li key={index} className={`rounded-md overflow-hidden`}>
+                                                <SidebarItem {...item} />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </nav>
+                            </SidebarMenu>
+                        )}
 
-                        <SidebarMenu title="Meeting Minute Menu">
-                            <nav className="flex-grow">
-                                <ul className="space-y-1">
-                                    {meetingMinuteMenuItems.map((item, index) => (
-                                        <li key={index} className={`rounded-md overflow-hidden`}>
-                                            <SidebarItem {...item} />
-                                        </li>
-                                    ))}
-                                </ul>
-                            </nav>
-                        </SidebarMenu>
+                        {/* Senior Accountant Menu */}
+                        {showAccountantMenu && (
+                            <SidebarMenu title="Senior Accountant Menu">
+                                <nav className="flex-grow">
+                                    <ul className="space-y-1">
+                                        {seniorAccountantMenuItems.map((item, index) => (
+                                            <li key={index} className={`rounded-md overflow-hidden`}>
+                                                <SidebarItem {...item} />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </nav>
+                            </SidebarMenu>
+                        )}
 
-                        <SidebarMenu title="KPI Menu">
-                            <nav className="flex-grow">
-                                <ul className="space-y-1">
-                                    {kpiMenuItems.map((item, index) => (
-                                        <li key={index} className={`rounded-md overflow-hidden`}>
-                                            <SidebarItem {...item} />
-                                        </li>
-                                    ))}
-                                </ul>
-                            </nav>
-                        </SidebarMenu>
+                        {/* KPI Menu */}
+                        {showKPIMenu && (
+                            <SidebarMenu title="KPI Menu">
+                                <nav className="flex-grow">
+                                    <ul className="space-y-1">
+                                        {kpiMenuItems.map((item, index) => (
+                                            <li key={index} className={`rounded-md overflow-hidden`}>
+                                                <SidebarItem {...item} />
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </nav>
+                            </SidebarMenu>
+                        )}
                     </div>
 
                     {/* Footer area */}

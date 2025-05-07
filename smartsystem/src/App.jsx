@@ -43,9 +43,9 @@ import LeaveApproval from './pages/LeaveManagement/LeaveApproval';
 
 // Accountant Pages
 import EmployeeSalaryList from './pages/SeniorAccountant/EmployeeSalaryList';
-import ViewEmployeeSalary from './pages/SeniorAccountant/ViewEmployeeSalary';
-import EditEmployeeSalary from './pages/SeniorAccountant/EditEmployeeSalary';
-import PayrollSummaryPage from './pages/SeniorAccountant/PayrollSummaryPage';
+// import ViewEmployeeSalary from './pages/SeniorAccountant/ViewEmployeeSalary';
+// import EditEmployeeSalary from './pages/SeniorAccountant/EditEmployeeSalary';
+// import PayrollSummaryPage from './pages/SeniorAccountant/PayrollSummaryPage';
 import EmployeeDetailsView from './pages/SeniorAccountant/EmployeeDetailsView';
 import MonthlySalarySummaryPage from './pages/SeniorAccountant/MonthlySalarySummaryPage';
 import ComplaintMessaging from './pages/SeniorAccountant/ComplaintMessaging';
@@ -79,6 +79,7 @@ import MyTasks from './pages/workschedule/MyTasks';
 import OneTimeTask from './pages/workschedule/OneTimeTask';
 import CreateTask from './pages/workschedule/CreateTask';
 import MyProfile from './pages/employee/MyProfile';
+import CalculateSalary from './pages/SeniorAccountant/CalculateSalary';
 
 
 export default function App() {
@@ -152,6 +153,7 @@ export default function App() {
               <Route path="/salarycomplaint" element={<SalaryComplaintForm />} />
               <Route path="/complaints" element={<ComplaintsList />} />
               <Route path="/complaints/:id" element={<ComplaintMessaging />} />
+              <Route path="/calculatesalary" element={<CalculateSalary />} />
               
               {/* KPI Routes */}
               <Route path='/kpiwelcome' element={<KPIWelcome />} />

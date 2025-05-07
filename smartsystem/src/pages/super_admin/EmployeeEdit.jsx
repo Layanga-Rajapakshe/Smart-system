@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // Import axios
 import {
   useGetEmployeeQuery,
-  useUpdateEmployeeMutation,
   useGetEmployeesQuery,
 } from '../../redux/api/employeeApiSlice';
 import { useGetRolesQuery } from '../../redux/api/roleApiSlice';
@@ -17,10 +17,12 @@ const EmployeeEdit = () => {
   const navigate = useNavigate();
 
   const { data: employee, isLoading, isError } = useGetEmployeeQuery(employeeId);
-  const [updateEmployee, { isLoading: isUpdating }] = useUpdateEmployeeMutation();
   const { data: rolesData, isLoading: rolesLoading } = useGetRolesQuery();
   const { data: companiesData, isLoading: companiesLoading } = useGetCompaniesQuery();
   const { data: employeesData, isLoading: employeesLoading } = useGetEmployeesQuery();
+  
+  // State for tracking update process
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const [employeeData, setEmployeeData] = useState({
     name: '',
@@ -41,7 +43,7 @@ const EmployeeEdit = () => {
     single_ot: 0,
     double_ot: 0,
     meal_allowance: 0,
-    isEPF: false, // Added EPF field
+    isEPF: false,
   });
 
   const breadcrumbItems = [
@@ -71,10 +73,38 @@ const EmployeeEdit = () => {
     }));
   };
 
+  // Update employee using Axios instead of Redux mutation
+  const updateEmployeeWithAxios = async (employeeData) => {
+    setIsUpdating(true);
+    try {
+      // Get token from localStorage or wherever you store it
+      const token = localStorage.getItem('token'); // Adjust based on your auth setup
+      
+      const response = await axios.put(
+        `/api/employees/${employeeId}`, 
+        employeeData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // Include auth token if needed
+          }
+        }
+      );
+      
+      return response.data;
+    } catch (error) {
+      // Handle error and rethrow for the calling function to catch
+      const errorMessage = error.response?.data?.message || error.message || "Failed to update employee";
+      throw new Error(errorMessage);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateEmployee({ id: employeeId, ...employeeData }).unwrap();
+      await updateEmployeeWithAxios(employeeData);
       toast.success('Employee updated successfully!');
       navigate(`/employeeview/${employeeId}`);
       window.location.reload();

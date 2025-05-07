@@ -13,7 +13,7 @@ import {
 } from "chart.js";
 import { Button } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
-import jsPDF from "jspdf";
+// import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
@@ -92,9 +92,9 @@ const KPIChart = ({ employeeScores }) => {
 
     html2canvas(chart).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("landscape");
-      pdf.addImage(imgData, "PNG", 10, 10, 280, 150);
-      pdf.save("Employee_KPI_Analysis.pdf");
+      // const pdf = new jsPDF("landscape");
+      // pdf.addImage(imgData, "PNG", 10, 10, 280, 150);
+      // pdf.save("Employee_KPI_Analysis.pdf");
 
       // Show the button after downloading
       downloadButton.style.visibility = "visible";

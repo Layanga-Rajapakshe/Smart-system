@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // Import axios
 import { Input, Button, Image, Checkbox, Card, Spacer, CircularProgress } from "@heroui/react";
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetPermissionsQuery, useUpdateRoleMutation, useGetRoleByIdQuery } from '../../redux/api/roleApiSlice';
+import { useGetPermissionsQuery, useGetRoleByIdQuery } from '../../redux/api/roleApiSlice';
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 import image1 from '../../assets/images/background1.png';
-import toast from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 
 const RoleEdit = () => {
   const navigate = useNavigate();
@@ -15,10 +16,9 @@ const RoleEdit = () => {
   const [hierarchyLevel, setHierarchyLevel] = useState(1);
   const [permissions, setPermissions] = useState({});
   
-  // Use RTK Query hooks
+  // Use RTK Query hooks for fetching data
   const { data: permissionsData, isLoading: isLoadingPermissions } = useGetPermissionsQuery();
   const { data: roleData, isLoading: isLoadingRole } = useGetRoleByIdQuery(roleId);
-  const [updateRole] = useUpdateRoleMutation();
 
   // Initialize permissions when permissionsData is available
   useEffect(() => {
@@ -113,28 +113,53 @@ const RoleEdit = () => {
     return permission.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   };
 
+  // Update role using Axios instead of Redux mutation
+  const updateRoleWithAxios = async (roleData) => {
+    setIsSaving(true);
+    try {
+      // Get token from localStorage or wherever you store it
+      const token = localStorage.getItem('token'); // Adjust based on your auth setup
+      
+      const response = await axios.put(
+        `/api/role/${roleId}`, 
+        roleData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // Include auth token if needed
+          }
+        }
+      );
+      
+      return response.data;
+    } catch (error) {
+      // Handle error and rethrow for the calling function to catch
+      const errorMessage = error.response?.data?.message || error.message || "Failed to update role";
+      throw new Error(errorMessage);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSaving(true);
     
     // Get selected permissions
     const selectedPermissions = Object.keys(permissions).filter(perm => permissions[perm]);
 
     const updatedRoleData = {
-      id: roleId,
       name: roleName,
       permissions: selectedPermissions,
       hierarchyLevel,
     };
 
     try {
-      await updateRole(updatedRoleData).unwrap();
+      await updateRoleWithAxios(updatedRoleData);
       toast.success("Role updated successfully!");
       navigate('/role');
+      window.location.reload(); // Reload to ensure data consistency
     } catch (error) {
-      toast.error("Error updating role. Please try again.");
-    } finally {
-      setIsSaving(false);
+      toast.error(error?.message || "Error updating role. Please try again.");
     }
   };
 
@@ -242,7 +267,17 @@ const RoleEdit = () => {
             <Spacer y={1} />
             
             {/* Submit Button */}
-            <div className="flex justify-center pt-4">
+            <div className="flex justify-between pt-4">
+              <Button 
+                color="default"
+                variant="flat"
+                onPress={() => navigate('/role')}
+                size="lg"
+                className="px-6"
+              >
+                Cancel
+              </Button>
+              
               <Button 
                 type="submit" 
                 color="primary" 

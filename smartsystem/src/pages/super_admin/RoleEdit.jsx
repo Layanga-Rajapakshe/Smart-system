@@ -118,7 +118,7 @@ const RoleEdit = () => {
     setIsSaving(true);
     try {
       // Get token from localStorage or wherever you store it
-      const token = localStorage.getItem('token'); // Adjust based on your auth setup
+      const token = localStorage.getItem('auth_token'); // Adjust based on your auth setup
       
       const response = await axios.put(
         `https://smart-system-api.vercel.app//api/role/${roleId}`, 

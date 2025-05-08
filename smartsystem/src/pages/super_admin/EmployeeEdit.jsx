@@ -86,7 +86,7 @@ const EmployeeEdit = () => {
         {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` // Include auth token if needed
+            'Authorization': `${token}` // Include auth token if needed
           }
         }
       );

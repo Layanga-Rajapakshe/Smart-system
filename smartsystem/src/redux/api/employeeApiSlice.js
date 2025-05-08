@@ -8,6 +8,7 @@ export const employeeApiSlice = apiSlice.injectEndpoints({
       query: () => ({
         url: `${EMPLOYEE_URL}/`,
         method: 'GET',
+        Credential: 'include',
       }),
     }),
 

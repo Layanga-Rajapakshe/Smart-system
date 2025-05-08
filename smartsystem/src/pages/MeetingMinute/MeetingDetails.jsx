@@ -43,12 +43,13 @@ const MeetingDetails = () => {
           withCredentials: true,
         });
         
+        // Store meeting data
         setMeeting(response.data);
         
         // Initialize discussion points from meeting data
         setDiscussionPoints(response.data.discussionPoints || "");
         
-        // Fetch project details
+        // Fetch project details if projectId exists
         if (response.data.projectId) {
           const projectResponse = await axios.get(`/api/project/${response.data.projectId}`, {
             withCredentials: true,
@@ -56,14 +57,20 @@ const MeetingDetails = () => {
           setProject(projectResponse.data);
         }
         
-        // Fetch attendee details
+        // Check if attendees are already populated objects or just IDs
         if (response.data.attendees && response.data.attendees.length > 0) {
-          const attendeePromises = response.data.attendees.map(attendeeId => 
-            axios.get(`/api/employees/${attendeeId}`, { withCredentials: true })
-          );
-          
-          const attendeeResponses = await Promise.all(attendeePromises);
-          setAttendees(attendeeResponses.map(res => res.data));
+          // If first item has name property, attendees are already populated
+          if (response.data.attendees[0].name) {
+            setAttendees(response.data.attendees);
+          } else {
+            // Otherwise fetch each attendee individually
+            const attendeePromises = response.data.attendees.map(attendeeId => 
+              axios.get(`/api/employees/${attendeeId}`, { withCredentials: true })
+            );
+            
+            const attendeeResponses = await Promise.all(attendeePromises);
+            setAttendees(attendeeResponses.map(res => res.data));
+          }
         }
       } catch (err) {
         setError("Failed to fetch meeting details. Please try again.");
@@ -72,7 +79,7 @@ const MeetingDetails = () => {
         setLoading(false);
       }
     };
-
+  
     fetchMeetingDetails();
   }, [id]);
 

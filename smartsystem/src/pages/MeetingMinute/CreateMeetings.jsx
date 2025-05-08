@@ -220,21 +220,88 @@ const CreateMeetings = () => {
         }))
       };
 
-      const response = await axios.post("/api/meeting", formattedData, {
-        withCredentials: true,
-      });
-
-      console.log("Meeting created successfully:", response.data);
-      setSuccess(true);
-
-      // Redirect after a brief delay to show success message
-      setTimeout(() => {
-        navigate("/meetingList");
-      }, 2000);
+      // First check if the meeting already exists to avoid duplicates
+      let meetingExists = false;
+      
+      try {
+        // Make the POST request to create the meeting
+        const response = await axios.post("/api/meeting", formattedData, {
+          withCredentials: true,
+          timeout: 8000, // Reduced timeout to prevent long waits
+        });
+        
+        console.log("Meeting created successfully:", response.data);
+        setSuccess(true);
+        
+        // Redirect after a brief delay to show success message
+        setTimeout(() => {
+          navigate("/meetingList");
+        }, 2000);
+        
+      } catch (postError) {
+        console.error("Initial POST error:", postError);
+        
+        // Wait a moment to give database time to complete potential transaction
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // If the POST fails, check if the meeting was actually created
+        // by making a GET request to the meetings list
+        try {
+          const checkResponse = await axios.get("/api/meeting", {
+            withCredentials: true,
+            timeout: 5000,
+          });
+          
+          // Check if a meeting with the same topic and project exists in recent meetings
+          // This is a basic check - you may need more specific criteria
+          const recentCreatedMeeting = checkResponse.data.find(meeting => 
+            meeting.topic === meetingData.topic && 
+            meeting.projectId === meetingData.projectId &&
+            // Check if created within the last 5 minutes
+            new Date(meeting.createdAt) > new Date(Date.now() - 5 * 60 * 1000)
+          );
+          
+          if (recentCreatedMeeting) {
+            console.log("Meeting was actually created:", recentCreatedMeeting);
+            meetingExists = true;
+            setSuccess(true);
+            
+            // Redirect to meetings list
+            setTimeout(() => {
+              navigate("/meetingList");
+            }, 2000);
+          } else {
+            // Re-throw the original error if no matching meeting was found
+            throw postError;
+          }
+        } catch (checkError) {
+          console.error("Error checking for meeting:", checkError);
+          // Continue to the main error handler with the original error
+          throw postError;
+        }
+      }
     } catch (err) {
-      const errorMessage = err.response?.data?.message || "Failed to create meeting. Please try again.";
-      setError(errorMessage);
-      console.error("Error creating meeting:", err);
+      // Improved error handling
+      console.error("Final error details:", err);
+      
+      // Check if the error has a response property
+      if (err.response) {
+        // The request was made and the server responded with a status code outside 2xx range
+        const errorMsg = err.response.data?.message || `Server error: ${err.response.status}`;
+        
+        // If we get a 500 error, it might be from the notification service
+        if (err.response.status === 500 && err.response.data?.error?.includes("notification")) {
+          setError("Meeting may have been created but notification service failed. Please check the meetings list.");
+        } else {
+          setError(errorMsg);
+        }
+      } else if (err.request) {
+        // The request was made but no response was received
+        setError("No response received from server. The meeting might have been created. Please check the meetings list.");
+      } else {
+        // Something happened in setting up the request
+        setError(`Request error: ${err.message}`);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -289,6 +356,16 @@ const CreateMeetings = () => {
               <div>
                 <p className="text-red-700 font-medium">Error</p>
                 <p className="text-red-600">{error}</p>
+                {error.includes("might have been created") && (
+                  <p className="text-gray-600 mt-1">
+                    <button 
+                      onClick={() => navigate("/meetingList")} 
+                      className="text-blue-600 hover:underline"
+                    >
+                      Click here
+                    </button> to check if your meeting was created.
+                  </p>
+                )}
               </div>
               <button
                 onClick={() => setError(null)}

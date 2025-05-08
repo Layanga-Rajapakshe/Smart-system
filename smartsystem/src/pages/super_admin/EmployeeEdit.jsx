@@ -81,7 +81,7 @@ const EmployeeEdit = () => {
       const token = localStorage.getItem('token'); // Adjust based on your auth setup
       
       const response = await axios.put(
-        `https://smart-system-one.vercel.app/api/employees/${employeeId}`, 
+        `https://smart-system-api.vercel.app/api/employees/${employeeId}`, 
         employeeData,
         {
           headers: {

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Import axios
 import {
   useGetEmployeeQuery,
   useGetEmployeesQuery,
+  useUpdateEmployeeMutation, // Added the mutation hook
 } from '../../redux/api/employeeApiSlice';
 import { useGetRolesQuery } from '../../redux/api/roleApiSlice';
 import { useGetCompaniesQuery } from '../../redux/api/companyApiSlice';
@@ -21,8 +21,8 @@ const EmployeeEdit = () => {
   const { data: companiesData, isLoading: companiesLoading } = useGetCompaniesQuery();
   const { data: employeesData, isLoading: employeesLoading } = useGetEmployeesQuery();
   
-  // State for tracking update process
-  const [isUpdating, setIsUpdating] = useState(false);
+  // Use the update mutation hook instead of Axios
+  const [updateEmployee, { isLoading: isUpdating }] = useUpdateEmployeeMutation();
 
   const [employeeData, setEmployeeData] = useState({
     name: '',
@@ -73,43 +73,20 @@ const EmployeeEdit = () => {
     }));
   };
 
-  // Update employee using Axios instead of Redux mutation
-  const updateEmployeeWithAxios = async (employeeData) => {
-    setIsUpdating(true);
-    try {
-      // Get token from localStorage or wherever you store it
-      const token = localStorage.getItem('auth_token'); // Adjust based on your auth setup
-      
-      const response = await axios.put(
-        `https://smart-system-api.vercel.app/api/employees/${employeeId}`, 
-        employeeData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `${token}` // Include auth token if needed
-          }
-        }
-      );
-      
-      return response.data;
-    } catch (error) {
-      // Handle error and rethrow for the calling function to catch
-      const errorMessage = error.response?.data?.message || error.message || "Failed to update employee";
-      throw new Error(errorMessage);
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateEmployeeWithAxios(employeeData);
+      // Use the mutation hook to update the employee
+      const result = await updateEmployee({
+        id: employeeId,
+        data: employeeData
+      }).unwrap();
+      
       toast.success('Employee updated successfully!');
       navigate(`/employeeview/${employeeId}`);
       window.location.reload();
     } catch (error) {
-      toast.error(error?.message || "Failed to update employee. Please try again.");
+      toast.error(error?.data?.message || error?.message || "Failed to update employee. Please try again.");
     }
   };
 

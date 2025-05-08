@@ -26,7 +26,7 @@ export const roleApiSlice = apiSlice.injectEndpoints({
       query: () => ({
         url: `${ROLE_URL}/`,
         method: 'GET',
-        Credential: 'include',
+        credentials: 'include',
       }),
     }),
 

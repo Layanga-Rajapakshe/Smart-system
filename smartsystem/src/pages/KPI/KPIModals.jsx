@@ -1,7 +1,7 @@
 import React from "react";
 import {
   Modal, ModalContent, ModalHeader, ModalBody, ModalFooter,
-  Button, Input, Textarea, Select, SelectItem
+  Button, Input, Select, SelectItem
 } from "@heroui/react";
 
 export const EditParameterModal = ({ 
@@ -13,6 +13,8 @@ export const EditParameterModal = ({
   onUpdateField, 
   onSave 
 }) => {
+  if (!parameter) return null;
+  
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalContent>
@@ -50,15 +52,6 @@ export const EditParameterModal = ({
                     placeholder="Enter parameter name"
                     value={parameter?.name || ""}
                     onChange={(e) => onUpdateField("name", e.target.value)}
-                    className="w-full"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <Textarea
-                    label="Description"
-                    placeholder="Enter parameter description"
-                    value={parameter?.description || ""}
-                    onChange={(e) => onUpdateField("description", e.target.value)}
                     className="w-full"
                   />
                 </div>
@@ -138,15 +131,6 @@ export const AddParameterModal = ({
                     placeholder="Enter parameter name"
                     value={parameter?.name || ""}
                     onChange={(e) => onUpdateField("name", e.target.value)}
-                    className="w-full"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <Textarea
-                    label="Description"
-                    placeholder="Enter parameter description"
-                    value={parameter?.description || ""}
-                    onChange={(e) => onUpdateField("description", e.target.value)}
                     className="w-full"
                   />
                 </div>

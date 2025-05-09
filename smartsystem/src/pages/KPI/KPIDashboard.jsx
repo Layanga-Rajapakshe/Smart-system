@@ -1,53 +1,18 @@
-import React, { useState } from "react";
-import { Button, Card, Image, Select } from "@heroui/react";
+import React, { useState, useEffect } from "react";
+import { Button, Card, Image } from "@heroui/react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/KPI/Header";
 import ScoreTable from "../../components/KPI/ScoreTable";
 import KPIChart from "../../components/KPI/KPIChart";
 import EmployeeDetails from "../../components/KPI/EmployeeDetails";
-import { sampleEmployees } from "../../components/KPI/SampleData";
+import EmployeeSelection from "../../components/KPI/EmployeeSelection";
+import axios from "axios";
 import backgroundImage from '../../assets/images/background1.png';
-
-const EmployeeSelection = ({ employees, onSelect, onMonthChange, selectedMonth }) => {
-  // Transform employees into format expected by HeroUI Select
-  const employeeOptions = employees.map(employee => ({
-    value: employee,
-    label: employee.name
-  }));
-
-  // Add a placeholder option
-  const options = [
-    { value: "", label: "Select an employee" },
-    ...employeeOptions
-  ];
-
-  return (
-    <div className="flex w-full gap-4">
-      <div className="flex-1">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Employee</label>
-        <Select
-          options={options}
-          onChange={(selectedOption) => onSelect(selectedOption.value)}
-          className="w-full"
-          placeholder="Select an employee"
-        />
-      </div>
-      <div className="flex-1">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Month</label>
-        <input
-          type="month"
-          value={selectedMonth}
-          onChange={(e) => onMonthChange(e.target.value)}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        />
-      </div>
-    </div>
-  );
-};
 
 const KPIDashboard = () => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7)); // Current month in YYYY-MM format
+  const [loadingEmployee, setLoadingEmployee] = useState(false);
   const [scores, setScores] = useState({
     Attitude: { subParams: Array(3).fill(0) },
     Habits: { subParams: Array(3).fill(0) },
@@ -60,12 +25,36 @@ const KPIDashboard = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [comment, setComment] = useState("");
-  // New state variables for popup
+  // State variables for popup
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const [popupType, setPopupType] = useState(""); // "success" or "warning"
   
   const navigate = useNavigate();
+
+  const handleEmployeeSelect = async (employee) => {
+    try {
+      if (employee && employee._id) {
+        setLoadingEmployee(true);
+        const response = await axios.get(`/api/employees/${employee._id}`);
+        setSelectedEmployee(response.data);
+        setErrorMessage("");
+        setSuccessMessage("");
+        setLoadingEmployee(false);
+      } else {
+        setSelectedEmployee(null);
+      }
+    } catch (error) {
+      console.error("Failed to fetch employee details:", error);
+      setErrorMessage("Failed to load employee details. Please try again.");
+      setLoadingEmployee(false);
+    }
+  };
+
+  const handleMonthChange = (month) => {
+    setSelectedMonth(month);
+    if (month) setErrorMessage("");
+  };
 
   const handleAddScores = () => {
     if (!selectedEmployee) {
@@ -118,6 +107,11 @@ const KPIDashboard = () => {
     navigate("/kpidetails");
   };
 
+  // Function to navigate to KPI Home
+  const handleNavigateToHome = () => {
+    navigate("/KPIWelcome");
+  };
+
   return (
     <div className="relative min-h-screen">
       {/* Background Image Container */}
@@ -132,41 +126,43 @@ const KPIDashboard = () => {
 
       {/* Main Content */}
       <div className="relative z-10 container mx-auto py-6 px-4">
-        {/* Centered title and button */}
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-semibold text-black mb-4">
+        {/* Header with Home button */}
+        <div className="flex justify-between items-center mb-6">
+          <Button
+            color="secondary"
+            variant="bordered"
+            onClick={handleNavigateToHome}
+            className="flex items-center gap-2"
+          >
+            <span>🏠</span>
+            KPI Home
+          </Button>
+          
+          <h1 className="text-3xl font-semibold text-black">
             KPI Dashboard
           </h1>
+          
           <Button
             color="primary"
             variant="bordered"
             onClick={handleViewKPIParameters}
-            className="mx-auto"
+            className="flex items-center gap-2"
           >
-            {/* Use an icon if available or omit if not */}
-            <span className="mr-2">📋</span>
-            View KPI Parameter Details
+            <span>📋</span>
+            View KPI Parameters
           </Button>
         </div>
 
         <Card className="p-6 shadow-2xl bg-white/90 backdrop-blur-md rounded-2xl border border-white/40 mb-6">
           <div className="mb-4">
             <EmployeeSelection
-              employees={sampleEmployees}
-              onSelect={(employee) => {
-                setSelectedEmployee(employee);
-                setErrorMessage("");
-                setSuccessMessage("");
-              }}
-              onMonthChange={(month) => {
-                setSelectedMonth(month);
-                if (month) setErrorMessage("");
-              }}
+              onSelect={handleEmployeeSelect}
+              onMonthChange={handleMonthChange}
               selectedMonth={selectedMonth}
             />
           </div>
 
-          <EmployeeDetails employee={selectedEmployee} />
+          <EmployeeDetails employee={selectedEmployee} loading={loadingEmployee} />
 
           {successMessage && (
             <div className="mt-4 text-center text-green-600 font-semibold text-lg">

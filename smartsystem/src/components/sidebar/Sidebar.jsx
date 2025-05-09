@@ -95,8 +95,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     ];
 
     const meetingMinuteMenuItems = [
-        { title: 'Meeting Home', href: '/meetingHome', icon: <FaMoneyCheck />, isActive: ['/meetingHome'].includes(location.pathname) },
-        { title: 'Meetings', href: '/meetings', icon: <FaMoneyCheck />, isActive: ['/meetings'].includes(location.pathname) },
+        { title: 'Meeting List', href: '/meetingList', icon: <FaMoneyCheck />, isActive: ['/meetingList'].includes(location.pathname) },
+        { title: 'Meetings', href: '/createMeetings', icon: <FaMoneyCheck />, isActive: ['/createMeetings'].includes(location.pathname) },
     ];
 
     const kpiMenuItems = [

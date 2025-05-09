@@ -86,6 +86,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         { title: 'Smart Weekly Plan', href: '/mytasks', icon: <GrTask />, isActive: ['/mytasks'].includes(location.pathname) },
         { title: 'My Salary History', href: '/salary-history/1', icon: <GrTask />, isActive: ['/salary-history/1'].includes(location.pathname) },
         { title: 'Leave Dashboard', href: '/leaveprofile', icon: <GrTask />, isActive: ['/leaveprofile'].includes(location.pathname) },
+         { title: 'Request Management', href: '/requestDashboard', icon: <GrTask />, isActive: ['/requestDashboard'].includes(location.pathname) },
     ];
 
     const seniorAccountantMenuItems = [

@@ -93,6 +93,14 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         { title: 'CEO Dashboard', href: '/ceodashboard', icon: <TbLayoutDashboard />, isActive: ['/ceodashboard'].includes(location.pathname) },
     ];
 
+    const employeeMenuItems = [
+        { title: 'My Dashboard', href: '/dashboard', icon: <TbLayoutDashboard />, isActive: ['/dashboard'].includes(location.pathname) },
+        { title: 'Smart Weekly Plan', href: '/mytasks', icon: <GrTask />, isActive: ['/mytasks'].includes(location.pathname) },
+        { title: 'My Salary History', href: '/salary-history/1', icon: <GrTask />, isActive: ['/salary-history/1'].includes(location.pathname) },
+        { title: 'Leave Dashboard', href: '/leaveprofile', icon: <GrTask />, isActive: ['/leaveprofile'].includes(location.pathname) },
+         { title: 'Request Management', href: '/requestDashboard', icon: <GrTask />, isActive: ['/requestDashboard'].includes(location.pathname) },
+    ];
+
     const seniorAccountantMenuItems = [
         { title: 'Calculate Salary', href: '/calculatesalary', icon: <FaCalculator />, isActive: ['/calculatesalary'].includes(location.pathname) },
         { title: 'Employee Salary Details', href: '/employeesalarylist', icon: <FaMoneyCheck />, isActive: ['/employeesalarylist'].includes(location.pathname) },
@@ -101,8 +109,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     ];
 
     const meetingMinuteMenuItems = [
-        { title: 'Meeting Home', href: '/meetingHome', icon: <FaMoneyCheck />, isActive: ['/meetingHome'].includes(location.pathname) },
-        { title: 'Meetings', href: '/meetings', icon: <FaMoneyCheck />, isActive: ['/meetings'].includes(location.pathname) },
+        { title: 'Meeting List', href: '/meetingList', icon: <FaMoneyCheck />, isActive: ['/meetingList'].includes(location.pathname) },
+        { title: 'Meetings', href: '/createMeetings', icon: <FaMoneyCheck />, isActive: ['/createMeetings'].includes(location.pathname) },
     ];
 
     const kpiMenuItems = [

@@ -63,14 +63,18 @@ import EmployeesOverall from './pages/KPI/KPIOverallDetails';
 import KPIDetails from './pages/KPI/ParameterDetails';
 
 // Meeting Pages
-import MeetingHome from "./pages/MeetingMinute/MeetingHome";
-import Meetings from "./pages/MeetingMinute/Meetings";
+import MeetingList from "./pages/MeetingMinute/MeetingsList";
+import CreateMeetings from "./pages/MeetingMinute/CreateMeetings";
+import MeetingDetails from "./pages/MeetingMinute/MeetingDetails";
+import EditMeeting from "./pages/MeetingMinute/EditMeeting";
 import Notifications from './pages/MeetingMinute/Notifications';
 import NotificationList from './pages/MeetingMinute/NotificationList';
+
 
 //Permission Management
 import PermissionApproval from "./pages/PermissionManagement/PermissionApprove";
 import PermissionRequests from "./pages/PermissionManagement/PermissionRequest";
+import RequestDashboard from "./pages/PermissionManagement/RequestDash";
 import RequestType from "./pages/PermissionManagement/RequestType";
 
 // Protected Routes
@@ -100,17 +104,17 @@ export default function App() {
   return (
     <div className="h-screen flex-col">
       {!shouldHideSidebarAndNavbar && <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />}
-      
+
       <div className="flex flex-col" style={getContentStyle()}>
         {!shouldHideSidebarAndNavbar && <NavBar isOpen={isOpen} setIsOpen={setIsOpen} />}
-        
+
         <div className="p-4 overflow-auto flex-1">
           <Routes>
             <Route element={<ProtectedRoute />}>
-            
+
               {/* Common Routes */}
               <Route path="/" element={<Home />} />
-              
+
               {/* Super Admin Routes */}
               <Route path="/company" element={<Company />} />
               <Route path="/companyregister" element={<CompanyRegister />} />
@@ -123,17 +127,17 @@ export default function App() {
               <Route path="/role" element={<Role />} />
               <Route path="/roleregister" element={<RoleRegister />} />
               <Route path="/roleedit/:id" element={<RoleEdit />} />
-              
+
               {/* Admin Routes */}
               <Route path="/attendance" element={<Attendance />} />
               <Route path="/viewattendance/:userId/:month" element={<AttendanceView />} />
-              
+
               {/* Supervisor Routes */}
               <Route path="/superviseelist" element={<Supervisees />} />
               <Route path="/superviseetasks" element={<Tasks />} />
               <Route path="/superviseedetails" element={<SuperviseeDetails />} />
               <Route path="/leaveapproval" element={<LeaveApproval />} />
-              
+
               {/* Employee Routes */}
               <Route path="/dashboard" element={<MyDashboard />} />
               <Route path="/leaveprofile" element={<LeaveProfile />} />
@@ -142,7 +146,7 @@ export default function App() {
               <Route path='/mytasks' element={<MyTasks />} />
               <Route path='/newtask' element={<CreateTask />} />
               <Route path='/myprofile' element={<MyProfile />} />
-              
+
               {/* Accountant Routes */}
               <Route path="/employeesalarylist" element={<EmployeeSalaryList />} />
               {/* <Route path="/viewsalary/:id" element={<ViewEmployeeSalary />} />
@@ -163,15 +167,18 @@ export default function App() {
               <Route path="/kpidetails" element={<KPIDetails />} />
 
               {/* Meeting Routes */}
-              <Route path="/meetingHome" element={<MeetingHome />} />
-              <Route path="/meetings" element={<Meetings />} />
+              <Route path="/meetingList" element={<MeetingList />} />
+              <Route path="/meetingList/createMeetings" element={<CreateMeetings />} />
+              <Route path="/meetingList/:id" element={<MeetingDetails />} />
+              <Route path="/meetingList/:id/edit" element={<EditMeeting />} />
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/notificationsList" element={<NotificationList />} />
 
               {/*Permission Management*/}
-              <Route path="/permissionapprove" element={<PermissionApproval />}/>
-              <Route path="/permissionrequests" element={<PermissionRequests />}/>
-              <Route path="/requestType" element={<RequestType />}/>
+              <Route path="/permissionapprove" element={<PermissionApproval />} />
+              <Route path="/permissionrequests" element={<PermissionRequests />} />
+              <Route path="/requestDashboard" element={<RequestDashboard />} />
+              <Route path="/requestDashboard/requestCreate" element={<RequestType />} />
             </Route>
 
             {/* Public Routes */}

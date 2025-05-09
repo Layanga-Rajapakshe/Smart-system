@@ -17,20 +17,16 @@ import {
   Chip,
   Alert,
   Tooltip,
-  Textarea,
-  DatePicker
 } from "@heroui/react";
 
-const PermissionRequestForm = () => {
+const RequestTypeForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditMode = Boolean(id);
 
   const [formData, setFormData] = useState({
+    requestType: '',
     permission: '',
-    details: '',
-    additionalInfo: {},
-    expiryDate: null
   });
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(false);
@@ -60,27 +56,25 @@ const PermissionRequestForm = () => {
     { value: 'update_meeting', label: 'Update Meeting', description: 'Permission to modify meeting details' },
   ];
 
-  // Fetch permission request data if in edit mode
+  // Fetch request type data if in edit mode
   useEffect(() => {
     if (isEditMode) {
-      const fetchPermissionRequest = async () => {
+      const fetchRequestType = async () => {
         setFetchLoading(true);
         try {
-          const response = await axios.get(`/api/permission/${id}`);
+          const response = await axios.get(`/api/request / ${ id }`);
           setFormData({
+            requestType: response.data.requestType,
             permission: response.data.permission,
-            details: response.data.details,
-            additionalInfo: response.data.additionalInfo || {},
-            expiryDate: response.data.expiryDate ? new Date(response.data.expiryDate) : null
           });
           setError(null);
         } catch (err) {
-          setError(`Failed to fetch permission request: ${err.response?.data?.error || err.message}`);
+          setError(`Failed to fetch request type: ${ err.response?.data?.message || err.message }`);
         } finally {
           setFetchLoading(false);
         }
       };
-      fetchPermissionRequest();
+      fetchRequestType();
     }
   }, [id, isEditMode]);
 
@@ -93,31 +87,6 @@ const PermissionRequestForm = () => {
     }));
   };
 
-  // Handle additional info change (JSON object)
-  const handleAdditionalInfoChange = (e) => {
-    try {
-      const parsedValue = e.target.value ? JSON.parse(e.target.value) : {};
-      setFormData(prevData => ({
-        ...prevData,
-        additionalInfo: parsedValue
-      }));
-    } catch (err) {
-      // If not valid JSON, store as string to be validated later
-      setFormData(prevData => ({
-        ...prevData,
-        additionalInfo: { text: e.target.value }
-      }));
-    }
-  };
-
-  // Handle date change
-  const handleDateChange = (date) => {
-    setFormData(prevData => ({
-      ...prevData,
-      expiryDate: date
-    }));
-  };
-
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -126,35 +95,25 @@ const PermissionRequestForm = () => {
     setSuccess(null);
 
     try {
-      // Prepare data for submission
-      const requestData = {
-        permission: formData.permission,
-        details: formData.details,
-        additionalInfo: formData.additionalInfo,
-        expiryDate: formData.expiryDate
-      };
-
       if (isEditMode) {
-        await axios.put(`/api/permission/${id}`, requestData);
-        setSuccess('Permission request updated successfully!');
+        await axios.put(`/api/request / ${ id }`, formData);
+        setSuccess('Request type updated successfully!');
       } else {
-        await axios.post('/api/permission', requestData);
-        setSuccess('Permission request created successfully!');
-        // Clear form data if creating new request
+        await axios.post('/api/request/', formData);
+        setSuccess('Request type created successfully!');
+        // Clear form data if creating new request type
         setFormData({
+          requestType: '',
           permission: '',
-          details: '',
-          additionalInfo: {},
-          expiryDate: null
         });
       }
 
       // Redirect after a short delay to show success message
       setTimeout(() => {
-        navigate('/permissions/my-requests');
+        navigate('/requestDashboard');
       }, 1500);
     } catch (err) {
-      setError(`Error: ${err.response?.data?.error || 'Something went wrong'}`);
+      setError(`Error: ${ err.response?.data?.message || 'Something went wrong' }`);
     } finally {
       setLoading(false);
     }
@@ -169,40 +128,37 @@ const PermissionRequestForm = () => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
           <Tooltip content="Return to Dashboard">
-            <Button 
-              isIconOnly 
-              variant="light" 
-              size="md" 
+            <Button
+              isIconOnly
+              variant="light"
+              size="md"
               className="mr-4"
-              onPress={() => navigate("/dashboard")}
+              onPress={() => navigate("/requestDashboard")}
             >
               <Icon icon="lucide:layout-dashboard" width="22" height="22" />
             </Button>
           </Tooltip>
-          
+
           <Breadcrumbs size="md" className="text-sm">
-            <BreadcrumbItem href="/dashboard">
+            <BreadcrumbItem href="/requestDashboard">
               Dashboard
             </BreadcrumbItem>
-            <BreadcrumbItem href="/permissions/my-requests">
-              My Permission Requests
-            </BreadcrumbItem>
+
             <BreadcrumbItem>
-              {isEditMode ? "Edit Request" : "New Request"}
+              {isEditMode ? "Edit Request Type" : "Create Request Type"}
             </BreadcrumbItem>
           </Breadcrumbs>
         </div>
-
         <div className="flex items-center">
           <Button
             variant="flat"
             color="default"
             startContent={<Icon icon="lucide:arrow-left" width="16" height="16" />}
-            onPress={() => navigate("/permissions/my-requests")}
+            onPress={() => navigate("/requestDashboard")}
             size="md"
             className="font-medium"
           >
-            Back to My Requests
+            Back to List
           </Button>
         </div>
       </div>
@@ -210,18 +166,18 @@ const PermissionRequestForm = () => {
       <Card className="w-full shadow-md" radius="md">
         <CardHeader className="flex flex-col gap-2 px-6 py-4 bg-primary-50">
           <div className="flex items-center">
-            <Icon icon={isEditMode ? "lucide:edit-3" : "lucide:shield-plus"} 
-                  width="24" 
-                  height="24" 
-                  className="text-primary mr-3" />
+            <Icon icon={isEditMode ? "lucide:edit-3" : "lucide:plus-circle"}
+              width="24"
+              height="24"
+              className="text-primary mr-3" />
             <div>
               <h1 className="text-2xl font-bold text-primary">
-                {isEditMode ? "Edit Permission Request" : "Request New Permission"}
+                {isEditMode ? "Edit Request Type" : "Create New Request Type"}
               </h1>
               <p className="text-default-600 mt-1 text-base">
                 {isEditMode
-                  ? "Update your pending permission request."
-                  : "Submit a request for additional system permissions."}
+                  ? "Update the details of an existing request type in the system."
+                  : "Create a new request type with specific permissions for your organization."}
               </p>
             </div>
           </div>
@@ -234,11 +190,11 @@ const PermissionRequestForm = () => {
             <div className="flex justify-center my-8">
               <div className="flex flex-col items-center gap-2">
                 <span className="loading loading-spinner loading-md text-primary"></span>
-                <span className="text-base text-default-600">Loading request data...</span>
+                <span className="text-base text-default-600">Loading request type data...</span>
               </div>
             </div>
           )}
-          
+
           {!fetchLoading && (
             <>
               {error && (
@@ -260,11 +216,28 @@ const PermissionRequestForm = () => {
               )}
 
               <Form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                <Input
+                  isRequired
+                  label="Request Type Name"
+                  labelPlacement="outside"
+                  placeholder="Enter a descriptive name for this request type"
+                  value={formData.requestType}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({ ...prev, requestType: value }))
+                  }
+                  description="Must be unique across all request types"
+                  size="md"
+                  className="text-base"
+                  startContent={
+                    <Icon icon="lucide:tag" width="18" height="18" className="text-default-400" />
+                  }
+                />
+
                 <Select
                   isRequired
-                  label="Permission Type"
+                  label="Permission"
                   labelPlacement="outside"
-                  placeholder="Select the permission you need"
+                  placeholder="Select a permission"
                   selectedKeys={formData.permission ? [formData.permission] : []}
                   onSelectionChange={(keys) => {
                     const selected = Array.from(keys)[0];
@@ -275,7 +248,6 @@ const PermissionRequestForm = () => {
                   startContent={
                     <Icon icon="lucide:shield" width="18" height="18" className="text-default-400" />
                   }
-                  isDisabled={isEditMode && formData.status !== 'pending'}
                 >
                   {permissionOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value} textValue={option.label}>
@@ -305,83 +277,17 @@ const PermissionRequestForm = () => {
                   </Card>
                 )}
 
-                <Textarea
-                  isRequired
-                  label="Request Details"
-                  labelPlacement="outside"
-                  placeholder="Explain why you need this permission and how it will help you in your role"
-                  value={formData.details}
-                  onValueChange={(value) =>
-                    setFormData((prev) => ({ ...prev, details: value }))
-                  }
-                  minRows={4}
-                  maxRows={8}
-                  size="md"
-                  className="text-base"
-                  startContent={
-                    <Icon icon="lucide:file-text" width="18" height="18" className="text-default-400 mt-2" />
-                  }
-                  isDisabled={isEditMode && formData.status !== 'pending'}
-                />
-
-                <Textarea
-                  label="Additional Information (Optional)"
-                  labelPlacement="outside"
-                  placeholder="Any additional context or information in JSON format if required"
-                  value={
-                    typeof formData.additionalInfo === 'object' && Object.keys(formData.additionalInfo).length > 0
-                      ? JSON.stringify(formData.additionalInfo, null, 2)
-                      : ''
-                  }
-                  onChange={handleAdditionalInfoChange}
-                  minRows={3}
-                  maxRows={6}
-                  size="md"
-                  className="text-base font-mono"
-                  startContent={
-                    <Icon icon="lucide:code" width="18" height="18" className="text-default-400 mt-2" />
-                  }
-                  description="Optional JSON data that may be required for specific permission types"
-                  isDisabled={isEditMode && formData.status !== 'pending'}
-                />
-
-                <DatePicker
-                  label="Expiry Date (Optional)"
-                  labelPlacement="outside"
-                  placeholder="Select when this permission should expire (if temporary)"
-                  value={formData.expiryDate}
-                  onChange={handleDateChange}
-                  size="md"
-                  className="text-base"
-                  startContent={
-                    <Icon icon="lucide:calendar" width="18" height="18" className="text-default-400" />
-                  }
-                  description="Leave blank for permanent permission requests"
-                  isDisabled={isEditMode && formData.status !== 'pending'}
-                  minDate={new Date()} // Can't select dates in the past
-                />
-
-                {/* Action buttons positioned at the right side */}
-                <div className="flex justify-end gap-3 mt-6">
-                  <Button
-                    variant="flat"
-                    color="default"
-                    size="md"
-                    onPress={() => navigate("/permissions/my-requests")}
-                    className="font-medium text-base px-6 py-2"
-                  >
-                    Cancel
-                  </Button>
+                {/* Action button positioned at the right side */}
+                <div className="flex justify-end mt-6">
                   <Button
                     type="submit"
                     color="primary"
                     size="md"
-                    startContent={<Icon icon={isEditMode ? "lucide:refresh-cw" : "lucide:send"} width="18" height="18" />}
+                    startContent={<Icon icon="lucide:save" width="18" height="18" />}
                     isLoading={loading}
                     className="font-medium text-base px-6 py-2"
-                    isDisabled={isEditMode && formData.status !== 'pending'}
                   >
-                    {isEditMode ? "Update Request" : "Submit Request"}
+                    {isEditMode ? "Update Request Type" : "Create Request Type"}
                   </Button>
                 </div>
               </Form>
@@ -393,4 +299,4 @@ const PermissionRequestForm = () => {
   );
 }
 
-export default PermissionRequestForm;
+export default RequestTypeForm;

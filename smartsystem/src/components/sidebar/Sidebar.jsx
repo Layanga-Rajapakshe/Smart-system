@@ -66,12 +66,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     }, []);
 
     // Menu items categorized by roles
-    const employeeMenuItems = [
-        { title: 'My Dashboard', href: '/dashboard', icon: <TbLayoutDashboard />, isActive: ['/dashboard'].includes(location.pathname) },
-        { title: 'Smart Weekly Plan', href: '/mytasks', icon: <GrTask />, isActive: ['/mytasks'].includes(location.pathname) },
-        { title: 'My Salary History', href: '/salary-history/1', icon: <GiTakeMyMoney />, isActive: [`/salary-history/${userInfo.userId}`].includes(location.pathname) },
-        { title: 'Leave Dashboard', href: '/leaveprofile', icon: <SlCalender />, isActive: ['/leaveprofile'].includes(location.pathname) },
-    ];
+    // const employeeMenuItems = [
+    //     { title: 'My Dashboard', href: '/dashboard', icon: <TbLayoutDashboard />, isActive: ['/dashboard'].includes(location.pathname) },
+    //     { title: 'Smart Weekly Plan', href: '/mytasks', icon: <GrTask />, isActive: ['/mytasks'].includes(location.pathname) },
+    //     { title: 'My Salary History', href: '/salary-history/1', icon: <GiTakeMyMoney />, isActive: [`/salary-history/${userInfo.userId}`].includes(location.pathname) },
+    //     { title: 'Leave Dashboard', href: '/leaveprofile', icon: <SlCalender />, isActive: ['/leaveprofile'].includes(location.pathname) },
+    // ];
 
     const supervisorMenuItems = [
         { title: 'My Supervisee List', href: '/superviseelist', icon: <MdSupervisorAccount />, isActive: ['/superviseelist', '/superviseedetails'].includes(location.pathname) },

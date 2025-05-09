@@ -10,6 +10,15 @@ const sectionToCategory = {
   "knowledge": "Subject Specific"
 };
 
+// Map frontend category names back to backend section names
+const categoryToSection = {
+  "Attitude": "attitude",
+  "Habits": "habits",
+  "Skills": "skills",
+  "Performance": "performance",
+  "Subject Specific": "knowledge"
+};
+
 const getComment = (score) => {
   if (score >= 9) return "Excellent";
   if (score >= 7) return "Good";
@@ -28,11 +37,11 @@ const getCommentColor = (score) => {
   return "text-red-600";
 };
 
-const ScoreTable = () => {
+const ScoreTable = ({ scores, setScores }) => {
   const [kpiData, setKpiData] = useState(null);
-  const [scores, setScores] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
   // Fetch KPI parameters
   useEffect(() => {
     const fetchKPIData = async () => {
@@ -52,12 +61,20 @@ const ScoreTable = () => {
           const initialScores = {};
           Object.entries(kpiDetailResponse.data.sections).forEach(([section, parameters]) => {
             const categoryName = sectionToCategory[section] || section;
-            initialScores[categoryName] = {
-              subParams: parameters.map((param) => param.value || 0)
-            };
+            if (!scores[categoryName] || !scores[categoryName].subParams) {
+              initialScores[categoryName] = {
+                subParams: parameters.map((param) => param.value || 0)
+              };
+            }
           });
           
-          setScores(initialScores);
+          // Only update scores if they're not already set
+          if (Object.keys(initialScores).length > 0) {
+            setScores(prevScores => ({
+              ...prevScores,
+              ...initialScores
+            }));
+          }
         } else {
           setError("No KPI parameters found");
         }
@@ -70,41 +87,29 @@ const ScoreTable = () => {
     };
 
     fetchKPIData();
-  }, []);
-// Function to update KPI scores in the backend (optional)
-  const updateKPIScore = async (categoryName, index, value) => {
-    try {
-      if (!kpiData || !kpiData._id) return;
-      
-      // Map the category name back to the section name used in the backend
-      const sectionName = Object.keys(sectionToCategory).find(
-        key => sectionToCategory[key] === categoryName
-      ) || categoryName.toLowerCase();
-      
-      // Update the score in the backend
-      await axios.put(`/api/kpi-parameter/kpi-parameters/${kpiData._id}`, {
-        [`sections.${sectionName}.${index}.value`]: value
-      });
-    } catch (err) {
-      console.error("Error updating KPI score:", err);
-      // Optionally show an error message to the user
-    }
-  };
+  }, [setScores]);
 
   const calculateOverallKPI = () => {
-    if (Object.keys(scores).length === 0) return 0;
+    if (!kpiData || Object.keys(scores).length === 0) return 0;
     
-    const sum = Object.values(scores).reduce(
-      (acc, category) => acc + category.subParams.reduce((subAcc, score) => subAcc + (score || 0), 0), 
-      0
-    );
+    let totalWeightedScore = 0;
+    let totalWeight = 0;
     
-    const totalSubParams = Object.values(scores).reduce(
-      (acc, category) => acc + category.subParams.length, 
-      0
-    );
+    Object.entries(scores).forEach(([categoryName, category]) => {
+      const sectionName = categoryToSection[categoryName];
+      if (!sectionName || !kpiData.sections[sectionName]) return;
+      
+      const parameters = kpiData.sections[sectionName];
+      category.subParams.forEach((score, index) => {
+        if (parameters[index]) {
+          const weight = parameters[index].weight || 1;
+          totalWeightedScore += score * weight;
+          totalWeight += weight;
+        }
+      });
+    });
     
-    return totalSubParams > 0 ? (sum / totalSubParams).toFixed(1) : 0;
+    return totalWeight > 0 ? (totalWeightedScore / totalWeight).toFixed(1) : 0;
   };
 
   const handleScoreChange = (category, index, value) => {
@@ -114,10 +119,6 @@ const ScoreTable = () => {
     }
     newScores[category].subParams[index] = value;
     setScores(newScores);
-    
-    // Update the score in the backend (optional)
-    // Uncomment the next line if you want to save scores to the backend
-    // updateKPIScore(category, index, value);
   };
 
   if (loading) return <div className="text-center py-4">Loading KPI parameters...</div>;
@@ -125,7 +126,8 @@ const ScoreTable = () => {
   if (!kpiData) return <div className="text-center py-4">No KPI parameters found</div>;
 
   const overallScore = calculateOverallKPI();
-return (
+
+  return (
     <div className="p-4 shadow-lg rounded-xl bg-white/90 backdrop-blur-sm">
       <h2 className="text-xl font-bold text-center mb-4">KPI Score Table</h2>
       
@@ -161,7 +163,12 @@ return (
                     
                     return (
                       <tr key={`${sectionName}-${index}`} className="border-b border-gray-100">
-                        <td className="py-2 px-2">{param.parameter}</td>
+                        <td className="py-2 px-2">
+                          <div className="flex justify-between">
+                            <span>{param.parameter}</span>
+                            <span className="text-gray-500 text-sm">(Weight: {param.weight || 1})</span>
+                          </div>
+                        </td>
                         <td className="text-center py-2 px-2">
                           <div className="relative px-2" title={`Score: ${score}`}>
                             <div className="relative w-full">
@@ -204,4 +211,29 @@ return (
   );
 };
 
-export default ScoreTable;
+// Export the function for calculating weighted KPI score 
+const calculateWeightedKpiScore = (scores, kpiData) => {
+  if (!kpiData || Object.keys(scores).length === 0) return 0;
+  
+  let totalWeightedScore = 0;
+  let totalWeight = 0;
+  
+  Object.entries(scores).forEach(([categoryName, category]) => {
+    const sectionName = categoryToSection[categoryName];
+    if (!sectionName || !kpiData.sections[sectionName]) return;
+    
+    const parameters = kpiData.sections[sectionName];
+    category.subParams.forEach((score, index) => {
+      if (parameters[index]) {
+        const weight = parameters[index].weight || 1;
+        totalWeightedScore += score * weight;
+        totalWeight += weight;
+      }
+    });
+  });
+  
+  return totalWeight > 0 ? parseFloat((totalWeightedScore / totalWeight).toFixed(1)) : 0;
+};
+
+// Export the component and utility functions
+export { ScoreTable as default, categoryToSection, calculateWeightedKpiScore };

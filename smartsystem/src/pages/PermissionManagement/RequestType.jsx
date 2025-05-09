@@ -96,7 +96,7 @@ const RequestTypeForm = () => {
 
     try {
       if (isEditMode) {
-        await axios.put(`/api/request / ${ id }`, formData);
+        await axios.put(`/api/request / ${ id }, formData`);
         setSuccess('Request type updated successfully!');
       } else {
         await axios.post('/api/request/', formData);

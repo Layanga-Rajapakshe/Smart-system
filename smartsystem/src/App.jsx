@@ -45,7 +45,7 @@ import LeaveApproval from './pages/LeaveManagement/LeaveApproval';
 import EmployeeSalaryList from './pages/SeniorAccountant/EmployeeSalaryList';
 import ViewEmployeeSalary from './pages/SeniorAccountant/ViewEmployeeSalary';
 import EditEmployeeSalary from './pages/SeniorAccountant/EditEmployeeSalary';
-import PayrollSummaryPage from './pages/SeniorAccountant/PayrollSummaryPage';
+//import PayrollSummaryPage from './pages/SeniorAccountant/PayrollSummaryPage';
 import EmployeeDetailsView from './pages/SeniorAccountant/EmployeeDetailsView';
 import MonthlySalarySummaryPage from './pages/SeniorAccountant/MonthlySalarySummaryPage';
 import ComplaintMessaging from './pages/SeniorAccountant/ComplaintMessaging';

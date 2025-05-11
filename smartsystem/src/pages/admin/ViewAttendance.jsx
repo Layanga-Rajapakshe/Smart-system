@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Badge, Select, SelectItem, Image, Button, useDisclosure } from "@heroui/react";
-import { useAttendance } from './useAttendance';
+import { useAttendance } from './UseAttendance';
 import { useEditAttendanceDetailsMutation } from '../../redux/api/attendanceApiSlice';
 import { useGetEmployeesQuery } from '../../redux/api/employeeApiSlice';
 import DatePicker from "react-datepicker";

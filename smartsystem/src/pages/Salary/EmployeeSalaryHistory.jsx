@@ -20,8 +20,8 @@ import {
 import { useParams, Link } from 'react-router-dom';
 import { FaFileDownload, FaEye, FaExclamationTriangle } from 'react-icons/fa';
 import { IoFilterSharp } from 'react-icons/io5';
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+// import jsPDF from 'jspdf';
+// import 'jspdf-autotable';
 import GeneralBreadCrumb from '../../components/GeneralBreadCrumb';
 import { useGetSalaryHistoryQuery } from '../../redux/api/salaryCalculationApiSlice';
 
@@ -47,67 +47,10 @@ const EmployeeSalaryHistory = () => {
     { label: 'Salary History', href: '/salary-history', isCurrentPage: true },
   ];
 
+  // Commented out PDF generation functionality
   const generatePDF = (salaryData) => {
-    // Create new jsPDF instance
-    const doc = new jsPDF();
-    const companyName = "Sasesh International PVT LTD";
-    const month = monthNames[salaryData.month - 1];
-    const year = salaryData.year;
-
-    // Add company header
-    doc.setFontSize(20);
-    doc.text(companyName, 105, 20, { align: 'center' });
-    
-    // Add salary slip title
-    doc.setFontSize(16);
-    doc.text('Salary Slip', 105, 30, { align: 'center' });
-    doc.text(`${month} ${year}`, 105, 40, { align: 'center' });
-
-    // Add employee details
-    doc.setFontSize(12);
-    doc.text('Employee Details', 20, 55);
-    doc.setFontSize(10);
-    doc.text(`Employee ID: ${salaryData.employeeId}`, 20, 65);
-    doc.text(`Name: ${salaryData.employeeName}`, 20, 72);
-    doc.text(`Department: ${salaryData.department}`, 20, 79);
-
-    // Create earnings and deductions table
-    const tableData = [
-      ['Earnings', 'Amount', 'Deductions', 'Amount'],
-      ['Basic Salary', salaryData.basicSalary.toFixed(2), 'Income Tax', salaryData.incomeTax.toFixed(2)],
-      ['RE Allowance', salaryData.reAllowance.toFixed(2), 'Insurance', salaryData.insurance.toFixed(2)],
-      ['Single OT', salaryData.singleOT.toFixed(2), '', ''],
-      ['Double OT', salaryData.doubleOT.toFixed(2), '', ''],
-      ['Meal Allowance', salaryData.mealAllowance.toFixed(2), '', ''],
-    ];
-
-    // Add table to document
-    doc.autoTable({
-      startY: 90,
-      head: [tableData[0]],
-      body: tableData.slice(1),
-      theme: 'grid',
-      headStyles: { fillColor: [66, 66, 66] },
-      styles: { fontSize: 8 },
-      columnStyles: {
-        0: { cellWidth: 40 },
-        1: { cellWidth: 40 },
-        2: { cellWidth: 40 },
-        3: { cellWidth: 40 }
-      }
-    });
-
-    // Add net pay
-    const finalY = doc.lastAutoTable.finalY || 150;
-    doc.setFontSize(12);
-    doc.text(`Net Pay: $${salaryData.netPay.toFixed(2)}`, 20, finalY + 20);
-
-    // Add footer
-    doc.setFontSize(8);
-    doc.text('This is a computer-generated document. No signature required.', 105, 280, { align: 'center' });
-
-    // Save the PDF
-    doc.save(`salary-slip-${salaryData.employeeId}-${month}-${year}.pdf`);
+    // PDF generation functionality is commented out
+    console.log("PDF generation is disabled", salaryData);
   };
 
   const getStatusColor = (status) => {
@@ -242,6 +185,7 @@ const EmployeeSalaryHistory = () => {
                           isIconOnly
                           size="sm"
                           variant="light"
+                          // Commented out to disable PDF generation functionality
                           onPress={() => generatePDF(item)}
                         >
                           <FaFileDownload className="text-lg" />

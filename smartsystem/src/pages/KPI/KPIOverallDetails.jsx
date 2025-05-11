@@ -6,8 +6,9 @@ import {
   ModalFooter, Input, Select, SelectItem
 } from "@heroui/react";
 import { Icon } from "@iconify/react";
-import { jsPDF } from "jspdf";
-import "jspdf-autotable";
+// Comment out jsPDF imports
+// import jsPDF from "jspdf";
+// import "jspdf-autotable";
 
 // Sample employee data
 const initialEmployeeScores = [
@@ -58,6 +59,8 @@ const kpiCategories = ["Attitude", "Habits", "Skills", "Performance", "Subject"]
 const getScoreStatus = score => score >= 9 ? "success" : score >= 8 ? "primary" : score >= 7 ? "warning" : "danger";
 const getTrendIcon = score => score >= 8.5 ? "lucide:trending-up" : score < 7.5 ? "lucide:trending-down" : "lucide:minus";
 
+// Comment out PDF export functions
+/*
 // Functions for PDF export
 function prepareMetricsForExport(employees) {
   // Calculate average scores by category
@@ -175,6 +178,7 @@ function exportToPDF(employees, teamMetrics) {
   // Save the PDF
   doc.save("Employee_Performance_Report.pdf");
 }
+*/
 
 function EmployeeOfMonth({ employee }) {
   const overallKPI = (employee.scores.reduce((a, b) => a + b, 0) / employee.scores.length).toFixed(2);
@@ -303,9 +307,11 @@ function PerformanceTable({ employees, onEditEmployee }) {
     );
   }, []);
   
+  // Comment out PDF export handler and replace with placeholder function
   const handleExportPDF = () => {
-    const teamMetrics = prepareMetricsForExport(employees);
-    exportToPDF(employees, teamMetrics);
+    // const teamMetrics = prepareMetricsForExport(employees);
+    // exportToPDF(employees, teamMetrics);
+    alert("PDF Export is currently disabled");
   };
 
   return (

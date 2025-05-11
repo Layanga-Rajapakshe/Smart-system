@@ -1,4 +1,4 @@
-export const BASE_URL = "";
+export const BASE_URL = "https://smart-system-api.vercel.app/";
 export const AUTH_URL = "/api/auth";
 export const COMPANY_URL = "/api/company";
 export const EMPLOYEE_URL = "/api/employees";
@@ -10,3 +10,4 @@ export const SALARYMANAGEMENT_URL = "/api/salParam";
 export const SALARYCALCULATION_URL = "/api/salary";
 export const MEETING_URL = "/api/meeting";
 export const KPI_URL = "/api/kpi";
+export const SUPERVISEE_URL = "/api/supervisee";
